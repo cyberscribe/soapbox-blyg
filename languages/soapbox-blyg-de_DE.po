@@ -1,0 +1,1065 @@
+# Copyright (C) 2026 Robert Peake
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Soapbox Blyg 0.1.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/soapbox-blyg\n"
+"POT-Creation-Date: 2026-10-07T12:15:02+00:00\n"
+"PO-Revision-Date: 2026-10-07 20:03+0000\n"
+"Last-Translator: Claude (AI draft, pending native review)\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Domain: soapbox-blyg\n"
+"X-Generator: WP-CLI 2.12.0\n"
+
+#. Plugin Name of the plugin
+#: soapbox-blyg.php src/Admin/SettingsPage.php:305
+#: src/Admin/SettingsPage.php:306 src/Admin/SettingsPage.php:562
+#: src/Admin/SiteHealth.php:99 src/Admin/ToolsPage.php:46
+#: src/Admin/ToolsPage.php:47 src/Admin/ToolsPage.php:215 src/Plugin.php:310
+msgid "Soapbox Blyg"
+msgstr "Soapbox Blyg"
+
+#. Description of the plugin
+#: soapbox-blyg.php
+msgid "Publishes your posts as a blyg under the Blygger protocol: stable ids, versions, pins and a feed that other Blygger clients can subscribe to and quote. An independent implementation."
+msgstr "Veröffentlicht deine Beiträge als Blyg nach dem Blygger-Protokoll: stabile IDs, Versionen, Anheftungen und ein Feed, den andere Blygger-Clients abonnieren und zitieren können. Eine unabhängige Implementierung."
+
+#. Author of the plugin
+#: soapbox-blyg.php
+msgid "Robert Peake"
+msgstr "Robert Peake"
+
+#. Author URI of the plugin
+#: soapbox-blyg.php
+msgid "https://www.robertpeake.com/"
+msgstr "https://www.robertpeake.com/"
+
+#: src/Admin/EditorPanel.php:69 build/editor-panel.js:7
+msgid "Blyg"
+msgstr "Blyg"
+
+#: src/Admin/EditorPanel.php:89 build/editor-panel.js:7 build/tools.js:8
+msgid "Not on the blyg yet. A post joins it when it is published."
+msgstr "Noch nicht im Blyg. Ein Beitrag wird bei seiner Veröffentlichung aufgenommen."
+
+#. translators: 1: version number, 2: kind (thread, fragment or withdrawn)
+#: src/Admin/EditorPanel.php:97
+#, php-format
+msgid "Version %1$d, %2$s"
+msgstr "Version %1$d, %2$s"
+
+#: src/Admin/EditorPanel.php:103 build/editor-panel.js:7 build/tools.js:11
+msgid "Item document"
+msgstr "Eintragsdokument"
+
+#: src/Admin/SettingsPage.php:51
+msgid "Soapbox Blyg settings."
+msgstr "Einstellungen von Soapbox Blyg."
+
+#: src/Admin/SettingsPage.php:129
+msgid "The mount path must look like /blyg/ (letters, digits, dots and hyphens between slashes). It cannot be the site root, a path WordPress itself uses, a year such as /2024/, or a file name such as robots.txt."
+msgstr "Der Einhängepfad muss wie /blyg/ aussehen (Buchstaben, Ziffern, Punkte und Bindestriche zwischen Schrägstrichen). Er darf weder das Stammverzeichnis der Website noch ein von WordPress selbst verwendeter Pfad, eine Jahreszahl wie /2024/ oder ein Dateiname wie robots.txt sein."
+
+#. translators: 1: mount path, 2: title of the page or post that already uses it
+#: src/Admin/SettingsPage.php:136
+#, php-format
+msgid "The path %1$s is already the address of \"%2$s\". Choose another, or change that page's slug first."
+msgstr "Der Pfad %1$s ist bereits die Adresse von „%2$s“. Wähle einen anderen oder ändere zuerst die Titelform dieser Seite."
+
+#. translators: 1: mount path, 2: origin key
+#: src/Admin/SettingsPage.php:141
+#, php-format
+msgid "The path %1$s is already the mount of another blyg on this site (%2$s)."
+msgstr "Der Pfad %1$s ist bereits der Einhängepfad eines anderen Blygs auf dieser Website (%2$s)."
+
+#. translators: %s: mount path
+#: src/Admin/SettingsPage.php:155
+#, php-format
+msgid "Something else on this site already has addresses under %s (a post type, a taxonomy or another plugin). Choose another path."
+msgstr "Etwas anderes auf dieser Website hat bereits Adressen unter %s (ein Inhaltstyp, eine Taxonomie oder ein anderes Plugin). Wähle einen anderen Pfad."
+
+#: src/Admin/SettingsPage.php:208
+msgid "The cache lifetime was not changed: it has to be one of the lifetimes in the list."
+msgstr "Die Cache-Lebensdauer wurde nicht geändert: Erlaubt ist nur eine der Lebensdauern aus der Liste."
+
+#: src/Admin/SettingsPage.php:263
+msgid "The mount path and the surface layout were not changed. This blyg has published, and every address it has published is a promise to keep answering there, so they are now permanent."
+msgstr "Einhängepfad und Oberflächen-Layout wurden nicht geändert. Dieser Blyg hat bereits Einträge veröffentlicht, und jede Adresse, die er veröffentlicht hat, ist ein Versprechen, dort weiterhin zu antworten. Deshalb sind beide jetzt dauerhaft festgelegt."
+
+#: src/Admin/SettingsPage.php:293
+msgid "Publishing was not switched on. Choose the blyg's mount path and surface layout and save them first: both become permanent with the first item published."
+msgstr "Die Veröffentlichung wurde nicht eingeschaltet. Wähle zuerst den Einhängepfad und das Oberflächen-Layout des Blygs und speichere sie: Beide werden mit dem ersten veröffentlichten Eintrag dauerhaft festgelegt."
+
+#: src/Admin/SettingsPage.php:320 src/Admin/ToolsPage.php:220
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: src/Admin/SettingsPage.php:329
+msgid "Publishing"
+msgstr "Veröffentlichung"
+
+#: src/Admin/SettingsPage.php:331 src/Admin/ToolsPage.php:231
+msgid "Address"
+msgstr "Adresse"
+
+#: src/Admin/SettingsPage.php:332
+msgid "Where your blyg lives on this site. Choose before you publish: once the blyg has an item, both of these are permanent."
+msgstr "Wo dein Blyg auf dieser Website liegt. Entscheide vor dem Veröffentlichen: Sobald der Blyg einen Eintrag hat, sind beide Angaben dauerhaft festgelegt."
+
+#: src/Admin/SettingsPage.php:335
+msgid "Identity"
+msgstr "Identität"
+
+#: src/Admin/SettingsPage.php:336
+msgid "How the blyg describes itself to readers. Leave a field empty to use the site's own name and tagline."
+msgstr "Wie sich der Blyg seinen Lesern vorstellt. Lass ein Feld leer, um den Namen und Untertitel der Website zu verwenden."
+
+#: src/Admin/SettingsPage.php:338
+msgid "Content"
+msgstr "Inhalt"
+
+#: src/Admin/SettingsPage.php:339
+msgid "Caching"
+msgstr "Caching"
+
+#: src/Admin/SettingsPage.php:340 src/Admin/ToolsPage.php:373
+msgid "Mentions"
+msgstr "Erwähnungen"
+
+#: src/Admin/SettingsPage.php:341
+msgid "Data"
+msgstr "Daten"
+
+#: src/Admin/SettingsPage.php:357
+msgctxt "setting label: whether the site publishes a blyg"
+msgid "Publish"
+msgstr "Veröffentlichen"
+
+#: src/Admin/SettingsPage.php:358
+msgid "What to publish"
+msgstr "Was veröffentlicht wird"
+
+#: src/Admin/SettingsPage.php:359
+msgid "Mount path"
+msgstr "Einhängepfad"
+
+#: src/Admin/SettingsPage.php:360
+msgid "Surface layout"
+msgstr "Oberflächen-Layout"
+
+#: src/Admin/SettingsPage.php:361
+msgid "Title"
+msgstr "Titel"
+
+#: src/Admin/SettingsPage.php:362
+msgid "Description"
+msgstr "Beschreibung"
+
+#: src/Admin/SettingsPage.php:363
+msgid "Author name"
+msgstr "Name des Autors"
+
+#: src/Admin/SettingsPage.php:364
+msgid "Author bio"
+msgstr "Biografie des Autors"
+
+#: src/Admin/SettingsPage.php:365
+msgid "Author links"
+msgstr "Links des Autors"
+
+#: src/Admin/SettingsPage.php:366
+msgid "Featured image"
+msgstr "Beitragsbild"
+
+#: src/Admin/SettingsPage.php:367
+msgid "Older markup"
+msgstr "Älteres Markup"
+
+#: src/Admin/SettingsPage.php:368
+msgid "Cache lifetime"
+msgstr "Cache-Lebensdauer"
+
+#: src/Admin/SettingsPage.php:369
+msgid "Receive mentions"
+msgstr "Erwähnungen empfangen"
+
+#: src/Admin/SettingsPage.php:370
+msgid "When the plugin is deleted"
+msgstr "Beim Löschen des Plugins"
+
+#: src/Admin/SettingsPage.php:418 src/Admin/SettingsPage.php:423
+msgid "Publish this site's content as a blyg"
+msgstr "Die Inhalte dieser Website als Blyg veröffentlichen"
+
+#: src/Admin/SettingsPage.php:420
+msgid "Not available yet. First choose the mount path and the surface layout under \"Address\" below and save. Both become permanent with the first item published, so they are yours to decide before anything is. Then come back and tick this."
+msgstr "Noch nicht verfügbar. Wähle zuerst unten unter „Adresse“ den Einhängepfad und das Oberflächen-Layout und speichere. Beide werden mit dem ersten veröffentlichten Eintrag dauerhaft festgelegt, du entscheidest also darüber, bevor irgendetwas veröffentlicht ist. Komm dann zurück und aktiviere diese Option."
+
+#: src/Admin/SettingsPage.php:424
+msgid "With this off, the site serves no blyg and advertises none. Nothing already published is deleted; it stops being served until this is switched back on. Switching it on publishes nothing by itself: posts join the blyg as they are saved, and existing posts when you run the backfill from Tools."
+msgstr "Ist dies ausgeschaltet, liefert die Website keinen Blyg aus und kündigt auch keinen an. Bereits Veröffentlichtes wird nicht gelöscht; es wird nur nicht mehr ausgeliefert, bis dies wieder eingeschaltet wird. Das Einschalten allein veröffentlicht nichts: Beiträge kommen in den Blyg, sobald sie gespeichert werden, und bestehende Beiträge, wenn du den Nachimport unter Werkzeuge ausführst."
+
+#: src/Admin/SettingsPage.php:439
+msgid "Every published, public item of the ticked types becomes an item of the blyg, and stays one. Unticking a type stops new items and new versions; what is already published stays until the post itself is unpublished or deleted, which withdraws it."
+msgstr "Jeder veröffentlichte, öffentliche Inhalt der ausgewählten Typen wird zu einem Eintrag des Blygs und bleibt es. Wird ein Typ abgewählt, entstehen keine neuen Einträge und Versionen mehr; bereits Veröffentlichtes bleibt, bis der Beitrag selbst nicht mehr veröffentlicht oder gelöscht wird, wodurch es zurückgezogen wird."
+
+#: src/Admin/SettingsPage.php:453
+msgid "Permanent. This blyg has published, and readers hold its addresses; moving it would break every one of them."
+msgstr "Dauerhaft festgelegt. Dieser Blyg hat bereits Einträge veröffentlicht, und Leser kennen seine Adressen; ihn zu verschieben, würde jede einzelne davon ungültig machen."
+
+#: src/Admin/SettingsPage.php:454
+msgid "The address of the blyg, and its identity to every reader. /blyg/ is the convention, and the first place a reader looks."
+msgstr "Die Adresse des Blygs und seine Identität für jeden Leser. /blyg/ ist die Konvention und der erste Ort, an dem ein Leser sucht."
+
+#: src/Admin/SettingsPage.php:461 src/Admin/ToolsPage.php:247
+msgid "Fixed paths"
+msgstr "Feste Pfade"
+
+#: src/Admin/SettingsPage.php:462
+msgid "Blygger 0.3, understood by every reader. The protocol's own file names under the mount (feed.xml, items/index.json, items/{id}.json). Check Site Health afterwards: if your host caches them at the edge, exclude the mount path from that cache."
+msgstr "Blygger 0.3, von jedem Reader unterstützt. Die protokolleigenen Dateinamen unter dem Einhängepfad (feed.xml, items/index.json, items/{id}.json). Prüfe danach den Website-Zustand: Wenn dein Hoster sie am Edge zwischenspeichert, nimm den Einhängepfad von diesem Cache aus."
+
+#: src/Admin/SettingsPage.php:465 src/Admin/ToolsPage.php:247
+msgid "Templated"
+msgstr "Vorlagenbasiert"
+
+#: src/Admin/SettingsPage.php:466
+msgid "Blygger 0.4 draft (decision #51). Needs a reader that supports manifest-located surfaces; most don't yet. The manifest says where everything else is, and the documents are served through the REST API. Managed hosts often cache paths ending in .json and .xml for weeks, which would keep serving an item after you withdrew it; this layout avoids those paths."
+msgstr "Blygger-0.4-Entwurf (Entscheidung #51). Erfordert einen Reader, der im Manifest verortete Oberflächen unterstützt; die meisten können das noch nicht. Das Manifest gibt an, wo alles andere liegt, und die Dokumente werden über die REST-API ausgeliefert. Managed Hosts speichern Pfade, die auf .json und .xml enden, oft wochenlang im Cache, sodass ein Eintrag noch ausgeliefert würde, nachdem du ihn zurückgezogen hast; dieses Layout vermeidet solche Pfade."
+
+#: src/Admin/SettingsPage.php:483
+msgid "Permanent, for the same reason as the mount path."
+msgstr "Dauerhaft festgelegt, aus demselben Grund wie der Einhängepfad."
+
+#: src/Admin/SettingsPage.php:515
+msgid "One per line: a label, a vertical bar, and an address. With none, the blyg links to this site's home page."
+msgstr "Einer pro Zeile: eine Bezeichnung, ein senkrechter Strich und eine Adresse. Ohne Angabe verlinkt der Blyg auf die Startseite dieser Website."
+
+#: src/Admin/SettingsPage.php:519
+msgid "Lead each item with the post's featured image"
+msgstr "Jeden Eintrag mit dem Beitragsbild beginnen"
+
+#: src/Admin/SettingsPage.php:520
+msgid "Unless the post already shows that image, or opens with an image of its own. Changing this changes what posts look like the next time each is saved."
+msgstr "Außer wenn der Beitrag dieses Bild bereits zeigt oder mit einem eigenen Bild beginnt. Eine Änderung wirkt sich darauf aus, wie ein Beitrag aussieht, sobald er das nächste Mal gespeichert wird."
+
+#: src/Admin/SettingsPage.php:524
+msgid "Treat two or more line breaks in a row as a paragraph break"
+msgstr "Zwei oder mehr aufeinanderfolgende Zeilenumbrüche als Absatzwechsel behandeln"
+
+#: src/Admin/SettingsPage.php:525
+msgid "Posts written before the block editor often used doubled line breaks as paragraphs. Leave this on unless your posts use them deliberately."
+msgstr "Beiträge aus der Zeit vor dem Block-Editor nutzten oft doppelte Zeilenumbrüche als Absätze. Lass dies aktiviert, es sei denn, deine Beiträge verwenden sie bewusst."
+
+#. translators: %s: a length of time, such as "5 mins"
+#: src/Admin/SettingsPage.php:533
+#, php-format
+msgid "%s (recommended)"
+msgstr "%s (empfohlen)"
+
+#: src/Admin/SettingsPage.php:537
+msgid "How long readers and the caches in front of your site may keep a copy of the blyg's documents before asking again. Shorter, and a post you withdraw or edit stops being served in its old form sooner; longer, and fewer requests reach your site. Asking again is cheap either way: a document that has not changed is not sent twice. An address that has nothing yet is remembered as \"not found\" for the same time. Pinned versions never change and are not affected."
+msgstr "Wie lange Reader und die deiner Website vorgeschalteten Caches eine Kopie der Dokumente des Blygs behalten dürfen, bevor sie erneut nachfragen. Kürzer heißt: Ein Beitrag, den du zurückziehst oder bearbeitest, wird früher nicht mehr in seiner alten Form ausgeliefert; länger heißt: Weniger Anfragen erreichen deine Website. Erneutes Nachfragen kostet in beiden Fällen wenig: Ein Dokument, das sich nicht geändert hat, wird nicht zweimal gesendet. Eine Adresse, unter der noch nichts liegt, wird für dieselbe Zeit als „nicht gefunden“ gemerkt. Angeheftete Versionen ändern sich nie und sind nicht betroffen."
+
+#: src/Admin/SettingsPage.php:541
+msgid "Accept Webmentions from other blygs"
+msgstr "Webmentions von anderen Blygs akzeptieren"
+
+#: src/Admin/SettingsPage.php:542
+msgid "When another blyg quotes, answers or forks one of your items, it can tell this site. To check that the claim is true, this site then fetches that blyg's page and its item document, and its manifest when its documents are not at the usual addresses: at most three documents per mention, from addresses the sender chose, never from a private network. Nothing fetched is stored or displayed; mentions appear under Tools, for administrators only. With this off, the site makes no outbound requests at all."
+msgstr "Wenn ein anderer Blyg einen deiner Einträge zitiert, beantwortet oder forkt, kann er dies dieser Website mitteilen. Um die Angabe zu überprüfen, ruft diese Website dann die Seite dieses Blygs, sein Eintragsdokument und, falls seine Dokumente nicht unter den üblichen Adressen liegen, sein Manifest ab: höchstens drei Dokumente pro Erwähnung, von Adressen, die der Absender gewählt hat, niemals aus einem privaten Netzwerk. Nichts Abgerufenes wird gespeichert oder angezeigt; Erwähnungen erscheinen unter Werkzeuge, nur für Administratoren. Ist dies ausgeschaltet, stellt die Website überhaupt keine ausgehenden Anfragen."
+
+#: src/Admin/SettingsPage.php:546
+msgid "Delete all Soapbox Blyg data when the plugin is deleted"
+msgstr "Alle Daten von Soapbox Blyg löschen, wenn das Plugin gelöscht wird"
+
+#: src/Admin/SettingsPage.php:547
+msgid "Off by default, on purpose. The ledger holds every id, version and pin you have published, and it cannot be rebuilt: deleting it breaks every address the blyg has ever served, and reinstalling would start again with new ids. Deactivating the plugin never deletes anything."
+msgstr "Standardmäßig aus, und das mit Absicht. Das Register enthält jede ID, jede Version und jede Anheftung, die du veröffentlicht hast, und es lässt sich nicht neu aufbauen: Wird es gelöscht, ist jede Adresse ungültig, die der Blyg je ausgeliefert hat, und eine Neuinstallation würde mit neuen IDs von vorn beginnen. Das Deaktivieren des Plugins löscht niemals etwas."
+
+#. translators: 1: protocol version, 2: URL of the protocol specification
+#: src/Admin/SettingsPage.php:570
+#, php-format
+msgid "This plugin publishes under the <a href=\"%2$s\">Blygger protocol</a>, version %1$s, which is a draft: its wire format may change before 1.0, and this plugin will follow it. What does not change is the promise you make by publishing. Every address the blyg serves is meant to keep answering, and a pinned version is served forever. Soapbox Blyg is an independent implementation and is not affiliated with the protocol's authors."
+msgstr "Dieses Plugin veröffentlicht nach dem <a href=\"%2$s\">Blygger-Protokoll</a> in Version %1$s, einem Entwurf: Das Übertragungsformat kann sich vor 1.0 noch ändern, und dieses Plugin wird den Änderungen folgen. Was sich nicht ändert, ist das Versprechen, das du mit dem Veröffentlichen gibst. Jede Adresse, die der Blyg ausliefert, soll weiterhin antworten, und eine angeheftete Version wird für immer ausgeliefert. Soapbox Blyg ist eine unabhängige Implementierung und steht in keiner Verbindung zu den Autoren des Protokolls."
+
+#: src/Admin/SettingsPage.php:581
+msgid "This site uses \"Plain\" permalinks, and a blyg cannot be served on them. Choose any other structure under Settings > Permalinks."
+msgstr "Diese Website verwendet „Einfach“ als Permalink-Struktur, und damit kann kein Blyg ausgeliefert werden. Wähle unter Einstellungen > Permalinks eine beliebige andere Struktur."
+
+#. translators: 1: the blyg's address, 2: its manifest URL
+#: src/Admin/SettingsPage.php:591
+#, php-format
+msgid "Your blyg is at <code>%1$s</code>. <a href=\"%2$s\">Manifest</a>"
+msgstr "Dein Blyg befindet sich unter <code>%1$s</code>. <a href=\"%2$s\">Manifest</a>"
+
+#: src/Admin/SettingsPage.php:601
+msgid "Tools"
+msgstr "Werkzeuge"
+
+#: src/Admin/SiteHealth.php:59
+msgid "Blyg: permalinks"
+msgstr "Blyg: Permalinks"
+
+#: src/Admin/SiteHealth.php:60
+msgid "Blyg: mount path"
+msgstr "Blyg: Einhängepfad"
+
+#: src/Admin/SiteHealth.php:61
+msgid "Blyg: ledger integrity"
+msgstr "Blyg: Integrität des Registers"
+
+#: src/Admin/SiteHealth.php:70
+msgid "Blyg: surface reachable"
+msgstr "Blyg: Oberfläche erreichbar"
+
+#: src/Admin/SiteHealth.php:71
+msgid "Blyg: edge cache"
+msgstr "Blyg: Edge-Cache"
+
+#: src/Admin/SiteHealth.php:144
+msgid "The blyg could not be checked from the server"
+msgstr "Der Blyg konnte vom Server aus nicht geprüft werden"
+
+#. translators: 1: manifest URL, 2: error message
+#: src/Admin/SiteHealth.php:146
+#, php-format
+msgid "This site could not request its own manifest at %1$s (%2$s). That usually means the server cannot reach itself by its public address, which also affects other WordPress features. The blyg may still be reachable from outside: open the address in a browser to check."
+msgstr "Diese Website konnte ihr eigenes Manifest unter %1$s nicht abrufen (%2$s). Das bedeutet meist, dass der Server sich selbst nicht über seine öffentliche Adresse erreichen kann, was auch andere WordPress-Funktionen beeinträchtigt. Der Blyg ist von außen möglicherweise trotzdem erreichbar: Öffne die Adresse zur Kontrolle in einem Browser."
+
+#: src/Admin/SiteHealth.php:154
+msgid "The blyg's manifest is not being served"
+msgstr "Das Manifest des Blygs wird nicht ausgeliefert"
+
+#. translators: 1: manifest URL, 2: HTTP status
+#: src/Admin/SiteHealth.php:156
+#, php-format
+msgid "%1$s answered with status %2$d, or with something that is not a manifest. Readers cannot find the blyg. Re-saving Settings > Permalinks rebuilds the rewrite rules; if that does not help, another plugin or a server rule is answering at that path."
+msgstr "%1$s hat mit dem Status %2$d geantwortet oder mit etwas, das kein Manifest ist. Leser können den Blyg nicht finden. Erneutes Speichern unter Einstellungen > Permalinks baut die Rewrite-Regeln neu auf; hilft das nicht, antwortet ein anderes Plugin oder eine Serverregel unter diesem Pfad."
+
+#: src/Admin/SiteHealth.php:158 src/Admin/SiteHealth.php:352
+msgid "Permalink settings"
+msgstr "Permalink-Einstellungen"
+
+#: src/Admin/SiteHealth.php:170
+msgid "The blyg's documents are behind a login"
+msgstr "Die Dokumente des Blygs erfordern eine Anmeldung"
+
+#. translators: %s: URL
+#: src/Admin/SiteHealth.php:172
+#, php-format
+msgid "%s requires authentication. In the templated layout the blyg's documents are served through the REST API, and something on this site is restricting it to logged-in users: usually a security plugin, or a plugin that disables the REST API. Allow anonymous access to the soapbox-blyg/v1 namespace in that plugin's settings."
+msgstr "%s erfordert eine Authentifizierung. Im vorlagenbasierten Layout werden die Dokumente des Blygs über die REST-API ausgeliefert, und etwas auf dieser Website beschränkt diese auf angemeldete Benutzer: meist ein Sicherheits-Plugin oder ein Plugin, das die REST-API deaktiviert. Erlaube in den Einstellungen dieses Plugins den anonymen Zugriff auf den Namensraum soapbox-blyg/v1."
+
+#: src/Admin/SiteHealth.php:179
+msgid "Part of the blyg is not being served"
+msgstr "Ein Teil des Blygs wird nicht ausgeliefert"
+
+#. translators: 1: URL, 2: HTTP status
+#: src/Admin/SiteHealth.php:183
+#, php-format
+msgid "The manifest points to its feed at %1$s, which answered with status %2$d. Readers can find the blyg but cannot read it."
+msgstr "Das Manifest verweist für den Feed auf %1$s, und diese Adresse hat mit dem Status %2$d geantwortet. Leser können den Blyg finden, aber nicht lesen."
+
+#. translators: 1: URL, 2: HTTP status
+#: src/Admin/SiteHealth.php:185
+#, php-format
+msgid "The manifest points to its archive index at %1$s, which answered with status %2$d. Readers can find the blyg but cannot read it."
+msgstr "Das Manifest verweist für den Archivindex auf %1$s, und diese Adresse hat mit dem Status %2$d geantwortet. Leser können den Blyg finden, aber nicht lesen."
+
+#: src/Admin/SiteHealth.php:193
+msgid "The blyg is being served"
+msgstr "Der Blyg wird ausgeliefert"
+
+#: src/Admin/SiteHealth.php:193
+msgid "Every blyg on this site answers with a manifest, a feed and an archive index."
+msgstr "Jeder Blyg auf dieser Website antwortet mit einem Manifest, einem Feed und einem Archivindex."
+
+#: src/Admin/SiteHealth.php:262
+msgid "Your host adds its own caching instructions to the blyg"
+msgstr "Dein Hoster fügt dem Blyg eigene Caching-Anweisungen hinzu"
+
+#. translators: 1: URL, 2: the Cache-Control header as received, 3: mount path, 4: a length of time, such as "5 mins"
+#: src/Admin/SiteHealth.php:264
+#, php-format
+msgid "%1$s arrives with caching instructions that are not the plugin's (%2$s). The plugin puts its own lifetime (%4$s) first, and a cache follows the first it reads; here a longer one, added by the web server or by something else in front of WordPress, comes first. An item you withdraw, or a post you edit, could keep being served in its old form. If a plugin or theme on this site filters soapbox_blyg_cache_control, its value must keep s-maxage. Otherwise this comes from the server's own configuration, so excluding the path from a page cache does not remove it: ask your host to stop adding a Cache-Control header for %3$s and for /wp-json/soapbox-blyg/."
+msgstr "%1$s kommt mit Caching-Anweisungen an, die nicht vom Plugin stammen (%2$s). Das Plugin stellt seine eigene Lebensdauer (%4$s) an den Anfang, und ein Cache folgt der ersten, die er liest; hier steht eine längere zuerst, die vom Webserver oder von etwas anderem hinzugefügt wurde, das WordPress vorgeschaltet ist. Ein Eintrag, den du zurückziehst, oder ein Beitrag, den du bearbeitest, könnte weiterhin in seiner alten Form ausgeliefert werden. Wenn ein Plugin oder Theme auf dieser Website soapbox_blyg_cache_control filtert, muss sein Wert s-maxage beibehalten. Andernfalls stammt das aus der Konfiguration des Servers selbst, daher hilft es nicht, den Pfad von einem Seiten-Cache auszunehmen: Bitte deinen Hoster, für %3$s und für /wp-json/soapbox-blyg/ keinen Cache-Control-Header mehr hinzuzufügen."
+
+#: src/Admin/SiteHealth.php:293
+msgid "A cache in front of this site is serving an old copy of the blyg"
+msgstr "Ein vorgeschalteter Cache liefert eine alte Kopie des Blygs aus"
+
+#. translators: 1: URL, 2: mount path
+#: src/Admin/SiteHealth.php:295
+#, php-format
+msgid "%1$s was answered with a copy that is not the document as it is now. Something in front of WordPress (a CDN, Varnish, or your host's own cache) kept an earlier one and has not been told it changed. An item you withdraw, or a post you edit, keeps being served in its old form from there. Purge that cache now. So that it does not happen again, exclude the path %2$s, and the REST namespace /wp-json/soapbox-blyg/, from it, or connect it to the soapbox_blyg_purge_urls action. The plugin's readme lists the cache plugins it purges by itself."
+msgstr "%1$s wurde mit einer Kopie beantwortet, die nicht dem aktuellen Stand des Dokuments entspricht. Etwas, das WordPress vorgeschaltet ist (ein CDN, Varnish oder der eigene Cache deines Hosters), hat eine frühere Kopie behalten und nicht erfahren, dass sich das Dokument geändert hat. Ein Eintrag, den du zurückziehst, oder ein Beitrag, den du bearbeitest, wird von dort weiterhin in seiner alten Form ausgeliefert. Leere diesen Cache jetzt. Damit das nicht erneut passiert, nimm den Pfad %2$s und den REST-Namensraum /wp-json/soapbox-blyg/ von ihm aus oder verbinde ihn mit der Action soapbox_blyg_purge_urls. Die Readme-Datei des Plugins listet die Cache-Plugins auf, die es selbst leert."
+
+#: src/Admin/SiteHealth.php:305
+msgid "A cache in front of this site is holding the blyg"
+msgstr "Ein vorgeschalteter Cache hält den Blyg vor"
+
+#. translators: 1: URL, 2: mount path, 3: a length of time, such as "5 mins"
+#: src/Admin/SiteHealth.php:307
+#, php-format
+msgid "%1$s is being served from a shared cache (a CDN, Varnish, or your host's own cache) for longer than the cache lifetime in the plugin's settings (%3$s). An item you withdraw, or a post you edit, would keep being served in its old form until that cache expires. Exclude the path %2$s, and the REST namespace /wp-json/soapbox-blyg/, from that cache. The plugin's readme has instructions for Varnish, Cloudflare and nginx."
+msgstr "%1$s wird aus einem gemeinsam genutzten Cache (einem CDN, Varnish oder dem eigenen Cache deines Hosters) länger ausgeliefert als die Cache-Lebensdauer in den Einstellungen des Plugins (%3$s). Ein Eintrag, den du zurückziehst, oder ein Beitrag, den du bearbeitest, würde weiterhin in seiner alten Form ausgeliefert, bis dieser Cache abläuft. Nimm den Pfad %2$s und den REST-Namensraum /wp-json/soapbox-blyg/ von diesem Cache aus. Die Readme-Datei des Plugins enthält Anleitungen für Varnish, Cloudflare und nginx."
+
+#: src/Admin/SiteHealth.php:318
+msgid "The blyg's caching could not be checked from the server"
+msgstr "Das Caching des Blygs konnte vom Server aus nicht geprüft werden"
+
+#. translators: %d: a number of seconds
+#: src/Admin/SiteHealth.php:320
+#, php-format
+msgid "This site could not request its own blyg, so it cannot tell whether a cache in front of it is holding the documents. To check by hand, request the manifest twice, a few seconds apart, and look at the response headers: the first s-maxage in Cache-Control should be %1$d, and Age should never be more than %1$d."
+msgstr "Diese Website konnte ihren eigenen Blyg nicht abrufen und kann daher nicht feststellen, ob ein vorgeschalteter Cache die Dokumente vorhält. Zur manuellen Kontrolle rufe das Manifest zweimal im Abstand von ein paar Sekunden ab und sieh dir die Antwort-Header an: Das erste s-maxage in Cache-Control sollte %1$d sein, und Age sollte nie größer als %1$d sein."
+
+#: src/Admin/SiteHealth.php:327
+msgid "The copies of the blyg being served are current"
+msgstr "Die ausgelieferten Kopien des Blygs sind aktuell"
+
+#. translators: %s: a length of time, such as "5 mins"
+#: src/Admin/SiteHealth.php:329
+#, php-format
+msgid "A cache in front of this site keeps the blyg's documents for longer than the cache lifetime in the plugin's settings (%s), and the copies it is serving are the documents as they are now. That is safe for as long as the cache is told when a document changes; the plugin's readme lists the cache plugins it tells by itself. If you withdraw a post and it is still being served, this test will say so."
+msgstr "Ein vorgeschalteter Cache behält die Dokumente des Blygs länger als die Cache-Lebensdauer in den Einstellungen des Plugins (%s), und die Kopien, die er ausliefert, entsprechen dem aktuellen Stand der Dokumente. Das ist unbedenklich, solange der Cache benachrichtigt wird, wenn sich ein Dokument ändert; die Readme-Datei des Plugins listet die Cache-Plugins auf, die es selbst benachrichtigt. Wenn du einen Beitrag zurückziehst und er weiterhin ausgeliefert wird, meldet dieser Test das."
+
+#: src/Admin/SiteHealth.php:335
+msgid "No cache is holding the blyg"
+msgstr "Kein Cache hält den Blyg vor"
+
+#. translators: %s: a length of time, such as "5 mins"
+#: src/Admin/SiteHealth.php:337
+#, php-format
+msgid "No cache in front of this site keeps the blyg's documents for longer than the cache lifetime in the plugin's settings (%s)."
+msgstr "Kein vorgeschalteter Cache behält die Dokumente des Blygs länger als die Cache-Lebensdauer in den Einstellungen des Plugins (%s)."
+
+#: src/Admin/SiteHealth.php:349
+msgid "The blyg cannot be served on \"Plain\" permalinks"
+msgstr "Mit der Permalink-Struktur „Einfach“ kann der Blyg nicht ausgeliefert werden"
+
+#: src/Admin/SiteHealth.php:350
+msgid "A blyg is served at an address of its own, such as /blyg/blyg.json, which needs WordPress's rewrite rules. \"Plain\" permalinks switch those off. Choose any other permalink structure."
+msgstr "Ein Blyg wird unter einer eigenen Adresse ausgeliefert, etwa /blyg/blyg.json, wofür die Rewrite-Regeln von WordPress nötig sind. Die Permalink-Struktur „Einfach“ schaltet diese ab. Wähle eine beliebige andere Permalink-Struktur."
+
+#: src/Admin/SiteHealth.php:355
+msgid "Permalinks can serve the blyg"
+msgstr "Die Permalinks können den Blyg ausliefern"
+
+#: src/Admin/SiteHealth.php:355
+msgid "The site's permalink structure supports the addresses a blyg needs."
+msgstr "Die Permalink-Struktur der Website unterstützt die Adressen, die ein Blyg benötigt."
+
+#: src/Admin/SiteHealth.php:369
+msgid "A blyg was asked to move, and was not moved"
+msgstr "Ein Blyg sollte verschoben werden und wurde nicht verschoben"
+
+#. translators: 1: origin key, 2: the path asked for, 3: the path it is locked to
+#: src/Admin/SiteHealth.php:371
+#, php-format
+msgid "The blyg \"%1$s\" is now configured for %2$s, but it has already published at %3$s and is still served there: published addresses are permanent. Put the configuration back to %3$s."
+msgstr "Der Blyg „%1$s“ ist jetzt für %2$s konfiguriert, hat aber bereits unter %3$s veröffentlicht und wird weiterhin dort ausgeliefert: Veröffentlichte Adressen sind dauerhaft. Setze die Konfiguration wieder auf %3$s."
+
+#: src/Admin/SiteHealth.php:380
+msgid "A page has the same address as the blyg"
+msgstr "Eine Seite hat dieselbe Adresse wie der Blyg"
+
+#. translators: 1: page title, 2: mount path
+#: src/Admin/SiteHealth.php:382
+#, php-format
+msgid "\"%1$s\" has the address %2$s, which is where the blyg is mounted. The blyg wins, so that page cannot be reached. Give the page a different slug."
+msgstr "„%1$s“ hat die Adresse %2$s, unter der der Blyg eingehängt ist. Der Blyg hat Vorrang, daher ist diese Seite nicht erreichbar. Gib der Seite eine andere Titelform."
+
+#: src/Admin/SiteHealth.php:384
+msgid "Edit the page"
+msgstr "Seite bearbeiten"
+
+#: src/Admin/SiteHealth.php:388
+msgid "The blyg's address is its own"
+msgstr "Die Adresse des Blygs gehört ihm allein"
+
+#: src/Admin/SiteHealth.php:388
+msgid "No page or post shares an address with a blyg, and every blyg is served where it first published."
+msgstr "Keine Seite und kein Beitrag teilt sich eine Adresse mit einem Blyg, und jeder Blyg wird dort ausgeliefert, wo er zuerst veröffentlicht hat."
+
+#: src/Admin/SiteHealth.php:397
+msgid "Open Tools > Soapbox Blyg"
+msgstr "Werkzeuge > Soapbox Blyg öffnen"
+
+#: src/Admin/SiteHealth.php:403
+msgid "The blyg's database tables cannot be relied on"
+msgstr "Auf die Datenbanktabellen des Blygs ist kein Verlass"
+
+#: src/Admin/SiteHealth.php:405
+msgid "The plugin's tables are not using the InnoDB storage engine. Without it an item and its version cannot be written together or not at all, so the plugin is publishing nothing and the blyg is offline. Ask your host to convert the soapbox_blyg tables to InnoDB, then deactivate and activate the plugin."
+msgstr "Die Tabellen des Plugins verwenden nicht die Speicher-Engine InnoDB. Ohne sie ist nicht sichergestellt, dass ein Eintrag und seine Version entweder gemeinsam oder gar nicht geschrieben werden, daher veröffentlicht das Plugin nichts, und der Blyg ist offline. Bitte deinen Hoster, die soapbox_blyg-Tabellen in InnoDB umzuwandeln, und deaktiviere und aktiviere das Plugin anschließend."
+
+#: src/Admin/SiteHealth.php:406
+msgid "The plugin's tables could not be brought up to date, so the plugin is publishing nothing and the blyg is offline. It tries again by itself; if this stays, deactivate and activate the plugin, and check that the database user may create and alter tables."
+msgstr "Die Tabellen des Plugins konnten nicht aktualisiert werden, daher veröffentlicht das Plugin nichts, und der Blyg ist offline. Das Plugin versucht es selbstständig erneut; bleibt dieser Zustand bestehen, deaktiviere und aktiviere das Plugin und prüfe, ob der Datenbankbenutzer Tabellen erstellen und ändern darf."
+
+#: src/Admin/SiteHealth.php:417
+msgid "A post was saved but not published to the blyg"
+msgstr "Ein Beitrag wurde gespeichert, aber nicht im Blyg veröffentlicht"
+
+#. translators: 1: post id, 2: date and time, 3: error message
+#: src/Admin/SiteHealth.php:422
+#, php-format
+msgid "Post %1$d was saved on %2$s, but the blyg could not be brought into step with it: %3$s. The plugin has stopped trying. Nothing the post no longer shows is being served; open the post and save it to try again."
+msgstr "Beitrag %1$d wurde am %2$s gespeichert, aber der Blyg konnte nicht damit abgeglichen werden: %3$s. Das Plugin hat die Versuche eingestellt. Nichts, was der Beitrag nicht mehr zeigt, wird ausgeliefert; öffne den Beitrag und speichere ihn, um es erneut zu versuchen."
+
+#. translators: 1: post id, 2: date and time, 3: error message
+#: src/Admin/SiteHealth.php:424
+#, php-format
+msgid "Post %1$d was saved on %2$s, but the blyg could not be brought into step with it: %3$s. The plugin keeps trying, and until it succeeds nothing the post no longer shows is served. Saving the post again also retries."
+msgstr "Beitrag %1$d wurde am %2$s gespeichert, aber der Blyg konnte nicht damit abgeglichen werden: %3$s. Das Plugin versucht es weiter, und bis es gelingt, wird nichts ausgeliefert, was der Beitrag nicht mehr zeigt. Auch erneutes Speichern des Beitrags löst einen neuen Versuch aus."
+
+#: src/Admin/SiteHealth.php:435
+msgid "The blyg's ledger has never been verified"
+msgstr "Das Register des Blygs wurde noch nie verifiziert"
+
+#: src/Admin/SiteHealth.php:435
+msgid "Verifying recomputes the hash of every version ever published and checks the ledger is complete. Run it once now, and again after WordPress or plugin updates."
+msgstr "Beim Verifizieren wird der Hash jeder jemals veröffentlichten Version neu berechnet und geprüft, ob das Register vollständig ist. Führe die Verifizierung jetzt einmal aus und erneut nach Updates von WordPress oder Plugins."
+
+#: src/Admin/SiteHealth.php:441
+msgid "The blyg's ledger failed verification"
+msgstr "Das Register des Blygs hat die Verifizierung nicht bestanden"
+
+#. translators: 1: number of problems, already formatted for the locale, 2: date and time
+#: src/Admin/SiteHealth.php:444
+#, php-format
+msgid "The last verification, on %2$s, found %1$s problem. The ledger is the record of everything this site has published; run verify again from Tools to see what is wrong."
+msgid_plural "The last verification, on %2$s, found %1$s problems. The ledger is the record of everything this site has published; run verify again from Tools to see what is wrong."
+msgstr[0] "Die letzte Verifizierung am %2$s hat %1$s Problem gefunden. Das Register ist die Aufzeichnung von allem, was diese Website veröffentlicht hat; führe die Verifizierung unter Werkzeuge erneut aus, um zu sehen, was nicht stimmt."
+msgstr[1] "Die letzte Verifizierung am %2$s hat %1$s Probleme gefunden. Das Register ist die Aufzeichnung von allem, was diese Website veröffentlicht hat; führe die Verifizierung unter Werkzeuge erneut aus, um zu sehen, was nicht stimmt."
+
+#: src/Admin/SiteHealth.php:453
+msgid "The blyg's ledger was last verified over 30 days ago"
+msgstr "Das Register des Blygs wurde zuletzt vor über 30 Tagen verifiziert"
+
+#: src/Admin/SiteHealth.php:453
+msgid "It passed then. Verify again, especially after WordPress or plugin updates, which can change how posts render."
+msgstr "Damals war es in Ordnung. Verifiziere es erneut, vor allem nach Updates von WordPress oder Plugins, die verändern können, wie Beiträge gerendert werden."
+
+#: src/Admin/SiteHealth.php:455
+msgid "The blyg's ledger is verified"
+msgstr "Das Register des Blygs ist verifiziert"
+
+#: src/Admin/SiteHealth.php:455
+msgid "Every stored version matches its hash, and the ledger is complete."
+msgstr "Jede gespeicherte Version stimmt mit ihrem Hash überein, und das Register ist vollständig."
+
+#: src/Admin/ToolsPage.php:118
+msgid "Soapbox Blyg is not publishing, and its blyg is offline: its database tables are not using the InnoDB storage engine, which it needs in order to record what is published reliably. Ask your host to convert the soapbox_blyg tables to InnoDB, then deactivate and activate the plugin."
+msgstr "Soapbox Blyg veröffentlicht nicht, und sein Blyg ist offline: Die Datenbanktabellen des Plugins verwenden nicht die Speicher-Engine InnoDB, die es braucht, um zuverlässig festzuhalten, was veröffentlicht wurde. Bitte deinen Hoster, die soapbox_blyg-Tabellen in InnoDB umzuwandeln, und deaktiviere und aktiviere das Plugin anschließend."
+
+#: src/Admin/ToolsPage.php:119
+msgid "Soapbox Blyg is not publishing, and its blyg is offline: its database tables could not be brought up to date. It will try again; if this notice stays, deactivate and activate the plugin, and check that the database user may create and alter tables."
+msgstr "Soapbox Blyg veröffentlicht nicht, und sein Blyg ist offline: Die Datenbanktabellen des Plugins konnten nicht aktualisiert werden. Das Plugin versucht es erneut; bleibt dieser Hinweis bestehen, deaktiviere und aktiviere das Plugin und prüfe, ob der Datenbankbenutzer Tabellen erstellen und ändern darf."
+
+#: src/Admin/ToolsPage.php:122
+msgid "Dismiss"
+msgstr "Ausblenden"
+
+#: src/Admin/ToolsPage.php:128
+msgid "Soapbox Blyg: this site has a blyg that has published, and publishing is switched off, so every address it published is answering 404. Switch publishing back on in the settings to serve it again."
+msgstr "Soapbox Blyg: Diese Website hat einen Blyg, der bereits Einträge veröffentlicht hat, und die Veröffentlichung ist ausgeschaltet, daher antwortet jede von ihm veröffentlichte Adresse mit 404. Schalte die Veröffentlichung in den Einstellungen wieder ein, um ihn erneut auszuliefern."
+
+#: src/Admin/ToolsPage.php:129 src/Admin/ToolsPage.php:136
+msgid "Open the settings"
+msgstr "Einstellungen öffnen"
+
+#: src/Admin/ToolsPage.php:135
+msgid "Soapbox Blyg is active but not publishing. Choose where the blyg lives and how it is laid out, then switch publishing on."
+msgstr "Soapbox Blyg ist aktiv, veröffentlicht aber nicht. Lege fest, wo der Blyg liegt und wie er aufgebaut ist, und schalte dann die Veröffentlichung ein."
+
+#. translators: 1: origin key, 2: the path asked for, 3: the path it is locked to
+#: src/Admin/ToolsPage.php:144
+#, php-format
+msgid "Soapbox Blyg: the blyg \"%1$s\" is configured for %2$s, but it has already published at %3$s and is still served there. Published addresses are permanent; put the configuration back to %3$s."
+msgstr "Soapbox Blyg: Der Blyg „%1$s“ ist für %2$s konfiguriert, hat aber bereits unter %3$s veröffentlicht und wird weiterhin dort ausgeliefert. Veröffentlichte Adressen sind dauerhaft; setze die Konfiguration wieder auf %3$s."
+
+#: src/Admin/ToolsPage.php:173
+msgid "This site has published a blyg. Deactivating this plugin keeps all of its data, but takes the blyg offline: every address it serves will answer 404 until the plugin is activated again."
+msgstr "Diese Website hat einen Blyg veröffentlicht. Beim Deaktivieren dieses Plugins bleiben alle seine Daten erhalten, aber der Blyg geht offline: Jede Adresse, die er ausliefert, antwortet mit 404, bis das Plugin wieder aktiviert wird."
+
+#: src/Admin/ToolsPage.php:219
+msgid "Publishing is switched off for this site, so there is no blyg to show."
+msgstr "Die Veröffentlichung ist für diese Website ausgeschaltet, daher gibt es keinen Blyg anzuzeigen."
+
+#: src/Admin/ToolsPage.php:228
+msgid "Blygs on this site"
+msgstr "Blygs auf dieser Website"
+
+#: src/Admin/ToolsPage.php:232
+msgid "Layout"
+msgstr "Layout"
+
+#: src/Admin/ToolsPage.php:233
+msgctxt "column heading: how many items a blyg has"
+msgid "Items"
+msgstr "Einträge"
+
+#: src/Admin/ToolsPage.php:234
+msgctxt "column heading: how many versions a blyg has"
+msgid "Versions"
+msgstr "Versionen"
+
+#: src/Admin/ToolsPage.php:235
+msgid "Last updated"
+msgstr "Zuletzt aktualisiert"
+
+#: src/Admin/ToolsPage.php:236
+msgid "Documents"
+msgstr "Dokumente"
+
+#: src/Admin/ToolsPage.php:252 templates/soapbox-blyg-origin.php:31
+msgid "Manifest"
+msgstr "Manifest"
+
+#: src/Admin/ToolsPage.php:253 templates/soapbox-blyg-origin.php:31
+msgid "Feed"
+msgstr "Feed"
+
+#: src/Admin/ToolsPage.php:254
+msgid "Archive index"
+msgstr "Archivindex"
+
+#. translators: 1: post id, 2: date and time, 3: error message
+#: src/Admin/ToolsPage.php:271
+#, php-format
+msgid "Post %1$d was saved on %2$s but the blyg could not be brought into step with it: %3$s. The plugin keeps trying; saving the post again also retries."
+msgstr "Beitrag %1$d wurde am %2$s gespeichert, aber der Blyg konnte nicht damit abgeglichen werden: %3$s. Das Plugin versucht es weiter; auch erneutes Speichern des Beitrags löst einen neuen Versuch aus."
+
+#: src/Admin/ToolsPage.php:284
+msgid "Backfill"
+msgstr "Nachimport"
+
+#. translators: %s: number of posts, already formatted for the locale (for example 1,234)
+#: src/Admin/ToolsPage.php:291
+#, php-format
+msgid "%s published post is not on the blyg yet."
+msgid_plural "%s published posts are not on the blyg yet."
+msgstr[0] "%s veröffentlichter Beitrag ist noch nicht im Blyg."
+msgstr[1] "%s veröffentlichte Beiträge sind noch nicht im Blyg."
+
+#: src/Admin/ToolsPage.php:297
+msgid "A post joins the blyg when it is next saved; the backfill adds the ones published before the plugin was switched on, each as version 1, dated when the post was published."
+msgstr "Ein Beitrag kommt in den Blyg, wenn er das nächste Mal gespeichert wird; der Nachimport fügt die Beiträge hinzu, die vor dem Einschalten des Plugins veröffentlicht wurden, jeweils als Version 1 mit dem Veröffentlichungsdatum des Beitrags."
+
+#: src/Admin/ToolsPage.php:300
+msgid "A dry run renders every post and writes nothing, so you can read what would be published before it is. Publishing cannot be undone: an item can be withdrawn, but its address answers forever."
+msgstr "Ein Probelauf rendert jeden Beitrag und schreibt nichts, sodass du lesen kannst, was veröffentlicht würde, bevor es veröffentlicht wird. Das Veröffentlichen lässt sich nicht rückgängig machen: Ein Eintrag kann zurückgezogen werden, aber seine Adresse antwortet für immer."
+
+#: src/Admin/ToolsPage.php:303
+msgid "Dry run"
+msgstr "Probelauf"
+
+#: src/Admin/ToolsPage.php:305
+msgid "Run the backfill"
+msgstr "Nachimport ausführen"
+
+#: src/Admin/ToolsPage.php:309
+msgid "Publishing is switched off, so only the dry run is available. Nothing is published by it, now or later. Switch publishing on in the settings when you have looked at what the dry run shows."
+msgstr "Die Veröffentlichung ist ausgeschaltet, daher ist nur der Probelauf verfügbar. Er veröffentlicht nichts, weder jetzt noch später. Schalte die Veröffentlichung in den Einstellungen ein, sobald du dir angesehen hast, was der Probelauf zeigt."
+
+#: src/Admin/ToolsPage.php:314
+msgctxt "section heading: checking the ledger"
+msgid "Verify"
+msgstr "Verifizieren"
+
+#: src/Admin/ToolsPage.php:316
+msgid "Recomputes the hash of every version ever published and checks that the ledger is complete. With render drift, it also compares the blyg with the site: posts that should be on it and are not, and posts that would publish a new version if saved now, which is worth knowing after a WordPress or plugin update."
+msgstr "Berechnet den Hash jeder jemals veröffentlichten Version neu und prüft, ob das Register vollständig ist. Bei der Verifizierung mit Render-Abweichung wird außerdem der Blyg mit der Website verglichen: Beiträge, die darin sein sollten, es aber nicht sind, und Beiträge, die jetzt beim Speichern eine neue Version veröffentlichen würden – gut zu wissen nach einem Update von WordPress oder einem Plugin."
+
+#. translators: %s: date and time
+#: src/Admin/ToolsPage.php:328
+#, php-format
+msgid "Last verified %s: it passed."
+msgstr "Zuletzt verifiziert am %s: bestanden."
+
+#. translators: %s: date and time
+#: src/Admin/ToolsPage.php:330
+#, php-format
+msgid "Last verified %s: it failed."
+msgstr "Zuletzt verifiziert am %s: nicht bestanden."
+
+#: src/Admin/ToolsPage.php:338
+msgid "Verify the ledger"
+msgstr "Register verifizieren"
+
+#: src/Admin/ToolsPage.php:339
+msgid "Verify with render drift"
+msgstr "Mit Render-Abweichung verifizieren"
+
+#: src/Admin/ToolsPage.php:343
+msgctxt "section heading: the versions that have been pinned"
+msgid "Pins"
+msgstr "Anheftungen"
+
+#: src/Admin/ToolsPage.php:346
+msgid "Nothing is pinned. Pinning a version, from the post editor, promises to serve exactly that version at its own address forever."
+msgstr "Nichts ist angeheftet. Wer im Beitrags-Editor eine Version anheftet, verspricht, genau diese Version für immer unter ihrer eigenen Adresse auszuliefern."
+
+#: src/Admin/ToolsPage.php:350
+msgctxt "column heading: an item of the blyg"
+msgid "Item"
+msgstr "Eintrag"
+
+#: src/Admin/ToolsPage.php:351
+msgctxt "column heading: a version number"
+msgid "Version"
+msgstr "Version"
+
+#: src/Admin/ToolsPage.php:352
+msgctxt "column heading: the date a version was pinned"
+msgid "Pinned"
+msgstr "Angeheftet"
+
+#: src/Admin/ToolsPage.php:374
+msgid "Other blygs that have told this site they quoted, answered or forked one of its items. A mention is verified when the other blyg's own document says so; nothing here is shown to visitors."
+msgstr "Andere Blygs, die mitgeteilt haben, dass sie einen Eintrag dieser Website zitiert, beantwortet oder geforkt haben. Eine Erwähnung ist verifiziert, wenn das eigene Dokument des anderen Blygs dies bestätigt; nichts hiervon wird Besuchern angezeigt."
+
+#: src/Admin/ToolsPage.php:377
+msgid "No mentions yet."
+msgstr "Noch keine Erwähnungen."
+
+#: src/Admin/ToolsPage.php:381
+msgid "Waiting to be verified"
+msgstr "Wartet auf Verifizierung"
+
+#: src/Admin/ToolsPage.php:382
+msgid "Verified"
+msgstr "Verifiziert"
+
+#: src/Admin/ToolsPage.php:383
+msgid "Not verified"
+msgstr "Nicht verifiziert"
+
+#: src/Admin/ToolsPage.php:384
+msgid "Withdrawn by its author"
+msgstr "Vom Autor zurückgezogen"
+
+#. translators: %s: the address of one of this site's items, as a link. Another publication's item is a reply to it.
+#: src/Admin/ToolsPage.php:388
+#, php-format
+msgid "Answers %s"
+msgstr "Antwortet auf %s"
+
+#. translators: %s: the address of one of this site's items, as a link. Another publication's item quotes it.
+#: src/Admin/ToolsPage.php:390
+#, php-format
+msgid "Quotes %s"
+msgstr "Zitiert %s"
+
+#. translators: %s: the address of one of this site's items, as a link. Another publication's item is a fork of it.
+#: src/Admin/ToolsPage.php:392
+#, php-format
+msgid "Forked from %s"
+msgstr "Fork von %s"
+
+#: src/Admin/ToolsPage.php:397
+msgctxt "column heading: the publication a mention came from"
+msgid "From"
+msgstr "Von"
+
+#: src/Admin/ToolsPage.php:398
+msgctxt "column heading: the item a mention refers to"
+msgid "About"
+msgstr "Betrifft"
+
+#: src/Admin/ToolsPage.php:399
+msgctxt "column heading: whether a mention has been verified"
+msgid "Status"
+msgstr "Status"
+
+#: src/Admin/ToolsPage.php:400
+msgctxt "column heading: when a mention arrived"
+msgid "Received"
+msgstr "Empfangen"
+
+#: src/Origins/PostTypeSource.php:1259
+msgid "imported from WordPress"
+msgstr "aus WordPress importiert"
+
+#. translators: %s: a list of PHP extension names
+#: src/Plugin.php:256
+#, php-format
+msgid "Soapbox Blyg needs the PHP extensions %s, which this server does not have. Ask your host to enable them."
+msgstr "Soapbox Blyg benötigt die PHP-Erweiterungen %s, die auf diesem Server fehlen. Bitte deinen Hoster, sie zu aktivieren."
+
+#: src/Plugin.php:267
+msgid "Soapbox Blyg keeps its record of what was published in database tables that must use the InnoDB storage engine, and this database created them with another. Ask your host to make InnoDB the default engine, or convert the soapbox_blyg tables to InnoDB, then activate again."
+msgstr "Soapbox Blyg speichert seine Aufzeichnung dessen, was veröffentlicht wurde, in Datenbanktabellen, die die Speicher-Engine InnoDB verwenden müssen, und diese Datenbank hat sie mit einer anderen angelegt. Bitte deinen Hoster, InnoDB zur Standard-Engine zu machen, oder wandle die soapbox_blyg-Tabellen in InnoDB um, und aktiviere das Plugin dann erneut."
+
+#: src/Plugin.php:280
+msgid "Soapbox Blyg could not be activated"
+msgstr "Soapbox Blyg konnte nicht aktiviert werden"
+
+#: src/Plugin.php:306
+msgid "This site publishes its posts as a blyg, using the Soapbox Blyg plugin. Each published post is stored as a series of versions, with the author's display name as it was when that version was published. These versions stay available at their published addresses after the post is edited, and a withdrawn post's address continues to answer, with no content."
+msgstr "Diese Website veröffentlicht ihre Beiträge mit dem Plugin Soapbox Blyg als Blyg. Jeder veröffentlichte Beitrag wird als Folge von Versionen gespeichert, jeweils mit dem öffentlichen Namen des Autors, wie er bei der Veröffentlichung der jeweiligen Version lautete. Diese Versionen bleiben auch nach einer Bearbeitung des Beitrags unter ihren veröffentlichten Adressen verfügbar, und die Adresse eines zurückgezogenen Beitrags antwortet weiterhin, ohne Inhalt."
+
+#: src/Plugin.php:307
+msgid "The plugin sets no cookies and collects no information about visitors to this site."
+msgstr "Das Plugin setzt keine Cookies und erhebt keine Informationen über Besucher dieser Website."
+
+#: src/Plugin.php:308
+msgid "If the site accepts Webmentions: when another publication tells this site that it has quoted or responded to something here, this site fetches that publication's page to confirm it, and records the address of that page, the name its author published there, and the time. It does not store the content of the page, and these records are visible to this site's administrators only. To limit how often one sender can do this, it also keeps a scrambled form of the network address the notification came from, which cannot be turned back into the address."
+msgstr "Wenn die Website Webmentions akzeptiert: Teilt eine andere Publikation dieser Website mit, dass sie etwas von hier zitiert oder darauf geantwortet hat, ruft diese Website die Seite dieser Publikation ab, um das zu bestätigen, und speichert die Adresse dieser Seite, den dort veröffentlichten Namen ihres Autors und den Zeitpunkt. Der Inhalt der Seite wird nicht gespeichert, und diese Aufzeichnungen sind nur für die Administratoren dieser Website sichtbar. Um zu begrenzen, wie oft ein Absender dies tun kann, wird außerdem eine verschleierte Form der Netzwerkadresse gespeichert, von der die Benachrichtigung kam; sie lässt sich nicht in die Adresse zurückverwandeln."
+
+#: src/Plugin.php:309
+msgid "When a signed-in user pins a version of a post, the site records which user did so."
+msgstr "Wenn ein angemeldeter Benutzer eine Version eines Beitrags anheftet, speichert die Website, welcher Benutzer das war."
+
+#: src/Rest/AdminController.php:217
+msgid "This post is not on the blyg, so it has nothing to pin."
+msgstr "Dieser Beitrag ist nicht im Blyg, daher gibt es nichts anzuheften."
+
+#: src/Rest/AdminController.php:223
+msgid "That version does not exist."
+msgstr "Diese Version existiert nicht."
+
+#: src/Rest/AdminController.php:224
+msgid "That version records the post being withdrawn. It has no content, and cannot be pinned."
+msgstr "Diese Version hält fest, dass der Beitrag zurückgezogen wurde. Da sie keinen Inhalt hat, kann sie nicht angeheftet werden."
+
+#: src/Rest/AdminController.php:225
+msgid "This post is withdrawn from the blyg, so no version of it can be pinned now."
+msgstr "Dieser Beitrag ist aus dem Blyg zurückgezogen, daher kann jetzt keine seiner Versionen angeheftet werden."
+
+#: src/Rest/AdminController.php:226
+msgid "This post is not public now, so no version of it can be pinned."
+msgstr "Dieser Beitrag ist derzeit nicht öffentlich, daher kann keine seiner Versionen angeheftet werden."
+
+#: src/Rest/AdminController.php:227
+msgid "This post has changed since the blyg last took it in, so what would be pinned is not what it says now. Save the post, then pin. If its post type no longer publishes, its later changes are not on the blyg and it cannot be pinned."
+msgstr "Dieser Beitrag wurde geändert, seit der Blyg ihn zuletzt übernommen hat; was angeheftet würde, entspricht also nicht seinem jetzigen Inhalt. Speichere den Beitrag und hefte die Version dann an. Wird sein Inhaltstyp nicht mehr veröffentlicht, sind seine späteren Änderungen nicht im Blyg, und er kann nicht angeheftet werden."
+
+#: src/Rest/AdminController.php:228
+msgid "That version is already pinned."
+msgstr "Diese Version ist bereits angeheftet."
+
+#: src/Rest/AdminController.php:230
+msgid "That version could not be pinned. Try again in a moment."
+msgstr "Diese Version konnte nicht angeheftet werden. Versuche es gleich noch einmal."
+
+#: src/Rest/AdminController.php:250
+msgid "Publishing is switched off for this site."
+msgstr "Die Veröffentlichung ist für diese Website ausgeschaltet."
+
+#: src/Rest/AdminController.php:302
+msgid "The post produced no item."
+msgstr "Aus dem Beitrag ist kein Eintrag entstanden."
+
+#: src/Settings.php:146
+msgid "Home"
+msgstr "Startseite"
+
+#: templates/soapbox-blyg-origin.php:30
+msgid "This is a blyg: a publication you can subscribe to with any Blygger reader, by pasting this address into it, or with any feed reader, using the feed below."
+msgstr "Dies ist ein Blyg: eine Publikation, die du mit jedem Blygger-Reader abonnieren kannst, indem du diese Adresse dort einfügst, oder mit jedem Feedreader über den Feed unten."
+
+#. translators: %s: site name
+#: templates/soapbox-blyg-withdrawn.php:25
+#, php-format
+msgid "Withdrawn - %s"
+msgstr "Zurückgezogen - %s"
+
+#: templates/soapbox-blyg-withdrawn.php:35
+msgctxt "page heading: this item has been withdrawn by its author"
+msgid "Withdrawn"
+msgstr "Zurückgezogen"
+
+#. translators: %s: date
+#: templates/soapbox-blyg-withdrawn.php:41
+#, php-format
+msgid "The author withdrew this item on %s. Its content is no longer published."
+msgstr "Der Autor hat diesen Eintrag am %s zurückgezogen. Sein Inhalt ist nicht mehr veröffentlicht."
+
+#. translators: %d: version number. The item is currently withdrawn.
+#: build/editor-panel.js:2 build/tools.js:9
+msgctxt "an item’s current state"
+msgid "Version %d, withdrawn"
+msgstr "Version %d, zurückgezogen"
+
+#. translators: %d: version number. "Fragment" is the protocol's word for a short item that is not a thread.
+#: build/editor-panel.js:3 build/tools.js:10
+msgctxt "an item’s current state"
+msgid "Version %d, fragment"
+msgstr "Version %d, Fragment"
+
+#. translators: %d: version number. "Thread" is the protocol's word for an ordinary item, such as a post.
+#: build/editor-panel.js:4 build/tools.js:11
+msgctxt "an item’s current state"
+msgid "Version %d, thread"
+msgstr "Version %d, Thread"
+
+#. translators: %s: date and time. A version of the item that records its withdrawal.
+#: build/editor-panel.js:5 build/tools.js:12
+msgctxt "an entry in an item’s history"
+msgid "Withdrawn, %s"
+msgstr "Zurückgezogen am %s"
+
+#. translators: %s: date and time. A version of the item that was published then.
+#: build/editor-panel.js:6 build/tools.js:13
+msgctxt "an entry in an item’s history"
+msgid "Published, %s"
+msgstr "Veröffentlicht am %s"
+
+#. translators: %s: a user's name. Said of one version of an item.
+#: build/editor-panel.js:7 build/tools.js:14
+msgctxt "a version that has been pinned"
+msgid "Pinned by %s"
+msgstr "Angeheftet von %s"
+
+#: build/editor-panel.js:7 build/tools.js:14
+msgctxt "a version that has been pinned"
+msgid "Pinned"
+msgstr "Angeheftet"
+
+#. translators: %d: number of verified mentions
+#: build/editor-panel.js:8
+msgid "%d verified mention"
+msgid_plural "%d verified mentions"
+msgstr[0] "%d verifizierte Erwähnung"
+msgstr[1] "%d verifizierte Erwähnungen"
+
+#: build/editor-panel.js:8 build/tools.js:11
+msgid "A pinned version stays public for good, even if the post is later unpublished or deleted."
+msgstr "Eine angeheftete Version bleibt dauerhaft öffentlich, auch wenn der Beitrag später nicht mehr veröffentlicht oder gelöscht wird."
+
+#. translators: %d: version number. The text of a link to that version's document.
+#: build/editor-panel.js:9 build/tools.js:15
+msgctxt "link to a pinned version’s document"
+msgid "Version %d"
+msgstr "Version %d"
+
+#. translators: %d: version number
+#: build/editor-panel.js:10 build/tools.js:16
+msgid "Pin version %d"
+msgstr "Version %d anheften"
+
+#. translators: %d: version number
+#: build/editor-panel.js:11 build/tools.js:17
+msgid "Pin version %d?"
+msgstr "Version %d anheften?"
+
+#: build/editor-panel.js:11 build/tools.js:17
+msgid "Pinning cannot be undone. This exact version will be served at its own address forever, including after later edits and if the post is withdrawn."
+msgstr "Das Anheften lässt sich nicht rückgängig machen. Genau diese Version wird für immer unter ihrer eigenen Adresse ausgeliefert, auch nach späteren Bearbeitungen und selbst dann, wenn der Beitrag zurückgezogen wird."
+
+#: build/editor-panel.js:11
+msgid "Pin a version when someone needs to be able to cite it and find the same words there later."
+msgstr "Hefte eine Version an, wenn jemand sie zitieren können und dort später denselben Wortlaut wiederfinden soll."
+
+#: build/editor-panel.js:11
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: build/editor-panel.js:11
+msgid "Pin it permanently"
+msgstr "Dauerhaft anheften"
+
+#: build/tools.js:1
+msgid "Starting…"
+msgstr "Wird gestartet …"
+
+#. translators: 1: posts handled so far, 2: total posts
+#: build/tools.js:2
+msgid "%1$d of %2$d…"
+msgstr "%1$d von %2$d …"
+
+#: build/tools.js:2
+msgid "Dry run complete."
+msgstr "Probelauf abgeschlossen."
+
+#. translators: %d: number of posts
+#: build/tools.js:3
+msgid "%d post rendered."
+msgid_plural "%d posts rendered."
+msgstr[0] "%d Beitrag gerendert."
+msgstr[1] "%d Beiträge gerendert."
+
+#. translators: %d: number of posts that could not be rendered
+#: build/tools.js:4
+msgid "%d failed."
+msgid_plural "%d failed."
+msgstr[0] "%d fehlgeschlagen."
+msgstr[1] "%d fehlgeschlagen."
+
+#: build/tools.js:4
+msgid "Nothing was published."
+msgstr "Es wurde nichts veröffentlicht."
+
+#: build/tools.js:4
+msgid "The first file lists every post with its size and flags; the second is every post as it would be published, to read through; the third is a zip of every post as separate Markdown and HTML files, for comparing one run with another. Flags: featured-only (the featured image was added), embed-link (an embed became a link), br-heavy (many line breaks: usually a poem), relative-src (an image address was relative), empty-body (nothing but the title)."
+msgstr "Die erste Datei listet jeden Beitrag mit seiner Größe und seinen Markierungen auf; die zweite enthält zum Durchlesen jeden Beitrag so, wie er veröffentlicht würde; die dritte ist ein ZIP-Archiv mit jedem Beitrag als separate Markdown- und HTML-Datei, um einen Lauf mit einem anderen zu vergleichen. Markierungen: featured-only (das Beitragsbild wurde hinzugefügt), embed-link (eine Einbettung wurde zu einem Link), br-heavy (viele Zeilenumbrüche: meist ein Gedicht), relative-src (eine Bildadresse war relativ), empty-body (nur der Titel)."
+
+#. translators: %d: number of posts added
+#: build/tools.js:5
+msgid "Backfill complete: %d post added to the blyg."
+msgid_plural "Backfill complete: %d posts added to the blyg."
+msgstr[0] "Nachimport abgeschlossen: %d Beitrag wurde dem Blyg hinzugefügt."
+msgstr[1] "Nachimport abgeschlossen: %d Beiträge wurden dem Blyg hinzugefügt."
+
+#. translators: %d: number of posts
+#: build/tools.js:6
+msgid "%d post could not be added and was left as it is."
+msgid_plural "%d posts could not be added and were left as they are."
+msgstr[0] "%d Beitrag konnte nicht hinzugefügt werden und blieb unverändert."
+msgstr[1] "%d Beiträge konnten nicht hinzugefügt werden und blieben unverändert."
+
+#. translators: 1: post id, 2: error message
+#: build/tools.js:7
+msgid "Post %1$d: %2$s"
+msgstr "Beitrag %1$d: %2$s"
+
+#: build/tools.js:7
+msgid "Reload this page to see the updated totals."
+msgstr "Lade diese Seite neu, um die aktualisierten Summen zu sehen."
+
+#: build/tools.js:7
+msgid "Verifying…"
+msgstr "Wird verifiziert …"
+
+#: build/tools.js:7
+msgid "The ledger is verified."
+msgstr "Das Register ist verifiziert."
+
+#. translators: %d: number of problems
+#: build/tools.js:8
+msgid "%d problem found."
+msgid_plural "%d problems found."
+msgstr[0] "%d Problem gefunden."
+msgstr[1] "%d Probleme gefunden."
+
+#~ msgid "When another blyg quotes, answers or forks one of your items, it can tell this site. To check that the claim is true, this site then fetches that blyg's page and its item document: at most two requests per mention, to an address the sender chose, never to a private network. Nothing fetched is stored or displayed; mentions appear under Tools, for administrators only. With this off, the site makes no outbound requests at all."
+#~ msgstr "Wenn ein anderer Blyg einen deiner Einträge zitiert, beantwortet oder forkt, kann er dies dieser Website mitteilen. Um die Angabe zu überprüfen, ruft diese Website dann die Seite dieses Blygs und sein Eintragsdokument ab: höchstens zwei Anfragen pro Erwähnung, an eine vom Absender gewählte Adresse, niemals an ein privates Netzwerk. Nichts Abgerufenes wird gespeichert oder angezeigt; Erwähnungen erscheinen unter Werkzeuge, nur für Administratoren. Ist dies ausgeschaltet, stellt die Website überhaupt keine ausgehenden Anfragen."
+
+#, php-format
+#~ msgid "%1$s arrives with more than one caching instruction (%2$s). The plugin sends one; the rest were added by the web server or something else in front of WordPress, and a cache may follow the longest. An item you withdraw, or a post you edit, could keep being served in its old form. This usually comes from the server's own configuration, so excluding the path from a page cache does not remove it: ask your host to stop adding a Cache-Control header for %3$s and for /wp-json/soapbox-blyg/."
+#~ msgstr "%1$s kommt mit mehr als einer Caching-Anweisung an (%2$s). Das Plugin sendet eine; die übrigen wurden vom Webserver oder von etwas anderem hinzugefügt, das WordPress vorgeschaltet ist, und ein Cache folgt womöglich der längsten. Ein Eintrag, den du zurückziehst, oder ein Beitrag, den du bearbeitest, könnte weiterhin in seiner alten Form ausgeliefert werden. Das stammt meist aus der Konfiguration des Servers selbst, daher hilft es nicht, den Pfad von einem Seiten-Cache auszunehmen: Bitte deinen Hoster, für %3$s und für /wp-json/soapbox-blyg/ keinen Cache-Control-Header mehr hinzuzufügen."
+
+#, php-format
+#~ msgid "%1$s is being served from a shared cache (a CDN, Varnish, or your host's own cache) for longer than five minutes. An item you withdraw, or a post you edit, would keep being served in its old form until that cache expires. Exclude the path %2$s, and the REST namespace /wp-json/soapbox-blyg/, from that cache. The plugin's readme has instructions for Varnish, Cloudflare and nginx."
+#~ msgstr "%1$s wird länger als fünf Minuten aus einem gemeinsam genutzten Cache ausgeliefert (einem CDN, Varnish oder dem eigenen Cache deines Hosters). Ein Eintrag, den du zurückziehst, oder ein Beitrag, den du bearbeitest, würde weiterhin in seiner alten Form ausgeliefert, bis dieser Cache abläuft. Nimm den Pfad %2$s und den REST-Namensraum /wp-json/soapbox-blyg/ von diesem Cache aus. Die Readme-Datei des Plugins enthält Anleitungen für Varnish, Cloudflare und nginx."
+
+#~ msgid "This site could not request its own blyg, so it cannot tell whether a cache in front of it is holding the documents. To check by hand, request the manifest twice, a few seconds apart, and look at the response headers: there should be no s-maxage over 300, and no Age header that grows."
+#~ msgstr "Diese Website konnte ihren eigenen Blyg nicht abrufen und kann daher nicht feststellen, ob ein vorgeschalteter Cache die Dokumente vorhält. Zur manuellen Kontrolle rufe das Manifest zweimal im Abstand von ein paar Sekunden ab und sieh dir die Antwort-Header an: Es sollte kein s-maxage über 300 und keinen wachsenden Age-Header geben."
+
+#~ msgid "The blyg's documents reach readers fresh, so a withdrawal takes effect within five minutes."
+#~ msgstr "Die Dokumente des Blygs kommen aktuell bei den Lesern an, daher wird ein Zurückziehen innerhalb von fünf Minuten wirksam."
+
+#~ msgid "Dry run complete: %1$d rendered, %2$d failed. Nothing was published."
+#~ msgstr "Probelauf abgeschlossen: %1$d gerendert, %2$d fehlgeschlagen. Es wurde nichts veröffentlicht."
+
+#~ msgid "passed"
+#~ msgstr "bestanden"

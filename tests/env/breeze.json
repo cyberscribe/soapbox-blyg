@@ -1,0 +1,15 @@
+{
+	"core": null,
+	"phpVersion": "8.4",
+	"port": 8896,
+	"testsPort": 8897,
+	"plugins": [ ".", "https://downloads.wordpress.org/plugin/breeze.2.6.1.zip" ],
+	"themes": [ "https://downloads.wordpress.org/theme/twentytwentyfive.zip" ],
+	"mappings": {
+		"wp-content/mu-plugins/loopback.php": "./tests/env/mu-plugins/loopback.php"
+	},
+	"config": {
+		"WP_DEBUG": true,
+		"WP_DEBUG_DISPLAY": false
+	}
+}

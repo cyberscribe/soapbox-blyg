@@ -1,0 +1,25 @@
+# Everything a site does not need to run the plugin. `wp dist-archive` reads this.
+/.git
+/.gitignore
+/.distignore
+/.editorconfig
+/.wp-env.json
+/.wp-env.override.json
+/.phpunit.result.cache
+/.claude
+/release
+/bin
+/docs
+/node_modules
+/tests
+/vendor
+/composer.json
+/composer.lock
+/package.json
+/package-lock.json
+/phpcs.xml.dist
+/phpunit.xml.dist
+/README.md
+/CHANGELOG.md
+*.zip
+.DS_Store

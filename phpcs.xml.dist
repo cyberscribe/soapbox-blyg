@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<ruleset name="Soapbox Blyg">
+	<description>WordPress-Extra, plus the documentation rules, for the code that ships.</description>
+
+	<file>soapbox-blyg.php</file>
+	<file>uninstall.php</file>
+	<file>includes</file>
+	<file>src</file>
+	<file>templates</file>
+
+	<arg name="extensions" value="php"/>
+	<arg name="basepath" value="."/>
+	<arg value="sp"/>
+
+	<config name="minimum_wp_version" value="6.4"/>
+	<config name="testVersion" value="7.4-"/>
+
+	<rule ref="WordPress-Extra"/>
+	<rule ref="WordPress-Docs"/>
+	<rule ref="PHPCompatibilityWP"/>
+
+	<!-- Classes are PSR-4: one per file, named for the class, under src/. -->
+	<rule ref="WordPress.Files.FileName">
+		<exclude-pattern>src/*</exclude-pattern>
+	</rule>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="soapbox-blyg"/>
+			</property>
+		</properties>
+	</rule>
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="soapbox_blyg"/>
+				<element value="SoapboxBlyg"/>
+			</property>
+		</properties>
+	</rule>
+</ruleset>

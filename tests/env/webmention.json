@@ -1,0 +1,15 @@
+{
+	"core": null,
+	"phpVersion": "8.4",
+	"port": 8892,
+	"testsPort": 8893,
+	"plugins": [ ".", "https://downloads.wordpress.org/plugin/webmention.zip" ],
+	"themes": [ "https://downloads.wordpress.org/theme/twentytwentyfive.zip" ],
+	"mappings": {
+		"wp-content/mu-plugins/allow-docker-host.php": "./tests/env/mu-plugins/allow-docker-host.php"
+	},
+	"config": {
+		"WP_DEBUG": true,
+		"WP_DEBUG_DISPLAY": false
+	}
+}

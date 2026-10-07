@@ -1,0 +1,11 @@
+{
+	"core": "https://wordpress.org/wordpress-6.6.zip",
+	"phpVersion": "7.4",
+	"port": 8890,
+	"testsPort": 8891,
+	"plugins": [ "." ],
+	"config": {
+		"WP_DEBUG": true,
+		"WP_DEBUG_DISPLAY": false
+	}
+}

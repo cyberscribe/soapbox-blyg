@@ -1,0 +1,50 @@
+{
+	"name": "cyberscribe/soapbox-blyg",
+	"description": "Publishes WordPress content as a blyg under the Blygger protocol.",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"require": {
+		"php": ">=7.4",
+		"league/html-to-markdown": "5.1.2"
+	},
+	"require-dev": {
+		"brianhenryie/strauss": "^0.19",
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+		"league/commonmark": "^2.4",
+		"phpcompatibility/phpcompatibility-wp": "^2.1",
+		"phpunit/phpunit": "^9.6",
+		"wp-coding-standards/wpcs": "^3.1",
+		"yoast/phpunit-polyfills": "^2.0"
+	},
+	"config": {
+		"platform": {
+			"php": "7.4"
+		},
+		"sort-packages": true,
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	},
+	"extra": {
+		"strauss": {
+			"target_directory": "vendor-prefixed",
+			"namespace_prefix": "SoapboxBlyg\\Vendor\\",
+			"classmap_prefix": "SoapboxBlyg_Vendor_",
+			"constant_prefix": "SOAPBOX_BLYG_VENDOR_",
+			"packages": [
+				"league/html-to-markdown"
+			],
+			"delete_vendor_packages": false
+		}
+	},
+	"scripts": {
+		"prefix-namespaces": [
+			"strauss",
+			"chmod -R a+rX vendor-prefixed"
+		],
+		"post-install-cmd": "@prefix-namespaces",
+		"post-update-cmd": "@prefix-namespaces",
+		"lint": "phpcs",
+		"test": "phpunit"
+	}
+}

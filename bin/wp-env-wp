@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+#
+# Runs WP-CLI inside a wp-env container, for scripts that take a WP command (the conformance
+# scenario: WP=bin/wp-env-wp). Paths under this checkout are rewritten to where the container
+# mounts the plugin. It talks to Docker directly: `wp-env run` adds a second or more to every call
+# and prints its own progress lines.
+#
+#   bin/wp-env-wp post list                 # development site, http://localhost:8888
+#   WP_ENV_SERVICE=tests-cli bin/wp-env-wp  # the tests site, http://localhost:8889
+#   WP_ENV_CELL=webmention bin/wp-env-wp    # a cell from tests/env/
+
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+SERVICE="${WP_ENV_SERVICE:-cli}"
+MOUNT="/var/www/html/wp-content/plugins/$(basename "$ROOT")"
+
+# wp-env names its containers after the directory holding the config file: this checkout for
+# .wp-env.json, "env-<cell>" for the cells under tests/env/ (WP_ENV_CELL=min, webmention, ...).
+PREFIX="wp-env-$(basename "$ROOT")-"
+[ -n "${WP_ENV_CELL:-}" ] && PREFIX="wp-env-env-${WP_ENV_CELL}-"
+CONTAINER="$(docker ps --filter "label=com.docker.compose.service=${SERVICE}" --format '{{.Names}}' | grep "^${PREFIX}" | head -n 1 || true)"
+[ -n "$CONTAINER" ] || { echo "wp-env is not running (npx wp-env start)" >&2; exit 2; }
+
+args=()
+for arg in "$@"; do
+	args+=("${arg//$ROOT/$MOUNT}")
+done
+
+TTY=()
+[ -t 0 ] || TTY=(-i)
+exec docker exec "${TTY[@]}" --user "$(id -u):$(id -g)" --workdir /var/www/html "$CONTAINER" wp "${args[@]}"

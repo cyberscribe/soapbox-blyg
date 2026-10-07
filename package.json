@@ -1,0 +1,26 @@
+{
+	"name": "soapbox-blyg",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Publishes WordPress content as a blyg under the Blygger protocol.",
+	"license": "GPL-2.0-or-later",
+	"scripts": {
+		"build": "wp-scripts build assets/src/editor-panel.js assets/src/tools.js --output-path=build",
+		"start": "wp-scripts start assets/src/editor-panel.js assets/src/tools.js --output-path=build",
+		"lint:js": "wp-scripts lint-js assets/src",
+		"env": "wp-env"
+	},
+	"devDependencies": {
+		"@wordpress/api-fetch": "^7.56.0",
+		"@wordpress/components": "^41.0.0",
+		"@wordpress/data": "^10.56.0",
+		"@wordpress/date": "^5.56.0",
+		"@wordpress/edit-post": "^8.56.0",
+		"@wordpress/editor": "^15.1.0",
+		"@wordpress/element": "^8.8.0",
+		"@wordpress/env": "11.16.0",
+		"@wordpress/i18n": "^6.29.0",
+		"@wordpress/plugins": "^7.56.0",
+		"@wordpress/scripts": "^36.0.0"
+	}
+}

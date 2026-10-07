@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<phpunit
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+	bootstrap="tests/phpunit/bootstrap.php"
+	backupGlobals="false"
+	colors="true"
+	convertDeprecationsToExceptions="false"
+	cacheResult="false"
+>
+	<testsuites>
+		<testsuite name="soapbox-blyg">
+			<directory suffix="Test.php">tests/phpunit</directory>
+		</testsuite>
+	</testsuites>
+</phpunit>

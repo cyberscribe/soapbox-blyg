@@ -1,0 +1,13 @@
+{
+	"core": null,
+	"phpVersion": "8.4",
+	"port": 8894,
+	"testsPort": 8895,
+	"multisite": true,
+	"plugins": [ "." ],
+	"themes": [ "https://downloads.wordpress.org/theme/twentytwentyfive.zip" ],
+	"config": {
+		"WP_DEBUG": true,
+		"WP_DEBUG_DISPLAY": false
+	}
+}

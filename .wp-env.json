@@ -1,0 +1,22 @@
+{
+	"core": null,
+	"phpVersion": "8.4",
+	"plugins": [
+		"."
+	],
+	"themes": [
+		"https://downloads.wordpress.org/theme/twentytwentyfive.zip"
+	],
+	"config": {
+		"WP_DEBUG": true,
+		"WP_DEBUG_DISPLAY": false,
+		"SCRIPT_DEBUG": false
+	},
+	"lifecycleScripts": {
+		"afterStart": "wp-env run cli wp rewrite structure '/%year%/%monthnum%/%postname%/' --hard && wp-env run tests-cli wp rewrite structure '/%year%/%monthnum%/%postname%/' --hard"
+	},
+	"mappings": {
+		"wp-content/mu-plugins/loopback.php": "./tests/env/mu-plugins/loopback.php",
+		"wp-content/mu-plugins/fixture-origin.php": "./tests/conformance/fixture-origin.php"
+	}
+}
