@@ -100,6 +100,27 @@ templated() {
     bad "could not reuse the slug for the takeover check"
   fi
 
+  # P2 (production, 2026-10-07): permalinks that carry the post's id, as on robertpeake.com, and
+  # an earlier slug on record. WordPress redirects an address with an old slug to the post's
+  # permalink without asking whether the post can be seen; for a draft that is /?p=N, a 404.
+  step "templated: a withdrawn page under /archives/%post_id%-%postname%.html"
+  $WP rewrite structure '/archives/%post_id%-%postname%.html' --hard >/dev/null
+  W=$($WP post create --post_status=publish --post_title="Acceptance drafted" --post_content="<p>To be drafted.</p>" --porcelain)
+  WPAGE="$SITE/archives/$W-acceptance-drafted.html"
+  [[ "$($WP post list --post__in="$W" --field=url)" == "$WPAGE" ]] && ok "the post is at ${WPAGE#$SITE}" || bad "the post is not at ${WPAGE#$SITE}"
+  $WP post update "$W" --post_name=renamed >/dev/null
+  $WP post update "$W" --post_name=acceptance-drafted >/dev/null
+  $WP post meta add "$W" _wp_old_slug acceptance-drafted >/dev/null
+  $WP post update "$W" --post_status=draft >/dev/null
+  [[ "$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' "$WPAGE")" == "200 " ]] && ok "the drafted post's page: 200, no redirect" || bad "the drafted post's page: $(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' "$WPAGE")"
+  curl -s "$WPAGE" | grep -q 'rel="alternate" type="application/json"' && ok "and it is the withdrawn page" || bad "and it is not the withdrawn page"
+  [[ "$(code "$SITE/archives/$W-renamed.html")" == "200" ]] && ok "so is the address it had under its other slug" || bad "the address under its other slug: $(code "$SITE/archives/$W-renamed.html")"
+  [[ "$(code "$SITE/?p=$W")" == "404" ]] && ok "the plain address of a draft is still 404" || bad "the plain address of a draft: $(code "$SITE/?p=$W")"
+  $WP post update "$W" --post_status=publish >/dev/null
+  curl -s "$WPAGE" | grep -q 'To be drafted' && ok "published again, the post is back at its address" || bad "published again, the post is not back"
+  $WP post delete "$W" --force >/dev/null
+  $WP rewrite structure '/%year%/%monthnum%/%postname%/' --hard >/dev/null
+
   step "templated: G2 headers on every document"
   # The lifetimes are the plugin's to say: the one in force, and a pin's.
   read -r LIFE PIN_LIFE <<<"$($WP eval 'echo SoapboxBlyg\Surface\Caching::lifetime(), " ", SoapboxBlyg\Surface\Caching::PIN_LIFETIME;')"

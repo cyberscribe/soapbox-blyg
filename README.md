@@ -6,7 +6,8 @@ surface other Blygger clients can subscribe to and quote. An independent impleme
 affiliated with the protocol's authors.
 
 What it does for a site owner is in [`readme.txt`](readme.txt), which is also the WordPress.org
-listing. This file is for working on the plugin.
+listing. This file is for working on the plugin. The repository is
+<https://github.com/cyberscribe/soapbox-blyg>; issues and pull requests go there.
 
 ## Layout
 

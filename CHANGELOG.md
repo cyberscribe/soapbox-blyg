@@ -1,5 +1,45 @@
 # Changelog
 
+## 0.1.1 (unreleased)
+
+From production (robertpeake.com, 2026-10-07):
+
+- **With Breeze, an unpublished post stayed readable at its address.** Breeze 2.6.1 drops a post's
+  page by the address `get_permalink()` gives after the change, and for a draft that is `/?p=N`:
+  the page it cached under the permalink stayed, in Breeze's file cache and in Varnish. The
+  plugin answers Breeze's `breeze_collect_urls_for_cache_purge` filter with the address the
+  ledger has for the post. (P1)
+- **The withdrawn page is shown where WordPress redirected to a 404.** `wp_old_slug_redirect()`
+  redirects an address that carries one of a post's earlier slugs to the post's permalink without
+  asking whether the post can be seen. For a withdrawn item's page, that redirect is now stopped
+  unless the post it leads to is publicly viewable. (P2)
+
+From QA's review of the purging in 0.1.0 (F1 to F8):
+
+- A pin purges the item's document. (F1)
+- A new plugin version, and a change to the site's name, tagline, `home` or permalink structure,
+  purge every origin's documents. (F2)
+- A new item's own address is not purged. A list longer than fifty addresses is cut, for a
+  cache that is purged one address at a time, to what cannot wait: the origins' manifest, feed
+  and index, and the document and the page of everything withdrawn. For Breeze it is queued
+  through Action Scheduler. `soapbox_blyg_purge_urls` gains a second argument, that shorter
+  list. (F3, and R1 of QA's review of this release)
+- The bare mount is purged when the settings change, not on every item. (F4)
+- When an item is withdrawn or returns, the post's page is purged. (F5)
+- Site Health asks for the documents compressed, as a reader does, and probes an item in the
+  templated layout too. (F6, F8)
+- Each list is announced once more a little later. (F7)
+- The plugin's own listeners run at priority 5; a lifetime filter that returns `NAN` is ignored;
+  switching publishing on, or moving a mount, purges the new address. (F8)
+
+- The purge a new version causes happens only once its version has been recorded. (R2)
+
+The source is public at <https://github.com/cyberscribe/soapbox-blyg>, named in the plugin's
+header (`Plugin URI`) and both readmes.
+
+The repository no longer holds working papers or the E1 scripts, and `bin/check-tree.sh` keeps
+such things out.
+
 ## 0.1.0 (unreleased)
 
 First release.

@@ -30,6 +30,11 @@ defined( 'ABSPATH' ) || exit;
 final class Plugin {
 
 	/**
+	 * The plugin version this site last ran, so that a new one is noticed.
+	 */
+	const VERSION_OPTION = 'soapbox_blyg_plugin_version';
+
+	/**
 	 * The one instance.
 	 *
 	 * @var Plugin|null
@@ -120,7 +125,7 @@ final class Plugin {
 		$this->mentions  = new Store();
 		$this->receiver  = new Receiver( $this->mentions, $this->locations );
 		$this->posts     = new PostTypeSource( $this->ledger );
-		$this->purge     = new Integrations\Purge( $this->registry, $this->locations );
+		$this->purge     = new Integrations\Purge( $this->registry, $this->locations, $this->ledger );
 	}
 
 	/**
@@ -226,6 +231,14 @@ final class Plugin {
 	 */
 	public static function upgrade(): void {
 		Schema::maybe_install();
+		// Every document names the plugin's version in its generator, so a new version is new
+		// bytes at every address with no ledger event to say so. A site that ran a release from
+		// before this was recorded counts as changed, once. Only if the record was written: where
+		// it cannot be (an object cache that goes on answering the old version), every request
+		// would purge everything instead.
+		if ( SOAPBOX_BLYG_VERSION !== get_option( self::VERSION_OPTION ) && update_option( self::VERSION_OPTION, SOAPBOX_BLYG_VERSION, true ) ) {
+			self::instance()->purge->everything_changed();
+		}
 		if ( (int) get_option( Settings::MEANING_OPTION, 0 ) < Settings::MEANING ) {
 			$plugin = self::instance();
 			$known  = false !== get_option( Schema::VERSION_OPTION );
@@ -286,7 +299,7 @@ final class Plugin {
 	 */
 	public static function deactivate(): void {
 		Router::forget();
-		foreach ( array( Receiver::SWEEP_HOOK, Receiver::SWEEP_HOOK . '_more', Receiver::VERIFY_HOOK, PostTypeSource::REPAIR_HOOK, PostTypeSource::RECONCILE_HOOK ) as $hook ) {
+		foreach ( array( Receiver::SWEEP_HOOK, Receiver::SWEEP_HOOK . '_more', Receiver::VERIFY_HOOK, PostTypeSource::REPAIR_HOOK, PostTypeSource::RECONCILE_HOOK, Integrations\Purge::AGAIN_HOOK ) as $hook ) {
 			wp_unschedule_hook( $hook );
 			// Verification is queued with Action Scheduler where another plugin provides it.
 			if ( function_exists( 'as_unschedule_all_actions' ) ) {

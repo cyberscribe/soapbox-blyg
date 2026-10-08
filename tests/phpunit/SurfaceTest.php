@@ -327,6 +327,37 @@ class SurfaceTest extends TestCase {
 		$this->assertLessThan( array_search( '(.?.+?)(?:/([0-9]+))?/?$', $order, true ), array_search( $regex, $order, true ), 'ours are matched before the page catch-all' );
 	}
 
+	/**
+	 * P2 (production, 2026-10-07). WordPress keeps a post's earlier slugs and, on a 404, redirects
+	 * an address that carries one to the post's permalink. It does not ask whether the post is
+	 * public: for a draft the permalink is /?p=N, which is a 404. So the page of a withdrawn item
+	 * answered with a redirect to nowhere, before the withdrawn page could be shown.
+	 */
+	public function test_p2_an_old_slug_does_not_redirect_a_withdrawn_page_to_a_post_nobody_can_see() {
+		$this->set_permalink_structure( '/archives/%post_id%-%postname%.html' );
+		$post = self::factory()->post->create( array( 'post_status' => 'publish', 'post_title' => 'Gone' ) );
+		$page = get_permalink( $post );
+		add_post_meta( $post, '_wp_old_slug', 'gone' );
+
+		// While it is public, WordPress's answer stands.
+		$this->go_to( $page );
+		$this->assertSame( $post, apply_filters( 'old_slug_redirect_post_id', $post ) );
+
+		wp_update_post( array( 'ID' => $post, 'post_status' => 'draft' ) );
+		$this->go_to( $page );
+		$this->assertTrue( is_404() );
+		$this->assertSame( 0, apply_filters( 'old_slug_redirect_post_id', $post ), 'no redirect: the withdrawn page is the answer' );
+
+		// A redirect to a post that can be seen is a better answer than the withdrawn page, and is kept.
+		$other = self::factory()->post->create( array( 'post_status' => 'publish' ) );
+		$this->assertSame( $other, apply_filters( 'old_slug_redirect_post_id', $other ) );
+
+		// And nothing changes anywhere else: an address the blyg never served.
+		$this->go_to( home_url( '/archives/' . $post . '-never-was.html' ) );
+		$this->assertSame( $post, apply_filters( 'old_slug_redirect_post_id', $post ) );
+		$this->assertSame( 0, apply_filters( 'old_slug_redirect_post_id', 0 ) );
+	}
+
 	public function test_a_new_origin_triggers_exactly_one_flush() {
 		$router = Plugin::instance()->router;
 		$router->maybe_flush();

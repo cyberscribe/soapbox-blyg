@@ -24,10 +24,11 @@ function soapbox_blyg_uninstall_site() {
 	// for itself on every site of a network, scheduled work, and an option earlier versions used.
 	delete_option( 'soapbox_blyg_activation_seen' );
 	delete_option( 'soapbox_blyg_viewable_types' );
+	delete_option( 'soapbox_blyg_plugin_version' );
 	delete_metadata( 'user', 0, 'soapbox_blyg_dismissed_problem', '', true );
 	delete_option( 'soapbox_blyg_last_error' );
 	delete_transient( 'soapbox_blyg_stale_posts' );
-	foreach ( array( 'soapbox_blyg_sweep_mentions', 'soapbox_blyg_sweep_mentions_more', 'soapbox_blyg_verify_mention', 'soapbox_blyg_repair', 'soapbox_blyg_reconcile_run' ) as $soapbox_blyg_hook ) {
+	foreach ( array( 'soapbox_blyg_sweep_mentions', 'soapbox_blyg_sweep_mentions_more', 'soapbox_blyg_verify_mention', 'soapbox_blyg_repair', 'soapbox_blyg_reconcile_run', 'soapbox_blyg_purge_again' ) as $soapbox_blyg_hook ) {
 		wp_unschedule_hook( $soapbox_blyg_hook );
 		if ( function_exists( 'as_unschedule_all_actions' ) ) {
 			as_unschedule_all_actions( $soapbox_blyg_hook );

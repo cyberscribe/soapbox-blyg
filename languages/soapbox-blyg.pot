@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Soapbox Blyg 0.1.0\n"
+"Project-Id-Version: Soapbox Blyg 0.1.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/soapbox-blyg\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-07T12:15:02+00:00\n"
+"POT-Creation-Date: 2026-10-08T15:08:06+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: soapbox-blyg\n"
@@ -23,8 +23,13 @@ msgstr ""
 #: src/Admin/ToolsPage.php:46
 #: src/Admin/ToolsPage.php:47
 #: src/Admin/ToolsPage.php:215
-#: src/Plugin.php:310
+#: src/Plugin.php:323
 msgid "Soapbox Blyg"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: soapbox-blyg.php
+msgid "https://github.com/cyberscribe/soapbox-blyg"
 msgstr ""
 
 #. Description of the plugin
@@ -357,7 +362,7 @@ msgid "%1$s answered with status %2$d, or with something that is not a manifest.
 msgstr ""
 
 #: src/Admin/SiteHealth.php:158
-#: src/Admin/SiteHealth.php:352
+#: src/Admin/SiteHealth.php:351
 msgid "Permalink settings"
 msgstr ""
 
@@ -395,179 +400,179 @@ msgstr ""
 msgid "Every blyg on this site answers with a manifest, a feed and an archive index."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:262
+#: src/Admin/SiteHealth.php:261
 msgid "Your host adds its own caching instructions to the blyg"
 msgstr ""
 
 #. translators: 1: URL, 2: the Cache-Control header as received, 3: mount path, 4: a length of time, such as "5 mins"
-#: src/Admin/SiteHealth.php:264
+#: src/Admin/SiteHealth.php:263
 #, php-format
 msgid "%1$s arrives with caching instructions that are not the plugin's (%2$s). The plugin puts its own lifetime (%4$s) first, and a cache follows the first it reads; here a longer one, added by the web server or by something else in front of WordPress, comes first. An item you withdraw, or a post you edit, could keep being served in its old form. If a plugin or theme on this site filters soapbox_blyg_cache_control, its value must keep s-maxage. Otherwise this comes from the server's own configuration, so excluding the path from a page cache does not remove it: ask your host to stop adding a Cache-Control header for %3$s and for /wp-json/soapbox-blyg/."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:293
+#: src/Admin/SiteHealth.php:292
 msgid "A cache in front of this site is serving an old copy of the blyg"
 msgstr ""
 
 #. translators: 1: URL, 2: mount path
-#: src/Admin/SiteHealth.php:295
+#: src/Admin/SiteHealth.php:294
 #, php-format
 msgid "%1$s was answered with a copy that is not the document as it is now. Something in front of WordPress (a CDN, Varnish, or your host's own cache) kept an earlier one and has not been told it changed. An item you withdraw, or a post you edit, keeps being served in its old form from there. Purge that cache now. So that it does not happen again, exclude the path %2$s, and the REST namespace /wp-json/soapbox-blyg/, from it, or connect it to the soapbox_blyg_purge_urls action. The plugin's readme lists the cache plugins it purges by itself."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:305
+#: src/Admin/SiteHealth.php:304
 msgid "A cache in front of this site is holding the blyg"
 msgstr ""
 
 #. translators: 1: URL, 2: mount path, 3: a length of time, such as "5 mins"
-#: src/Admin/SiteHealth.php:307
+#: src/Admin/SiteHealth.php:306
 #, php-format
 msgid "%1$s is being served from a shared cache (a CDN, Varnish, or your host's own cache) for longer than the cache lifetime in the plugin's settings (%3$s). An item you withdraw, or a post you edit, would keep being served in its old form until that cache expires. Exclude the path %2$s, and the REST namespace /wp-json/soapbox-blyg/, from that cache. The plugin's readme has instructions for Varnish, Cloudflare and nginx."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:318
+#: src/Admin/SiteHealth.php:317
 msgid "The blyg's caching could not be checked from the server"
 msgstr ""
 
 #. translators: %d: a number of seconds
-#: src/Admin/SiteHealth.php:320
+#: src/Admin/SiteHealth.php:319
 #, php-format
 msgid "This site could not request its own blyg, so it cannot tell whether a cache in front of it is holding the documents. To check by hand, request the manifest twice, a few seconds apart, and look at the response headers: the first s-maxage in Cache-Control should be %1$d, and Age should never be more than %1$d."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:327
+#: src/Admin/SiteHealth.php:326
 msgid "The copies of the blyg being served are current"
 msgstr ""
 
 #. translators: %s: a length of time, such as "5 mins"
-#: src/Admin/SiteHealth.php:329
+#: src/Admin/SiteHealth.php:328
 #, php-format
 msgid "A cache in front of this site keeps the blyg's documents for longer than the cache lifetime in the plugin's settings (%s), and the copies it is serving are the documents as they are now. That is safe for as long as the cache is told when a document changes; the plugin's readme lists the cache plugins it tells by itself. If you withdraw a post and it is still being served, this test will say so."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:335
+#: src/Admin/SiteHealth.php:334
 msgid "No cache is holding the blyg"
 msgstr ""
 
 #. translators: %s: a length of time, such as "5 mins"
-#: src/Admin/SiteHealth.php:337
+#: src/Admin/SiteHealth.php:336
 #, php-format
 msgid "No cache in front of this site keeps the blyg's documents for longer than the cache lifetime in the plugin's settings (%s)."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:349
+#: src/Admin/SiteHealth.php:348
 msgid "The blyg cannot be served on \"Plain\" permalinks"
 msgstr ""
 
-#: src/Admin/SiteHealth.php:350
+#: src/Admin/SiteHealth.php:349
 msgid "A blyg is served at an address of its own, such as /blyg/blyg.json, which needs WordPress's rewrite rules. \"Plain\" permalinks switch those off. Choose any other permalink structure."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:355
+#: src/Admin/SiteHealth.php:354
 msgid "Permalinks can serve the blyg"
 msgstr ""
 
-#: src/Admin/SiteHealth.php:355
+#: src/Admin/SiteHealth.php:354
 msgid "The site's permalink structure supports the addresses a blyg needs."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:369
+#: src/Admin/SiteHealth.php:368
 msgid "A blyg was asked to move, and was not moved"
 msgstr ""
 
 #. translators: 1: origin key, 2: the path asked for, 3: the path it is locked to
-#: src/Admin/SiteHealth.php:371
+#: src/Admin/SiteHealth.php:370
 #, php-format
 msgid "The blyg \"%1$s\" is now configured for %2$s, but it has already published at %3$s and is still served there: published addresses are permanent. Put the configuration back to %3$s."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:380
+#: src/Admin/SiteHealth.php:379
 msgid "A page has the same address as the blyg"
 msgstr ""
 
 #. translators: 1: page title, 2: mount path
-#: src/Admin/SiteHealth.php:382
+#: src/Admin/SiteHealth.php:381
 #, php-format
 msgid "\"%1$s\" has the address %2$s, which is where the blyg is mounted. The blyg wins, so that page cannot be reached. Give the page a different slug."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:384
+#: src/Admin/SiteHealth.php:383
 msgid "Edit the page"
 msgstr ""
 
-#: src/Admin/SiteHealth.php:388
+#: src/Admin/SiteHealth.php:387
 msgid "The blyg's address is its own"
 msgstr ""
 
-#: src/Admin/SiteHealth.php:388
+#: src/Admin/SiteHealth.php:387
 msgid "No page or post shares an address with a blyg, and every blyg is served where it first published."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:397
+#: src/Admin/SiteHealth.php:396
 msgid "Open Tools > Soapbox Blyg"
 msgstr ""
 
-#: src/Admin/SiteHealth.php:403
+#: src/Admin/SiteHealth.php:402
 msgid "The blyg's database tables cannot be relied on"
 msgstr ""
 
-#: src/Admin/SiteHealth.php:405
+#: src/Admin/SiteHealth.php:404
 msgid "The plugin's tables are not using the InnoDB storage engine. Without it an item and its version cannot be written together or not at all, so the plugin is publishing nothing and the blyg is offline. Ask your host to convert the soapbox_blyg tables to InnoDB, then deactivate and activate the plugin."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:406
+#: src/Admin/SiteHealth.php:405
 msgid "The plugin's tables could not be brought up to date, so the plugin is publishing nothing and the blyg is offline. It tries again by itself; if this stays, deactivate and activate the plugin, and check that the database user may create and alter tables."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:417
+#: src/Admin/SiteHealth.php:416
 msgid "A post was saved but not published to the blyg"
 msgstr ""
 
 #. translators: 1: post id, 2: date and time, 3: error message
-#: src/Admin/SiteHealth.php:422
+#: src/Admin/SiteHealth.php:421
 #, php-format
 msgid "Post %1$d was saved on %2$s, but the blyg could not be brought into step with it: %3$s. The plugin has stopped trying. Nothing the post no longer shows is being served; open the post and save it to try again."
 msgstr ""
 
 #. translators: 1: post id, 2: date and time, 3: error message
-#: src/Admin/SiteHealth.php:424
+#: src/Admin/SiteHealth.php:423
 #, php-format
 msgid "Post %1$d was saved on %2$s, but the blyg could not be brought into step with it: %3$s. The plugin keeps trying, and until it succeeds nothing the post no longer shows is served. Saving the post again also retries."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:435
+#: src/Admin/SiteHealth.php:434
 msgid "The blyg's ledger has never been verified"
 msgstr ""
 
-#: src/Admin/SiteHealth.php:435
+#: src/Admin/SiteHealth.php:434
 msgid "Verifying recomputes the hash of every version ever published and checks the ledger is complete. Run it once now, and again after WordPress or plugin updates."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:441
+#: src/Admin/SiteHealth.php:440
 msgid "The blyg's ledger failed verification"
 msgstr ""
 
 #. translators: 1: number of problems, already formatted for the locale, 2: date and time
-#: src/Admin/SiteHealth.php:444
+#: src/Admin/SiteHealth.php:443
 #, php-format
 msgid "The last verification, on %2$s, found %1$s problem. The ledger is the record of everything this site has published; run verify again from Tools to see what is wrong."
 msgid_plural "The last verification, on %2$s, found %1$s problems. The ledger is the record of everything this site has published; run verify again from Tools to see what is wrong."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Admin/SiteHealth.php:453
+#: src/Admin/SiteHealth.php:452
 msgid "The blyg's ledger was last verified over 30 days ago"
 msgstr ""
 
-#: src/Admin/SiteHealth.php:453
+#: src/Admin/SiteHealth.php:452
 msgid "It passed then. Verify again, especially after WordPress or plugin updates, which can change how posts render."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:455
+#: src/Admin/SiteHealth.php:454
 msgid "The blyg's ledger is verified"
 msgstr ""
 
-#: src/Admin/SiteHealth.php:455
+#: src/Admin/SiteHealth.php:454
 msgid "Every stored version matches its hash, and the ledger is complete."
 msgstr ""
 
@@ -808,32 +813,32 @@ msgid "imported from WordPress"
 msgstr ""
 
 #. translators: %s: a list of PHP extension names
-#: src/Plugin.php:256
+#: src/Plugin.php:269
 #, php-format
 msgid "Soapbox Blyg needs the PHP extensions %s, which this server does not have. Ask your host to enable them."
 msgstr ""
 
-#: src/Plugin.php:267
+#: src/Plugin.php:280
 msgid "Soapbox Blyg keeps its record of what was published in database tables that must use the InnoDB storage engine, and this database created them with another. Ask your host to make InnoDB the default engine, or convert the soapbox_blyg tables to InnoDB, then activate again."
 msgstr ""
 
-#: src/Plugin.php:280
+#: src/Plugin.php:293
 msgid "Soapbox Blyg could not be activated"
 msgstr ""
 
-#: src/Plugin.php:306
+#: src/Plugin.php:319
 msgid "This site publishes its posts as a blyg, using the Soapbox Blyg plugin. Each published post is stored as a series of versions, with the author's display name as it was when that version was published. These versions stay available at their published addresses after the post is edited, and a withdrawn post's address continues to answer, with no content."
 msgstr ""
 
-#: src/Plugin.php:307
+#: src/Plugin.php:320
 msgid "The plugin sets no cookies and collects no information about visitors to this site."
 msgstr ""
 
-#: src/Plugin.php:308
+#: src/Plugin.php:321
 msgid "If the site accepts Webmentions: when another publication tells this site that it has quoted or responded to something here, this site fetches that publication's page to confirm it, and records the address of that page, the name its author published there, and the time. It does not store the content of the page, and these records are visible to this site's administrators only. To limit how often one sender can do this, it also keeps a scrambled form of the network address the notification came from, which cannot be turned back into the address."
 msgstr ""
 
-#: src/Plugin.php:309
+#: src/Plugin.php:322
 msgid "When a signed-in user pins a version of a post, the site records which user did so."
 msgstr ""
 

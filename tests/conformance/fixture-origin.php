@@ -1,8 +1,8 @@
 <?php
 /**
- * Test-only second origin, /blyg-fixture/ (SPEC.md §5.2, AC-16).
+ * Test-only second origin, /blyg-fixture/ (the checker's AC-16: one site, more than one blyg).
  *
- * Owned by QA. The engine loads this file only when SOAPBOX_BLYG_FIXTURES is defined, which is set in
+ * The engine loads this file only when SOAPBOX_BLYG_FIXTURES is defined, which is set in
  * the local wp-config.php and never on production. It proves the engine serves two origins from one
  * ledger without either seeing the other's items, before the practices corpus depends on that.
  *

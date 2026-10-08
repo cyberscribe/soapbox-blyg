@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Rehearses the Webmention half of the 0.4 gate (PLUGIN-SPEC G3, G4) on this machine: a stub
+# Rehearses the Webmention half of the protocol's 0.4 gate (spec 0.3 §16.6e) on this machine: a stub
 # standing in for another Blygger client publishes a thread that quotes one of our items and sends
 # us a mention, and we verify it by fetching the stub's page and document.
 #

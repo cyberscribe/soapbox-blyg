@@ -1,8 +1,8 @@
 <?php
 /**
- * Seeds the fixture origin through the public engine API (SPEC.md §5.2).
+ * Seeds the fixture origin through the plugin's public API (includes/functions.php).
  *
- *     wp eval-file inc/blyg/tests/fixture-seed.php
+ *     wp eval-file wp-content/plugins/soapbox-blyg/tests/conformance/fixture-seed.php
  *
  * Every run uses fresh source keys, so re-running adds a new set instead of colliding with the last.
  * Prints one JSON object on the last line: the ids it created, for scenario.sh to assert on.

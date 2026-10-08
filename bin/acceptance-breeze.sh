@@ -94,7 +94,7 @@ check() {
                  [[ "$kind" == "held" || "$first_line" == "$want" ]] || problems+=" first-line-is-not-exactly-ours" ;;
     *)           [[ "$n" == "1" ]] || problems+=" $n-lines"; grep -q '2592000' <<<"$joined" && problems+=" a-host-header-in-this-state" ;;
   esac
-  # The content type is the one the protocol names (SPEC 7), exactly, and stated once.
+  # The content type is the one the protocol names (Blygger spec §7), exactly, and stated once.
   ctype=$(grep -i '^content-type:' <<<"$H" | sed 's/^[^:]*: *//' | paste -sd'|' -)
   case "$type" in
     json) [[ "$ctype" == "application/json; charset=utf-8" ]] || problems+=" content-type($ctype)" ;;
@@ -129,18 +129,52 @@ site_health() { # expected status
 # B14: with Breeze active, a change to the blyg hands Breeze the addresses that changed, through
 # the action Breeze purges Varnish on. A listener ahead of Breeze's own shows what it was given.
 # (There is no Varnish here: what Breeze then does with the list is not shown.)
+# F3 to F5: a new item's own address was never served, so publishing names the origin's three
+# documents and no more; the bare mount changes only with the settings; and when the item goes,
+# its document and the post's page are named too.
 purged() {
-  local got
+  local got made gone
   got=$($WP eval '
-    add_action( "breeze_purge_varnish_urls", function ( $urls ) { echo is_array( $urls ) ? implode( " ", $urls ) : "not-an-array"; }, 1 );
+    add_action( "breeze_purge_varnish_urls", function ( $urls ) { echo is_array( $urls ) ? implode( " ", $urls ) : "not-an-array", "\n"; }, 1 );
     $id = wp_insert_post( array( "post_status" => "publish", "post_title" => "Purged " . microtime(), "post_content" => "<p>x</p>" ) );
     SoapboxBlyg\Plugin::instance()->purge->flush();
     wp_delete_post( $id, true ); SoapboxBlyg\Plugin::instance()->purge->flush();' 2>/dev/null)
-  if grep -qF "$MANIFEST" <<<"$got" && grep -qF "$FEED" <<<"$got" && grep -qF "$INDEX" <<<"$got" && grep -qF "$SITE/blyg/ " <<<"$got " && grep -qE "${ITEM%/*}/[0-9a-z]{26}" <<<"$got"; then
-    ok "publishing a post hands Breeze the addresses to purge: the manifest, the feed, the index, the mount and the item ($(wc -w <<<"$got" | tr -d ' ') in the request)"
+  made=$(sed -n 1p <<<"$got"); gone=$(sed -n 2p <<<"$got")
+  if [[ "$(tr ' ' '\n' <<<"$made" | sort | paste -sd' ' -)" == "$(printf '%s\n' "$MANIFEST" "$FEED" "$INDEX" | sort | paste -sd' ' -)" ]]; then
+    ok "publishing a post hands Breeze the manifest, the feed and the index, and nothing else"
   else
-    bad "Breeze was given: ${got:-nothing}"
+    bad "on publishing, Breeze was given: ${made:-nothing}"
   fi
+  if grep -qF "$MANIFEST" <<<"$gone" && grep -qF "$FEED" <<<"$gone" && grep -qF "$INDEX" <<<"$gone" && grep -qE "${ITEM%/*}/[0-9a-z]{26}" <<<"$gone" && grep -qE "$SITE/[0-9]{4}/[0-9]{2}/purged-" <<<"$gone" && ! grep -qF "$SITE/blyg/ " <<<"$gone "; then
+    ok "deleting it adds the item's document and the post's page, and not the mount ($(wc -w <<<"$gone" | tr -d ' ') in the request)"
+  else
+    bad "on deleting, Breeze was given: ${gone:-nothing}"
+  fi
+}
+
+# P1 (production, 2026-10-07): a post set back to Draft went on being served, in full, at its
+# permalink, from Breeze's page cache. Breeze drops a post's page by the address get_permalink()
+# gives after the change, and for a draft that is /?p=N. The plugin adds the address the post was
+# published at. Run with the permalinks of robertpeake.com, and as a user, since Breeze purges
+# only for someone who may edit the post.
+unpublished() {
+  local p u body
+  step "$LAYOUT: a post set back to Draft leaves Breeze's page cache"
+  $WP rewrite structure '/archives/%post_id%-%postname%.html' --hard >/dev/null
+  $WP eval '$o = (array) get_option( "breeze_basic_settings" ); $o["breeze-active"] = "1"; update_option( "breeze_basic_settings", $o );' >/dev/null
+  $WP eval 'Breeze_ConfigCache::factory()->write(); Breeze_ConfigCache::factory()->write_config_cache();' >/dev/null 2>&1
+  p=$($WP post create --user=1 --post_status=publish --post_title="Taken down" --post_content="<p>Only-while-published.</p>" --porcelain)
+  u="$SITE/archives/$p-taken-down.html"
+  curl -s -o /dev/null "$u"
+  body=$(curl -s "$u")
+  grep -q 'Cache served by breeze' <<<"$body" && grep -q 'Only-while-published' <<<"$body" && ok "control: Breeze serves the post's page from its cache" || bad "control: the page is not served from Breeze's cache (nothing is being tested)"
+  $WP post update "$p" --user=1 --post_status=draft >/dev/null
+  body=$(curl -s "$u")
+  grep -q 'Only-while-published' <<<"$body" && bad "the article is still served at ${u#$SITE} after Draft" || ok "after Draft the article is no longer served at ${u#$SITE}"
+  grep -q 'rel="alternate" type="application/json"' <<<"$body" && ok "the withdrawn page is" || bad "the withdrawn page is not served there"
+  $WP post update "$p" --user=1 --post_status=publish >/dev/null
+  curl -s "$u" | grep -q 'Only-while-published' && ok "published again, the article is back" || bad "published again, the article is not back"
+  $WP post delete "$p" --force >/dev/null
 }
 
 apache() { # reload after a change to its configuration
@@ -251,6 +285,7 @@ run() {
     [[ "$L" == "$DEFAULT" ]] && { enter "two lines"; documents; }
   done
   enter off
+  unpublished
 }
 
 [[ "$WHICH" == "both" || "$WHICH" == "templated" ]] && run templated

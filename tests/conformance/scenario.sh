@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Lifecycle and multi-origin acceptance scenario (SPEC.md §11: AC-3, 6-10, 13, 14, 16).
-# Owned by QA. Runs against the LOCAL site only: it creates, edits, trashes and deletes posts.
+# A post's whole life, and two origins on one site: publish, edit, pin, trash, restore, delete
+# (the checker's AC-3, 6 to 10, 13, 14 and 16). Runs against a LOCAL site only: it creates, edits, trashes and deletes posts.
 #
-#   WP="wp --path=$HOME/Sites/wordpress" SITE=http://wordpress.oz inc/blyg/tests/scenario.sh
+#   WP="wp --path=$HOME/Sites/wordpress" SITE=http://wordpress.oz tests/conformance/scenario.sh
 #
 # Needs: wp-cli, curl, python3, and SOAPBOX_BLYG_FIXTURES defined in the local wp-config.php.
 # Posts it creates are force-deleted at the end. Their ledger items stay behind as withdrawn items,
@@ -157,7 +157,7 @@ $WP blyg verify >/dev/null 2>&1 && ok "wp blyg verify" || bad "wp blyg verify fa
 step "posts origin conformance"
 $CHECK "$ORIGIN" --home "$SITE/" >/tmp/blyg-posts-check.txt 2>&1 && ok "blyg-check posts origin" || { bad "blyg-check posts origin"; grep -E 'FAIL' /tmp/blyg-posts-check.txt | head -10; }
 
-# ---- SPEC draft 4 §12 additions (R1, R2, R4), added by the implementer at QA's request. ----------
+# ---- Later additions, R1 to R5 in the steps' names. ------------------------------------------------
 
 step "R4 no author, no author key"
 body "${ORIGIN}items/$ID.json" | python3 -c "import json,sys; sys.exit('author' in json.load(sys.stdin))" \

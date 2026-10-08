@@ -69,8 +69,9 @@ class Caching {
 		 */
 		$filtered = apply_filters( 'soapbox_blyg_cache_lifetime', $seconds );
 		// Held between a second and the longest lifetime offered, as a float first: a number too
-		// large to be an integer must not become one.
-		return (int) min( (float) max( self::LIFETIMES ), max( 1.0, is_numeric( $filtered ) ? (float) $filtered : 0.0 ) );
+		// large to be an integer must not become one, and one that is not a number at all is none.
+		$filtered = is_numeric( $filtered ) && ! is_nan( (float) $filtered ) ? (float) $filtered : 0.0;
+		return (int) min( (float) max( self::LIFETIMES ), max( 1.0, $filtered ) );
 	}
 
 	/**

@@ -187,8 +187,8 @@ class CachingTest extends TestCase {
 		add_filter( 'soapbox_blyg_cache_lifetime', $set );
 		$this->assertSame( 120, Caching::lifetime() );
 		$this->assertSame( 'public, max-age=120, s-maxage=120', $this->caching( Http::not_found() )['Cache-Control'] );
-		foreach ( array( 0, -5, 'never', null ) as $given ) {
-			$this->assertSame( 1, Caching::lifetime(), wp_json_encode( $given ) );
+		foreach ( array( 0, -5, 'never', null, NAN, -INF ) as $given ) {
+			$this->assertSame( 1, Caching::lifetime(), var_export( $given, true ) );
 		}
 		remove_filter( 'soapbox_blyg_cache_lifetime', $set );
 	}
@@ -341,7 +341,8 @@ class CachingTest extends TestCase {
 		$notes   = $plugin->registry->get( 'notes' );
 		$life    = Caching::lifetime();
 		$asked   = array();
-		$answer  = static function ( $pre, $args, $url ) use ( $plugin, $notes, $change, $more, $life, &$asked ) {
+		$answer  = function ( $pre, $args, $url ) use ( $plugin, $notes, $change, $more, $life, &$asked ) {
+			$this->assertSame( 'gzip', $args['headers']['Accept-Encoding'], 'asked for as a reader asks' );
 			// The test environment sends a loopback to the web server beside it; it is the same request.
 			$url     = (string) preg_replace( '#^http://127\.0\.0\.1(?=/)#', home_url(), $url );
 			$asked[] = $url;
@@ -401,6 +402,20 @@ class CachingTest extends TestCase {
 		};
 		$this->assertSame( 'good', $this->site_health_served( $none )['status'] );
 		$this->assertSame( 'recommended', $this->site_health_served( $none, array( 'age' => (string) DAY_IN_SECONDS ) )['status'] );
+	}
+
+	public function test_f8_a_templated_origin_has_one_of_its_items_looked_at_too() {
+		$this->register_notes( array( 'layout' => 'templated' ) );
+		$a      = soapbox_blyg_publish( 'notes', 'a', $this->fragment( 'One.' ), array( 'at' => '2026-03-01T10:00:00Z' ) );
+		$asked  = array();
+		$answer = static function ( $pre, $args, $url ) use ( &$asked ) {
+			$asked[] = (string) preg_replace( '#^http://127\\.0\\.0\\.1(?=/)#', home_url(), $url );
+			return array( 'response' => array( 'code' => 200, 'message' => '' ), 'body' => '', 'headers' => array( 'cache-control' => 'public, max-age=300, s-maxage=300', 'age' => '1' ), 'cookies' => array() );
+		};
+		add_filter( 'pre_http_request', $answer, 10, 3 );
+		SiteHealth::test_edge_cache();
+		remove_filter( 'pre_http_request', $answer, 10 );
+		$this->assertContains( home_url( '/wp-json/soapbox-blyg/v1/origins/notes/items/' . $a['id'] ), $asked );
 	}
 
 	public function test_b14_a_templated_origin_is_checked_by_its_manifest_and_feed() {

@@ -4,7 +4,7 @@ Tags: blygger, feed, rss, webmention, syndication
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.1.0
+Stable tag: 0.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -115,9 +115,9 @@ Cloudways' Varnish keeps a document for as long as its own configuration says, w
 
 = Which caches does Soapbox Blyg purge? =
 
-When a post is published, edited, withdrawn or restored, or the blyg's settings change, the plugin works out which of the blyg's addresses changed (the manifest, the feed, the archive index, the item's own document and the mount) and tells the cache plugin beside it, once, at the end of the request:
+When a post is published, edited, withdrawn or restored, or the blyg's settings change, the plugin works out which of the blyg's addresses changed (the manifest, the feed and the archive index; the item's own document, unless the item is new; the post's page, when an item is withdrawn or restored; and the mount, when the settings change) and tells the cache plugin beside it, once, at the end of the request:
 
-* **Breeze** (Cloudways): Varnish is purged for those addresses. Cloudways' Varnish keeps what it caches for hours whatever lifetime a response states, so this is what makes a withdrawal prompt there. Without Breeze, add your mount path as a Varnish exclusion in the Cloudways panel.
+* **Breeze** (Cloudways): Varnish is purged for those addresses. When a post is unpublished, Breeze is also given the address it was published at, so that Breeze drops the page from its own cache, from Varnish and from Cloudflare; by itself, Breeze 2.6.1 looks for a draft's page under its `?p=` address and leaves the cached page in place. Two cases are purged from Varnish only, because Breeze does not clear its own page cache for them and offers no way to drop one address from it: a withdrawal that no save of the post causes (a post type switched off, a change made in the database), and a post unpublished by something that is not a signed-in user who may edit it, such as WP-CLI run without `--user`. That page stays until Breeze's own cache lifetime ends or its cache is purged. Cloudways' Varnish keeps what it caches for hours whatever lifetime a response states, so this is what makes a withdrawal prompt there. Without Breeze, add your mount path as a Varnish exclusion in the Cloudways panel.
 * **W3 Total Cache**: each address is flushed from whichever of its caches are on, Varnish and a full-site CDN included.
 * **SiteGround Speed Optimizer**: each address is purged from SiteGround's dynamic cache.
 
@@ -182,6 +182,8 @@ Known limits. Each request is pinned to the address that was checked, which clos
 Caching. The plugin states its lifetime first, and relies on caches using the first of a repeated instruction, as RFC 9111 says and Varnish does. A cache that does not follow that rule could still use a lifetime your host appends. nginx's `proxy_cache` and `fastcgi_cache` are one such case: when the host's instruction arrives as a separate `Cache-Control` header line after the plugin's, nginx uses the last line. This has not been tested with nginx in front. Site Health asks for the documents as a reader would and compares what it is given with the documents as they are now; if it is given an old copy, purge that cache and exclude the blyg's paths from it as described above.
 
 == For developers ==
+
+The source, with its tests, is at https://github.com/cyberscribe/soapbox-blyg. The scripts in `build/` are compiled from `assets/src/` there with `npm run build`.
 
 The functions below are the stable API. Classes under `src/` are internal. Guard calls with `function_exists()`.
 
@@ -256,10 +258,21 @@ JavaScript sources are in `assets/src/`; the built files in `build/` are produce
 
 == Changelog ==
 
+= 0.1.1 =
+* With Breeze: a post set back to Draft or Pending no longer stays readable at its address from Breeze's page cache. Breeze looked for the page under the draft's `?p=` address; the plugin now gives it the address the post was published at.
+* The "Withdrawn" page is shown where WordPress used to redirect to the unpublished post itself, and so to a 404, because the address carried one of the post's earlier slugs.
+* Purging: a pin, a new version of the plugin and a change to the site's name, tagline or address now purge the documents they change. A new item's own address and the bare mount are no longer purged on every save. A long list (a backfill) is cut to the manifest, the feed and the index and whatever was withdrawn, or queued where Breeze can queue it. Each list is announced a second time a little later, for a request that was under way.
+* When the plugin withdraws an item by itself, the post's page is purged too.
+* Site Health asks for the documents as a reader does, compressed, and looks at an item in both layouts.
+* The source is public: https://github.com/cyberscribe/soapbox-blyg
+
 = 0.1.0 =
 * First release. Blygger 0.3, level 2. Posts and any post type with `blyg` support; versions, withdrawal and pins; templated and fixed surface layouts; an optional Webmention receiver with structural verification; Site Health tests; WP-CLI.
 
 == Upgrade Notice ==
+
+= 0.1.1 =
+With Breeze, an unpublished post could stay readable from the page cache. Update, then purge your caches once.
 
 = 0.1.0 =
 First release.

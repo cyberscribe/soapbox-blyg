@@ -120,9 +120,9 @@ class SiteHealth {
 				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- core's filter for loopback requests, as Site Health's own tests use it.
 				'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
 				'cookies'   => array(),
-				// Nothing that asks a cache to step aside: the question is what a reader is given.
-				// And no compression, so that the ETag arrives as the plugin sent it.
-				'headers'   => array( 'Accept-Encoding' => 'identity' ),
+				// As a reader asks: nothing that tells a cache to step aside, and compressed, since
+				// a cache keeps a copy for each encoding and that is the one readers are given.
+				'headers'   => array( 'Accept-Encoding' => 'gzip' ),
 			)
 		);
 	}
@@ -234,15 +234,14 @@ class SiteHealth {
 		$words   = Caching::in_words( $allowed );
 		$holding = false;
 		foreach ( $plugin->registry->all() as $origin ) {
-			// The manifest, and the feed: in the templated layout they travel different paths. In
-			// the fixed layout the item documents sit on paths that hosts cache by their endings,
-			// and an item is what a withdrawal is about, so one of those is asked for as well.
+			// The manifest, and the feed: in the templated layout they travel different paths.
+			// And one item, when there is one: an item is what a withdrawal is about.
 			// Each is paired with the document as the plugin would make it now.
 			$documents = array(
 				$plugin->locations->manifest( $origin ) => $plugin->documents->manifest( $origin ),
 				$plugin->locations->feed( $origin )     => $plugin->documents->feed( $origin ),
 			);
-			$live      = 'fixed' === $origin->layout ? $plugin->ledger->live_items_after( $origin->key, '', 1 ) : array();
+			$live      = $plugin->ledger->live_items_after( $origin->key, '', 1 );
 			if ( $live ) {
 				$documents[ $plugin->locations->item( $origin, $live[0]['blyg_id'] ) ] = $plugin->documents->item( $origin, $live[0]['blyg_id'] );
 			}

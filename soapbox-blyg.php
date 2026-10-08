@@ -1,8 +1,9 @@
 <?php
 /**
  * Plugin Name:       Soapbox Blyg
+ * Plugin URI:        https://github.com/cyberscribe/soapbox-blyg
  * Description:       Publishes your posts as a blyg under the Blygger protocol: stable ids, versions, pins and a feed that other Blygger clients can subscribe to and quote. An independent implementation.
- * Version:           0.1.0
+ * Version:           0.1.1
  * Requires at least: 6.6
  * Requires PHP:      7.4
  * Author:            Robert Peake
@@ -24,7 +25,7 @@ defined( 'ABSPATH' ) || exit;
  * function, hook and option names, the namespace) is renamed by bin/rename.sh.
  */
 const SOAPBOX_BLYG_SLUG    = 'soapbox-blyg';
-const SOAPBOX_BLYG_VERSION = '0.1.0';
+const SOAPBOX_BLYG_VERSION = '0.1.1';
 const SOAPBOX_BLYG_FILE    = __FILE__;
 
 /*

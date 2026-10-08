@@ -2,8 +2,11 @@
 """Black-box conformance check for one blyg origin: Blygger Protocol 0.3, publish side, with the
 0.4 templated surface (spec 0.3 §16.6e, decision #51).
 
-Owned by QA. Implements the "check" column of SPEC.md §11 and PLUGIN-SPEC §13.3 (G1, G2), with the
-QA rulings of 2026-10-06 (level 2, absolute `page`). Standard library only.
+It checks what the Blygger specification (https://blygger.org/spec/0.3/) requires of a publisher
+at level 2: the manifest, the feed, the archive index, item and pinned documents, an absolute
+`page` for every item, and discovery. Each failure is labelled with the checker's own name for
+the check (AC-1 to AC-16, T1); "spec §n" in a message is a section of that specification.
+Standard library only.
 
 The checker never assumes a path past `blyg.json`: it reads `feed`, `items`, `item` and `pin` from
 the manifest (defaults `feed.xml`, `items/index.json`, `items/{id}.json`, `items/{id}/v{n}.json`)

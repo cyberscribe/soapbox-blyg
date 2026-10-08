@@ -71,6 +71,7 @@ class ItemPage {
 		// after core's own redirects have had their turn: if WordPress knows a better answer for
 		// this URL (an old-slug redirect, a newer post), it has already given it.
 		add_filter( 'do_redirect_guess_404_permalink', array( $this, 'keep_withdrawn_from_guess' ) );
+		add_filter( 'old_slug_redirect_post_id', array( $this, 'keep_withdrawn_from_old_slug' ) );
 		add_action( 'template_redirect', array( $this, 'maybe_serve_withdrawn' ), 11 );
 	}
 
@@ -90,23 +91,40 @@ class ItemPage {
 	 * @return array|null { item, endcap, origin }
 	 */
 	private function withdrawn_here() {
-		static $found = false;
-		if ( false !== $found ) {
-			return $found;
+		// Asked up to three times in a request, of the same address.
+		static $found = array();
+		$url          = self::requested_url();
+		if ( array_key_exists( $url, $found ) ) {
+			return $found[ $url ];
 		}
-		$found = null;
-		$item  = $this->ledger->item_by_page( Locations::spellings( self::requested_url() ) );
+		$found[ $url ] = null;
+		$item          = $this->ledger->item_by_page( Locations::spellings( $url ) );
 		if ( $item && $this->registry->has( $item['origin_key'] ) ) {
 			$endcap = $this->ledger->version_row( $item['blyg_id'], (int) $item['current_version'] );
 			if ( $endcap && 'withdrawn' === $endcap['kind'] ) {
-				$found = array(
+				$found[ $url ] = array(
 					'item'   => $item,
 					'endcap' => $endcap,
 					'origin' => $this->registry->get( $item['origin_key'] ),
 				);
 			}
 		}
-		return $found;
+		return $found[ $url ];
+	}
+
+	/**
+	 * Stops core redirecting a withdrawn item's page to the post that was withdrawn.
+	 *
+	 * WordPress keeps a post's earlier slugs and dates, and on a 404 redirects an address that
+	 * carries one to the post's permalink (wp_old_slug_redirect()). It does not ask whether
+	 * anyone can see the post: for a draft the permalink is /?p=N, and that is a 404. A redirect
+	 * to a post that can be seen is left alone: it is a better answer than the withdrawn page.
+	 *
+	 * @param int $id The post core means to redirect to, or 0.
+	 * @return int
+	 */
+	public function keep_withdrawn_from_old_slug( $id ) {
+		return $id && is_404() && ! is_post_publicly_viewable( (int) $id ) && $this->withdrawn_here() ? 0 : $id;
 	}
 
 	/**

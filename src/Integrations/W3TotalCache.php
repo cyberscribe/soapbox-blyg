@@ -22,22 +22,25 @@ class W3TotalCache {
 	 * Hooks.
 	 */
 	public static function register(): void {
-		add_action( 'soapbox_blyg_purge_urls', array( __CLASS__, 'purge' ) );
+		// Ahead of anyone else's listener, so that one of theirs failing cannot keep this from running.
+		add_action( 'soapbox_blyg_purge_urls', array( __CLASS__, 'purge' ), 5, 2 );
 	}
 
 	/**
 	 * Passes the addresses on. Whatever the other plugin does with them, it is not this
 	 * request's failure.
 	 *
-	 * @param string[] $urls Absolute URLs.
+	 * @param string[] $urls      Absolute URLs.
+	 * @param string[] $essential Those of them a long list is cut to.
 	 */
-	public static function purge( $urls ): void {
+	public static function purge( $urls, $essential = array() ): void {
 		if ( ! function_exists( 'w3tc_flush_url' ) ) {
 			return;
 		}
 		try {
-			foreach ( (array) $urls as $url ) {
-				if ( is_string( $url ) && '' !== $url ) {
+			// One flush for each address, so a long list is cut to what cannot wait.
+			foreach ( Purge::bounded( $urls, $essential ) as $url ) {
+				if ( '' !== $url ) {
 					w3tc_flush_url( $url );
 				}
 			}
