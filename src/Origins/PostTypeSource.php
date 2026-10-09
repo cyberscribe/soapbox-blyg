@@ -1256,7 +1256,7 @@ class PostTypeSource {
 				'at'   => self::gmt_iso( $post->post_modified_gmt, $post->post_modified ),
 				'note' => self::in_site_language(
 					static function () {
-						return __( 'imported from WordPress', 'soapbox-blyg' );
+						return __( 'imported from WordPress', 'soapbox-for-blygger' );
 					}
 				),
 			)

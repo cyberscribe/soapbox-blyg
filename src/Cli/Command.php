@@ -328,7 +328,7 @@ class Command {
 			);
 		}
 		if ( ! $rows ) {
-			WP_CLI::log( 'No origins are registered. Publishing may be switched off in Settings > Soapbox Blyg.' );
+			WP_CLI::log( 'No origins are registered. Publishing may be switched off in Settings > Soapbox for Blygger.' );
 			return;
 		}
 		\WP_CLI\Utils\format_items( 'table', $rows, array( 'origin', 'mount', 'layout', 'items', 'updated', 'priority', 'locked' ) );
@@ -343,7 +343,7 @@ class Command {
 	private function posts_source( bool $read_only = false ): PostTypeSource {
 		$plugin = Plugin::instance();
 		if ( ! $plugin->registry->has( PostTypeSource::ORIGIN ) && ! ( $read_only && \SoapboxBlyg\Settings::get( 'setup' ) ) ) {
-			WP_CLI::error( 'Publishing is switched off for this site (Settings > Soapbox Blyg).' );
+			WP_CLI::error( 'Publishing is switched off for this site (Settings > Soapbox for Blygger).' );
 		}
 		Schema::maybe_install();
 		return $plugin->posts;

@@ -130,15 +130,25 @@ final class Plugin {
 
 	/**
 	 * Attaches everything to WordPress. Runs once, on `plugins_loaded`.
+	 *
+	 * Once, whoever asks: where the plugin under its earlier name is active too and is loaded
+	 * after this one, its main file calls this as well, and finds this class.
 	 */
 	public static function boot(): void {
+		static $booted = false;
+		if ( $booted ) {
+			return;
+		}
+		$booted = true;
 		$plugin = self::instance();
 
 		// On every request, before anything else of the plugin's: an update can replace the files
 		// without anyone visiting the admin, and the next thing to happen may be a scheduled post
 		// going out or a reader's request. It is one autoloaded option read when nothing is due.
 		add_action( 'init', array( __CLASS__, 'upgrade' ), 0 );
-		add_action( 'init', array( __CLASS__, 'load_translations' ), 0 );
+		add_action( 'init', array( __CLASS__, 'keep_data_beside_the_earlier_plugin' ), 0 );
+		add_action( 'admin_notices', array( __CLASS__, 'earlier_plugin_notice' ) );
+		add_action( 'network_admin_notices', array( __CLASS__, 'earlier_plugin_notice' ) );
 		add_action( 'wp_initialize_site', array( __CLASS__, 'install_on_new_site' ), 900 );
 		add_filter( 'wpmu_drop_tables', array( Schema::class, 'drop_with_site' ) );
 
@@ -213,17 +223,46 @@ final class Plugin {
 	}
 
 	/**
-	 * Loads the translations that ship with the plugin.
-	 *
-	 * WordPress loads a plugin's language pack from translate.wordpress.org by itself, from
-	 * WP_LANG_DIR, and looks there first, so a pack overrides these as soon as one exists. These
-	 * are for the languages the plugin is released with before that, and for sites that do not
-	 * fetch packs. Plugin Check discourages this call for plugins hosted on WordPress.org, on
-	 * the grounds that packs make it unnecessary; they do, once there are any.
+	 * Whether the plugin as it was first released, "Soapbox Blyg" in the folder soapbox-blyg, is
+	 * still installed beside this one. Active or not: it is deleting it that matters.
 	 */
-	public static function load_translations(): void {
-		// phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- see above: the bundled files are the fallback until language packs exist.
-		load_plugin_textdomain( 'soapbox-blyg', false, dirname( plugin_basename( SOAPBOX_BLYG_FILE ) ) . '/languages' );
+	public static function earlier_plugin_installed(): bool {
+		$earlier = WP_PLUGIN_DIR . '/' . SOAPBOX_BLYG_SLUG . '/' . SOAPBOX_BLYG_SLUG . '.php';
+		return SOAPBOX_BLYG_FILE !== $earlier && file_exists( $earlier );
+	}
+
+	/**
+	 * Holds "delete all data when the plugin is deleted" off while the earlier plugin is installed.
+	 *
+	 * The two share one ledger and one set of options. Deleting the earlier plugin runs the
+	 * earlier plugin's uninstall, which reads that setting and, finding it on, drops the tables
+	 * this plugin is serving from: every id and every address the site has published. Nothing in
+	 * this plugin runs at that moment, so the setting is switched off beforehand, here, and the
+	 * settings screen will not switch it on again until the earlier plugin has gone.
+	 *
+	 * The file is looked for only when the setting is on, so an ordinary request reads nothing extra.
+	 */
+	public static function keep_data_beside_the_earlier_plugin(): void {
+		$settings = get_option( Settings::OPTION );
+		if ( is_array( $settings ) && ! empty( $settings['delete_data'] ) && self::earlier_plugin_installed() ) {
+			$settings['delete_data'] = false;
+			update_option( Settings::OPTION, $settings );
+		}
+	}
+
+	/**
+	 * Says, on the Plugins screen and the plugin's own, that the earlier plugin can go and what
+	 * is being held off until it has.
+	 */
+	public static function earlier_plugin_notice(): void {
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( ! $screen || ! current_user_can( 'activate_plugins' ) || ! self::earlier_plugin_installed() ) {
+			return;
+		}
+		if ( ! in_array( $screen->id, array( 'plugins', 'plugins-network' ), true ) && false === strpos( (string) $screen->id, SOAPBOX_BLYG_SLUG ) ) {
+			return;
+		}
+		echo '<div class="notice notice-info"><p>' . esc_html__( 'Soapbox Blyg, the earlier name of Soapbox for Blygger, is still installed. It can be deleted: this plugin has taken over the same blyg, at the same addresses. Until it has gone, "Delete all data when the plugin is deleted" is kept switched off, because deleting Soapbox Blyg with that setting on would delete the record of everything this site has published.', 'soapbox-for-blygger' ) . '</p></div>';
 	}
 
 	/**
@@ -266,7 +305,7 @@ final class Plugin {
 		);
 		if ( $missing ) {
 			/* translators: %s: a list of PHP extension names */
-			self::refuse_activation( sprintf( __( 'Soapbox Blyg needs the PHP extensions %s, which this server does not have. Ask your host to enable them.', 'soapbox-blyg' ), implode( ', ', $missing ) ) );
+			self::refuse_activation( sprintf( __( 'Soapbox for Blygger needs the PHP extensions %s, which this server does not have. Ask your host to enable them.', 'soapbox-for-blygger' ), implode( ', ', $missing ) ) );
 		}
 		if ( is_multisite() && $network_wide ) {
 			// Each site creates its tables when its admin is first visited, which is also where a
@@ -277,7 +316,7 @@ final class Plugin {
 		}
 		update_option( Schema::PROBLEM_OPTION, '', true ); // Activating is asking for it to be tried again.
 		if ( ! Schema::install() && 'engine' === Schema::$problem ) {
-			self::refuse_activation( __( 'Soapbox Blyg keeps its record of what was published in database tables that must use the InnoDB storage engine, and this database created them with another. Ask your host to make InnoDB the default engine, or convert the soapbox_blyg tables to InnoDB, then activate again.', 'soapbox-blyg' ) );
+			self::refuse_activation( __( 'Soapbox for Blygger keeps its record of what was published in database tables that must use the InnoDB storage engine, and this database created them with another. Ask your host to make InnoDB the default engine, or convert the soapbox_blyg tables to InnoDB, then activate again.', 'soapbox-for-blygger' ) );
 		}
 		// Posts may have been unpublished while the plugin was inactive.
 		PostTypeSource::request_reconcile();
@@ -290,7 +329,7 @@ final class Plugin {
 	 */
 	private static function refuse_activation( string $message ): void {
 		deactivate_plugins( plugin_basename( SOAPBOX_BLYG_FILE ) );
-		wp_die( esc_html( $message ), esc_html__( 'Soapbox Blyg could not be activated', 'soapbox-blyg' ), array( 'back_link' => true ) );
+		wp_die( esc_html( $message ), esc_html__( 'Soapbox for Blygger could not be activated', 'soapbox-for-blygger' ), array( 'back_link' => true ) );
 	}
 
 	/**
@@ -316,11 +355,11 @@ final class Plugin {
 		if ( ! function_exists( 'wp_add_privacy_policy_content' ) ) {
 			return;
 		}
-		$text  = '<p>' . esc_html__( 'This site publishes its posts as a blyg, using the Soapbox Blyg plugin. Each published post is stored as a series of versions, with the author\'s display name as it was when that version was published. These versions stay available at their published addresses after the post is edited, and a withdrawn post\'s address continues to answer, with no content.', 'soapbox-blyg' ) . '</p>';
-		$text .= '<p>' . esc_html__( 'The plugin sets no cookies and collects no information about visitors to this site.', 'soapbox-blyg' ) . '</p>';
-		$text .= '<p>' . esc_html__( 'If the site accepts Webmentions: when another publication tells this site that it has quoted or responded to something here, this site fetches that publication\'s page to confirm it, and records the address of that page, the name its author published there, and the time. It does not store the content of the page, and these records are visible to this site\'s administrators only. To limit how often one sender can do this, it also keeps a scrambled form of the network address the notification came from, which cannot be turned back into the address.', 'soapbox-blyg' ) . '</p>';
-		$text .= '<p>' . esc_html__( 'When a signed-in user pins a version of a post, the site records which user did so.', 'soapbox-blyg' ) . '</p>';
-		wp_add_privacy_policy_content( __( 'Soapbox Blyg', 'soapbox-blyg' ), wp_kses_post( $text ) );
+		$text  = '<p>' . esc_html__( 'This site publishes its posts as a blyg, using the Soapbox for Blygger plugin. Each published post is stored as a series of versions, with the author\'s display name as it was when that version was published. These versions stay available at their published addresses after the post is edited, and a withdrawn post\'s address continues to answer, with no content.', 'soapbox-for-blygger' ) . '</p>';
+		$text .= '<p>' . esc_html__( 'The plugin sets no cookies and collects no information about visitors to this site.', 'soapbox-for-blygger' ) . '</p>';
+		$text .= '<p>' . esc_html__( 'If the site accepts Webmentions: when another publication tells this site that it has quoted or responded to something here, this site fetches that publication\'s page to confirm it, and records the address of that page, the name its author published there, and the time. It does not store the content of the page, and these records are visible to this site\'s administrators only. To limit how often one sender can do this, it also keeps a scrambled form of the network address the notification came from, which cannot be turned back into the address.', 'soapbox-for-blygger' ) . '</p>';
+		$text .= '<p>' . esc_html__( 'When a signed-in user pins a version of a post, the site records which user did so.', 'soapbox-for-blygger' ) . '</p>';
+		wp_add_privacy_policy_content( __( 'Soapbox for Blygger', 'soapbox-for-blygger' ), wp_kses_post( $text ) );
 	}
 
 	/**

@@ -56,9 +56,9 @@ class SiteHealth {
 			return $tests; // Publishing is off: there is nothing to check.
 		}
 		$direct = array(
-			'permalinks' => __( 'Blyg: permalinks', 'soapbox-blyg' ),
-			'mount'      => __( 'Blyg: mount path', 'soapbox-blyg' ),
-			'ledger'     => __( 'Blyg: ledger integrity', 'soapbox-blyg' ),
+			'permalinks' => __( 'Blyg: permalinks', 'soapbox-for-blygger' ),
+			'mount'      => __( 'Blyg: mount path', 'soapbox-for-blygger' ),
+			'ledger'     => __( 'Blyg: ledger integrity', 'soapbox-for-blygger' ),
 		);
 		foreach ( $direct as $test => $label ) {
 			$tests['direct'][ 'soapbox_blyg_' . $test ] = array(
@@ -67,8 +67,8 @@ class SiteHealth {
 			);
 		}
 		$async = array(
-			'reachable'  => __( 'Blyg: surface reachable', 'soapbox-blyg' ),
-			'edge-cache' => __( 'Blyg: edge cache', 'soapbox-blyg' ),
+			'reachable'  => __( 'Blyg: surface reachable', 'soapbox-for-blygger' ),
+			'edge-cache' => __( 'Blyg: edge cache', 'soapbox-for-blygger' ),
 		);
 		foreach ( $async as $test => $label ) {
 			$tests['async'][ 'soapbox_blyg_' . str_replace( '-', '_', $test ) ] = array(
@@ -96,7 +96,7 @@ class SiteHealth {
 			'label'       => $label,
 			'status'      => $status,
 			'badge'       => array(
-				'label' => __( 'Soapbox Blyg', 'soapbox-blyg' ),
+				'label' => __( 'Soapbox for Blygger', 'soapbox-for-blygger' ),
 				'color' => 'good' === $status ? 'blue' : ( 'critical' === $status ? 'red' : 'orange' ),
 			),
 			'description' => '<p>' . esc_html( $description ) . '</p>',
@@ -141,9 +141,9 @@ class SiteHealth {
 				return self::result(
 					'reachable',
 					'recommended',
-					__( 'The blyg could not be checked from the server', 'soapbox-blyg' ),
+					__( 'The blyg could not be checked from the server', 'soapbox-for-blygger' ),
 					/* translators: 1: manifest URL, 2: error message */
-					sprintf( __( 'This site could not request its own manifest at %1$s (%2$s). That usually means the server cannot reach itself by its public address, which also affects other WordPress features. The blyg may still be reachable from outside: open the address in a browser to check.', 'soapbox-blyg' ), $manifest_url, $response->get_error_message() )
+					sprintf( __( 'This site could not request its own manifest at %1$s (%2$s). That usually means the server cannot reach itself by its public address, which also affects other WordPress features. The blyg may still be reachable from outside: open the address in a browser to check.', 'soapbox-for-blygger' ), $manifest_url, $response->get_error_message() )
 				);
 			}
 			$manifest = json_decode( wp_remote_retrieve_body( $response ), true );
@@ -151,11 +151,11 @@ class SiteHealth {
 				return self::result(
 					'reachable',
 					'critical',
-					__( 'The blyg\'s manifest is not being served', 'soapbox-blyg' ),
+					__( 'The blyg\'s manifest is not being served', 'soapbox-for-blygger' ),
 					/* translators: 1: manifest URL, 2: HTTP status */
-					sprintf( __( '%1$s answered with status %2$d, or with something that is not a manifest. Readers cannot find the blyg. Re-saving Settings > Permalinks rebuilds the rewrite rules; if that does not help, another plugin or a server rule is answering at that path.', 'soapbox-blyg' ), $manifest_url, (int) wp_remote_retrieve_response_code( $response ) ),
+					sprintf( __( '%1$s answered with status %2$d, or with something that is not a manifest. Readers cannot find the blyg. Re-saving Settings > Permalinks rebuilds the rewrite rules; if that does not help, another plugin or a server rule is answering at that path.', 'soapbox-for-blygger' ), $manifest_url, (int) wp_remote_retrieve_response_code( $response ) ),
 					admin_url( 'options-permalink.php' ),
-					__( 'Permalink settings', 'soapbox-blyg' )
+					__( 'Permalink settings', 'soapbox-for-blygger' )
 				);
 			}
 			foreach ( array(
@@ -167,22 +167,22 @@ class SiteHealth {
 					return self::result(
 						'reachable',
 						'critical',
-						__( 'The blyg\'s documents are behind a login', 'soapbox-blyg' ),
+						__( 'The blyg\'s documents are behind a login', 'soapbox-for-blygger' ),
 						/* translators: %s: URL */
-						sprintf( __( '%s requires authentication. In the templated layout the blyg\'s documents are served through the REST API, and something on this site is restricting it to logged-in users: usually a security plugin, or a plugin that disables the REST API. Allow anonymous access to the soapbox-blyg/v1 namespace in that plugin\'s settings.', 'soapbox-blyg' ), $url )
+						sprintf( __( '%s requires authentication. In the templated layout the blyg\'s documents are served through the REST API, and something on this site is restricting it to logged-in users: usually a security plugin, or a plugin that disables the REST API. Allow anonymous access to the soapbox-blyg/v1 namespace in that plugin\'s settings.', 'soapbox-for-blygger' ), $url )
 					);
 				}
 				if ( 200 !== $status ) {
 					return self::result(
 						'reachable',
 						'critical',
-						__( 'Part of the blyg is not being served', 'soapbox-blyg' ),
+						__( 'Part of the blyg is not being served', 'soapbox-for-blygger' ),
 						sprintf(
 							'feed' === $name
 								/* translators: 1: URL, 2: HTTP status */
-								? __( 'The manifest points to its feed at %1$s, which answered with status %2$d. Readers can find the blyg but cannot read it.', 'soapbox-blyg' )
+								? __( 'The manifest points to its feed at %1$s, which answered with status %2$d. Readers can find the blyg but cannot read it.', 'soapbox-for-blygger' )
 								/* translators: 1: URL, 2: HTTP status */
-								: __( 'The manifest points to its archive index at %1$s, which answered with status %2$d. Readers can find the blyg but cannot read it.', 'soapbox-blyg' ),
+								: __( 'The manifest points to its archive index at %1$s, which answered with status %2$d. Readers can find the blyg but cannot read it.', 'soapbox-for-blygger' ),
 							$url,
 							$status
 						)
@@ -190,7 +190,7 @@ class SiteHealth {
 				}
 			}
 		}
-		return self::result( 'reachable', 'good', __( 'The blyg is being served', 'soapbox-blyg' ), __( 'Every blyg on this site answers with a manifest, a feed and an archive index.', 'soapbox-blyg' ) );
+		return self::result( 'reachable', 'good', __( 'The blyg is being served', 'soapbox-for-blygger' ), __( 'Every blyg on this site answers with a manifest, a feed and an archive index.', 'soapbox-for-blygger' ) );
 	}
 
 	/**
@@ -258,9 +258,9 @@ class SiteHealth {
 					return self::result(
 						'edge_cache',
 						'recommended',
-						__( 'Your host adds its own caching instructions to the blyg', 'soapbox-blyg' ),
+						__( 'Your host adds its own caching instructions to the blyg', 'soapbox-for-blygger' ),
 						/* translators: 1: URL, 2: the Cache-Control header as received, 3: mount path, 4: a length of time, such as "5 mins" */
-						sprintf( __( '%1$s arrives with caching instructions that are not the plugin\'s (%2$s). The plugin puts its own lifetime (%4$s) first, and a cache follows the first it reads; here a longer one, added by the web server or by something else in front of WordPress, comes first. An item you withdraw, or a post you edit, could keep being served in its old form. If a plugin or theme on this site filters soapbox_blyg_cache_control, its value must keep s-maxage. Otherwise this comes from the server\'s own configuration, so excluding the path from a page cache does not remove it: ask your host to stop adding a Cache-Control header for %3$s and for /wp-json/soapbox-blyg/.', 'soapbox-blyg' ), $url, $lifetime['header'], $origin->path, $words )
+						sprintf( __( '%1$s arrives with caching instructions that are not the plugin\'s (%2$s). The plugin puts its own lifetime (%4$s) first, and a cache follows the first it reads; here a longer one, added by the web server or by something else in front of WordPress, comes first. An item you withdraw, or a post you edit, could keep being served in its old form. If a plugin or theme on this site filters soapbox_blyg_cache_control, its value must keep s-maxage. Otherwise this comes from the server\'s own configuration, so excluding the path from a page cache does not remove it: ask your host to stop adding a Cache-Control header for %3$s and for /wp-json/soapbox-blyg/.', 'soapbox-for-blygger' ), $url, $lifetime['header'], $origin->path, $words )
 					);
 				}
 				// What the header allows is one half. The other is what a cache does with it, and
@@ -289,9 +289,9 @@ class SiteHealth {
 						return self::result(
 							'edge_cache',
 							'recommended',
-							__( 'A cache in front of this site is serving an old copy of the blyg', 'soapbox-blyg' ),
+							__( 'A cache in front of this site is serving an old copy of the blyg', 'soapbox-for-blygger' ),
 							/* translators: 1: URL, 2: mount path */
-							sprintf( __( '%1$s was answered with a copy that is not the document as it is now. Something in front of WordPress (a CDN, Varnish, or your host\'s own cache) kept an earlier one and has not been told it changed. An item you withdraw, or a post you edit, keeps being served in its old form from there. Purge that cache now. So that it does not happen again, exclude the path %2$s, and the REST namespace /wp-json/soapbox-blyg/, from it, or connect it to the soapbox_blyg_purge_urls action. The plugin\'s readme lists the cache plugins it purges by itself.', 'soapbox-blyg' ), $url, $origin->path )
+							sprintf( __( '%1$s was answered with a copy that is not the document as it is now. Something in front of WordPress (a CDN, Varnish, or your host\'s own cache) kept an earlier one and has not been told it changed. An item you withdraw, or a post you edit, keeps being served in its old form from there. Purge that cache now. So that it does not happen again, exclude the path %2$s, and the REST namespace /wp-json/soapbox-blyg/, from it, or connect it to the soapbox_blyg_purge_urls action. The plugin\'s readme lists the cache plugins it purges by itself.', 'soapbox-for-blygger' ), $url, $origin->path )
 						);
 					}
 					$old = max( $old, max( array_map( 'intval', (array) wp_remote_retrieve_header( $answer, 'age' ) ) ) );
@@ -301,9 +301,9 @@ class SiteHealth {
 					return self::result(
 						'edge_cache',
 						'recommended',
-						__( 'A cache in front of this site is holding the blyg', 'soapbox-blyg' ),
+						__( 'A cache in front of this site is holding the blyg', 'soapbox-for-blygger' ),
 						/* translators: 1: URL, 2: mount path, 3: a length of time, such as "5 mins" */
-						sprintf( __( '%1$s is being served from a shared cache (a CDN, Varnish, or your host\'s own cache) for longer than the cache lifetime in the plugin\'s settings (%3$s). An item you withdraw, or a post you edit, would keep being served in its old form until that cache expires. Exclude the path %2$s, and the REST namespace /wp-json/soapbox-blyg/, from that cache. The plugin\'s readme has instructions for Varnish, Cloudflare and nginx.', 'soapbox-blyg' ), $url, $origin->path, $words )
+						sprintf( __( '%1$s is being served from a shared cache (a CDN, Varnish, or your host\'s own cache) for longer than the cache lifetime in the plugin\'s settings (%3$s). An item you withdraw, or a post you edit, would keep being served in its old form until that cache expires. Exclude the path %2$s, and the REST namespace /wp-json/soapbox-blyg/, from that cache. The plugin\'s readme has instructions for Varnish, Cloudflare and nginx.', 'soapbox-for-blygger' ), $url, $origin->path, $words )
 					);
 				}
 				$holding = $holding || $old > $allowed;
@@ -314,26 +314,26 @@ class SiteHealth {
 			return self::result(
 				'edge_cache',
 				'recommended',
-				__( 'The blyg\'s caching could not be checked from the server', 'soapbox-blyg' ),
+				__( 'The blyg\'s caching could not be checked from the server', 'soapbox-for-blygger' ),
 				/* translators: %d: a number of seconds */
-				sprintf( __( 'This site could not request its own blyg, so it cannot tell whether a cache in front of it is holding the documents. To check by hand, request the manifest twice, a few seconds apart, and look at the response headers: the first s-maxage in Cache-Control should be %1$d, and Age should never be more than %1$d.', 'soapbox-blyg' ), $allowed )
+				sprintf( __( 'This site could not request its own blyg, so it cannot tell whether a cache in front of it is holding the documents. To check by hand, request the manifest twice, a few seconds apart, and look at the response headers: the first s-maxage in Cache-Control should be %1$d, and Age should never be more than %1$d.', 'soapbox-for-blygger' ), $allowed )
 			);
 		}
 		if ( $holding ) {
 			return self::result(
 				'edge_cache',
 				'good',
-				__( 'The copies of the blyg being served are current', 'soapbox-blyg' ),
+				__( 'The copies of the blyg being served are current', 'soapbox-for-blygger' ),
 				/* translators: %s: a length of time, such as "5 mins" */
-				sprintf( __( 'A cache in front of this site keeps the blyg\'s documents for longer than the cache lifetime in the plugin\'s settings (%s), and the copies it is serving are the documents as they are now. That is safe for as long as the cache is told when a document changes; the plugin\'s readme lists the cache plugins it tells by itself. If you withdraw a post and it is still being served, this test will say so.', 'soapbox-blyg' ), $words )
+				sprintf( __( 'A cache in front of this site keeps the blyg\'s documents for longer than the cache lifetime in the plugin\'s settings (%s), and the copies it is serving are the documents as they are now. That is safe for as long as the cache is told when a document changes; the plugin\'s readme lists the cache plugins it tells by itself. If you withdraw a post and it is still being served, this test will say so.', 'soapbox-for-blygger' ), $words )
 			);
 		}
 		return self::result(
 			'edge_cache',
 			'good',
-			__( 'No cache is holding the blyg', 'soapbox-blyg' ),
+			__( 'No cache is holding the blyg', 'soapbox-for-blygger' ),
 			/* translators: %s: a length of time, such as "5 mins" */
-			sprintf( __( 'No cache in front of this site keeps the blyg\'s documents for longer than the cache lifetime in the plugin\'s settings (%s).', 'soapbox-blyg' ), $words )
+			sprintf( __( 'No cache in front of this site keeps the blyg\'s documents for longer than the cache lifetime in the plugin\'s settings (%s).', 'soapbox-for-blygger' ), $words )
 		);
 	}
 
@@ -345,13 +345,13 @@ class SiteHealth {
 			return self::result(
 				'permalinks',
 				'critical',
-				__( 'The blyg cannot be served on "Plain" permalinks', 'soapbox-blyg' ),
-				__( 'A blyg is served at an address of its own, such as /blyg/blyg.json, which needs WordPress\'s rewrite rules. "Plain" permalinks switch those off. Choose any other permalink structure.', 'soapbox-blyg' ),
+				__( 'The blyg cannot be served on "Plain" permalinks', 'soapbox-for-blygger' ),
+				__( 'A blyg is served at an address of its own, such as /blyg/blyg.json, which needs WordPress\'s rewrite rules. "Plain" permalinks switch those off. Choose any other permalink structure.', 'soapbox-for-blygger' ),
 				admin_url( 'options-permalink.php' ),
-				__( 'Permalink settings', 'soapbox-blyg' )
+				__( 'Permalink settings', 'soapbox-for-blygger' )
 			);
 		}
-		return self::result( 'permalinks', 'good', __( 'Permalinks can serve the blyg', 'soapbox-blyg' ), __( 'The site\'s permalink structure supports the addresses a blyg needs.', 'soapbox-blyg' ) );
+		return self::result( 'permalinks', 'good', __( 'Permalinks can serve the blyg', 'soapbox-for-blygger' ), __( 'The site\'s permalink structure supports the addresses a blyg needs.', 'soapbox-for-blygger' ) );
 	}
 
 	/**
@@ -365,9 +365,9 @@ class SiteHealth {
 			return self::result(
 				'mount',
 				'critical',
-				__( 'A blyg was asked to move, and was not moved', 'soapbox-blyg' ),
+				__( 'A blyg was asked to move, and was not moved', 'soapbox-for-blygger' ),
 				/* translators: 1: origin key, 2: the path asked for, 3: the path it is locked to */
-				sprintf( __( 'The blyg "%1$s" is now configured for %2$s, but it has already published at %3$s and is still served there: published addresses are permanent. Put the configuration back to %3$s.', 'soapbox-blyg' ), $key, $conflicts[ $key ], $plugin->registry->get( $key )->path )
+				sprintf( __( 'The blyg "%1$s" is now configured for %2$s, but it has already published at %3$s and is still served there: published addresses are permanent. Put the configuration back to %3$s.', 'soapbox-for-blygger' ), $key, $conflicts[ $key ], $plugin->registry->get( $key )->path )
 			);
 		}
 		foreach ( $plugin->registry->all() as $origin ) {
@@ -376,15 +376,15 @@ class SiteHealth {
 				return self::result(
 					'mount',
 					'recommended',
-					__( 'A page has the same address as the blyg', 'soapbox-blyg' ),
+					__( 'A page has the same address as the blyg', 'soapbox-for-blygger' ),
 					/* translators: 1: page title, 2: mount path */
-					sprintf( __( '"%1$s" has the address %2$s, which is where the blyg is mounted. The blyg wins, so that page cannot be reached. Give the page a different slug.', 'soapbox-blyg' ), get_the_title( $page ), $origin->path ),
+					sprintf( __( '"%1$s" has the address %2$s, which is where the blyg is mounted. The blyg wins, so that page cannot be reached. Give the page a different slug.', 'soapbox-for-blygger' ), get_the_title( $page ), $origin->path ),
 					(string) get_edit_post_link( $page, 'raw' ),
-					__( 'Edit the page', 'soapbox-blyg' )
+					__( 'Edit the page', 'soapbox-for-blygger' )
 				);
 			}
 		}
-		return self::result( 'mount', 'good', __( 'The blyg\'s address is its own', 'soapbox-blyg' ), __( 'No page or post shares an address with a blyg, and every blyg is served where it first published.', 'soapbox-blyg' ) );
+		return self::result( 'mount', 'good', __( 'The blyg\'s address is its own', 'soapbox-for-blygger' ), __( 'No page or post shares an address with a blyg, and every blyg is served where it first published.', 'soapbox-for-blygger' ) );
 	}
 
 	/**
@@ -393,16 +393,16 @@ class SiteHealth {
 	 */
 	public static function test_ledger(): array {
 		$tools  = admin_url( 'tools.php?page=' . ToolsPage::PAGE );
-		$action = __( 'Open Tools > Soapbox Blyg', 'soapbox-blyg' );
+		$action = __( 'Open Tools > Soapbox for Blygger', 'soapbox-for-blygger' );
 		$schema = \SoapboxBlyg\Ledger\Schema::blocked();
 		if ( '' !== $schema ) {
 			return self::result(
 				'ledger',
 				'critical',
-				__( 'The blyg\'s database tables cannot be relied on', 'soapbox-blyg' ),
+				__( 'The blyg\'s database tables cannot be relied on', 'soapbox-for-blygger' ),
 				'engine' === $schema
-					? __( 'The plugin\'s tables are not using the InnoDB storage engine. Without it an item and its version cannot be written together or not at all, so the plugin is publishing nothing and the blyg is offline. Ask your host to convert the soapbox_blyg tables to InnoDB, then deactivate and activate the plugin.', 'soapbox-blyg' )
-					: __( 'The plugin\'s tables could not be brought up to date, so the plugin is publishing nothing and the blyg is offline. It tries again by itself; if this stays, deactivate and activate the plugin, and check that the database user may create and alter tables.', 'soapbox-blyg' ),
+					? __( 'The plugin\'s tables are not using the InnoDB storage engine. Without it an item and its version cannot be written together or not at all, so the plugin is publishing nothing and the blyg is offline. Ask your host to convert the soapbox_blyg tables to InnoDB, then deactivate and activate the plugin.', 'soapbox-for-blygger' )
+					: __( 'The plugin\'s tables could not be brought up to date, so the plugin is publishing nothing and the blyg is offline. It tries again by itself; if this stays, deactivate and activate the plugin, and check that the database user may create and alter tables.', 'soapbox-for-blygger' ),
 				$tools,
 				$action
 			);
@@ -413,14 +413,14 @@ class SiteHealth {
 			return self::result(
 				'ledger',
 				'recommended',
-				__( 'A post was saved but not published to the blyg', 'soapbox-blyg' ),
+				__( 'A post was saved but not published to the blyg', 'soapbox-for-blygger' ),
 				/* translators: 1: post id, 2: date and time, 3: error message */
 				sprintf(
 					(int) $error['tries'] >= PostTypeSource::MAX_REPAIR_TRIES
 						/* translators: 1: post id, 2: date and time, 3: error message */
-						? __( 'Post %1$d was saved on %2$s, but the blyg could not be brought into step with it: %3$s. The plugin has stopped trying. Nothing the post no longer shows is being served; open the post and save it to try again.', 'soapbox-blyg' )
+						? __( 'Post %1$d was saved on %2$s, but the blyg could not be brought into step with it: %3$s. The plugin has stopped trying. Nothing the post no longer shows is being served; open the post and save it to try again.', 'soapbox-for-blygger' )
 						/* translators: 1: post id, 2: date and time, 3: error message */
-						: __( 'Post %1$d was saved on %2$s, but the blyg could not be brought into step with it: %3$s. The plugin keeps trying, and until it succeeds nothing the post no longer shows is served. Saving the post again also retries.', 'soapbox-blyg' ),
+						: __( 'Post %1$d was saved on %2$s, but the blyg could not be brought into step with it: %3$s. The plugin keeps trying, and until it succeeds nothing the post no longer shows is served. Saving the post again also retries.', 'soapbox-for-blygger' ),
 					(int) $error['post'],
 					(string) $error['at'],
 					(string) $error['message']
@@ -431,16 +431,16 @@ class SiteHealth {
 		}
 		$last = get_option( Verifier::RESULT_OPTION );
 		if ( ! is_array( $last ) ) {
-			return self::result( 'ledger', 'recommended', __( 'The blyg\'s ledger has never been verified', 'soapbox-blyg' ), __( 'Verifying recomputes the hash of every version ever published and checks the ledger is complete. Run it once now, and again after WordPress or plugin updates.', 'soapbox-blyg' ), $tools, $action );
+			return self::result( 'ledger', 'recommended', __( 'The blyg\'s ledger has never been verified', 'soapbox-for-blygger' ), __( 'Verifying recomputes the hash of every version ever published and checks the ledger is complete. Run it once now, and again after WordPress or plugin updates.', 'soapbox-for-blygger' ), $tools, $action );
 		}
 		if ( empty( $last['passed'] ) ) {
 			return self::result(
 				'ledger',
 				'critical',
-				__( 'The blyg\'s ledger failed verification', 'soapbox-blyg' ),
+				__( 'The blyg\'s ledger failed verification', 'soapbox-for-blygger' ),
 				sprintf(
 					/* translators: 1: number of problems, already formatted for the locale, 2: date and time */
-					_n( 'The last verification, on %2$s, found %1$s problem. The ledger is the record of everything this site has published; run verify again from Tools to see what is wrong.', 'The last verification, on %2$s, found %1$s problems. The ledger is the record of everything this site has published; run verify again from Tools to see what is wrong.', (int) $last['problems'], 'soapbox-blyg' ),
+					_n( 'The last verification, on %2$s, found %1$s problem. The ledger is the record of everything this site has published; run verify again from Tools to see what is wrong.', 'The last verification, on %2$s, found %1$s problems. The ledger is the record of everything this site has published; run verify again from Tools to see what is wrong.', (int) $last['problems'], 'soapbox-for-blygger' ),
 					number_format_i18n( (int) $last['problems'] ),
 					(string) $last['at']
 				),
@@ -449,8 +449,8 @@ class SiteHealth {
 			);
 		}
 		if ( time() - (int) strtotime( (string) $last['at'] ) > 30 * DAY_IN_SECONDS ) {
-			return self::result( 'ledger', 'recommended', __( 'The blyg\'s ledger was last verified over 30 days ago', 'soapbox-blyg' ), __( 'It passed then. Verify again, especially after WordPress or plugin updates, which can change how posts render.', 'soapbox-blyg' ), $tools, $action );
+			return self::result( 'ledger', 'recommended', __( 'The blyg\'s ledger was last verified over 30 days ago', 'soapbox-for-blygger' ), __( 'It passed then. Verify again, especially after WordPress or plugin updates, which can change how posts render.', 'soapbox-for-blygger' ), $tools, $action );
 		}
-		return self::result( 'ledger', 'good', __( 'The blyg\'s ledger is verified', 'soapbox-blyg' ), __( 'Every stored version matches its hash, and the ledger is complete.', 'soapbox-blyg' ) );
+		return self::result( 'ledger', 'good', __( 'The blyg\'s ledger is verified', 'soapbox-for-blygger' ), __( 'Every stored version matches its hash, and the ledger is complete.', 'soapbox-for-blygger' ) );
 	}
 }

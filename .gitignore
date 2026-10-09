@@ -3,6 +3,10 @@
 /.wp-env.override.json
 /.phpunit.result.cache
 *.zip
+# Compiled translations: none ships, and a language pack is where a site's come from.
+/languages/*.mo
+/languages/*.l10n.php
+/languages/*.json
 /release/
 /.claude/
 .DS_Store

@@ -139,7 +139,7 @@ function setBusy( busy ) {
 async function backfill( dryRun ) {
 	const target = output( 'backfill' );
 	target.textContent = '';
-	const progress = el( 'p', __( 'Starting…', 'soapbox-blyg' ) );
+	const progress = el( 'p', __( 'Starting…', 'soapbox-for-blygger' ) );
 	target.appendChild( progress );
 	setBusy( true );
 
@@ -167,7 +167,7 @@ async function backfill( dryRun ) {
 			stuck = batch.stuck;
 			progress.textContent = sprintf(
 				/* translators: 1: posts handled so far, 2: total posts */
-				__( '%1$d of %2$d…', 'soapbox-blyg' ),
+				__( '%1$d of %2$d…', 'soapbox-for-blygger' ),
 				Math.min( done + failed.length, total ),
 				total
 			);
@@ -187,14 +187,14 @@ async function backfill( dryRun ) {
 			target,
 			failed.length ? 'warning' : 'success',
 			[
-				__( 'Dry run complete.', 'soapbox-blyg' ),
+				__( 'Dry run complete.', 'soapbox-for-blygger' ),
 				sprintf(
 					/* translators: %d: number of posts */
 					_n(
 						'%d post rendered.',
 						'%d posts rendered.',
 						rows.length,
-						'soapbox-blyg'
+						'soapbox-for-blygger'
 					),
 					rows.length
 				),
@@ -204,11 +204,11 @@ async function backfill( dryRun ) {
 						'%d failed.',
 						'%d failed.',
 						failed.length,
-						'soapbox-blyg'
+						'soapbox-for-blygger'
 					),
 					failed.length
 				),
-				__( 'Nothing was published.', 'soapbox-blyg' ),
+				__( 'Nothing was published.', 'soapbox-for-blygger' ),
 			].join( ' ' )
 		);
 		if ( rows.length ) {
@@ -273,7 +273,7 @@ async function backfill( dryRun ) {
 					'p',
 					__(
 						'The first file lists every post with its size and flags; the second is every post as it would be published, to read through; the third is a zip of every post as separate Markdown and HTML files, for comparing one run with another. Flags: featured-only (the featured image was added), embed-link (an embed became a link), br-heavy (many line breaks: usually a poem), relative-src (an image address was relative), empty-body (nothing but the title).',
-						'soapbox-blyg'
+						'soapbox-for-blygger'
 					),
 					{ class: 'description' }
 				)
@@ -289,7 +289,7 @@ async function backfill( dryRun ) {
 					'Backfill complete: %d post added to the blyg.',
 					'Backfill complete: %d posts added to the blyg.',
 					done,
-					'soapbox-blyg'
+					'soapbox-for-blygger'
 				),
 				done
 			)
@@ -304,7 +304,7 @@ async function backfill( dryRun ) {
 						'%d post could not be added and was left as it is.',
 						'%d posts could not be added and were left as they are.',
 						stuck,
-						'soapbox-blyg'
+						'soapbox-for-blygger'
 					),
 					stuck
 				)
@@ -321,7 +321,7 @@ async function backfill( dryRun ) {
 					'li',
 					sprintf(
 						/* translators: 1: post id, 2: error message */
-						__( 'Post %1$d: %2$s', 'soapbox-blyg' ),
+						__( 'Post %1$d: %2$s', 'soapbox-for-blygger' ),
 						f.post,
 						f.message
 					)
@@ -343,7 +343,7 @@ async function backfill( dryRun ) {
 				'a',
 				__(
 					'Reload this page to see the updated totals.',
-					'soapbox-blyg'
+					'soapbox-for-blygger'
 				),
 				{ href: window.location.href }
 			)
@@ -362,7 +362,7 @@ async function backfill( dryRun ) {
 async function verify( render ) {
 	const target = output( 'verify' );
 	target.textContent = '';
-	const progress = el( 'p', __( 'Verifying…', 'soapbox-blyg' ) );
+	const progress = el( 'p', __( 'Verifying…', 'soapbox-for-blygger' ) );
 	target.appendChild( progress );
 	setBusy( true );
 	try {
@@ -376,14 +376,14 @@ async function verify( render ) {
 			target,
 			result.passed ? 'success' : 'error',
 			result.passed
-				? __( 'The ledger is verified.', 'soapbox-blyg' )
+				? __( 'The ledger is verified.', 'soapbox-for-blygger' )
 				: sprintf(
 						/* translators: %d: number of problems */
 						_n(
 							'%d problem found.',
 							'%d problems found.',
 							result.problems.length,
-							'soapbox-blyg'
+							'soapbox-for-blygger'
 						),
 						result.problems.length
 					)
@@ -432,7 +432,7 @@ function renderItem( box, data ) {
 				'p',
 				__(
 					'Not on the blyg yet. A post joins it when it is published.',
-					'soapbox-blyg'
+					'soapbox-for-blygger'
 				)
 			)
 		);
@@ -445,7 +445,7 @@ function renderItem( box, data ) {
 	head.appendChild( el( 'br' ) );
 	head.appendChild( document.createTextNode( versionLine( item ) + ' · ' ) );
 	head.appendChild(
-		el( 'a', __( 'Item document', 'soapbox-blyg' ), {
+		el( 'a', __( 'Item document', 'soapbox-for-blygger' ), {
 			href: item.url,
 			target: '_blank',
 			rel: 'noopener',
@@ -459,7 +459,7 @@ function renderItem( box, data ) {
 				'p',
 				__(
 					'A pinned version stays public for good, even if the post is later unpublished or deleted.',
-					'soapbox-blyg'
+					'soapbox-for-blygger'
 				),
 				{ class: 'description' }
 			)
@@ -491,7 +491,7 @@ function renderItem( box, data ) {
 				'button',
 				sprintf(
 					/* translators: %d: version number */
-					__( 'Pin version %d', 'soapbox-blyg' ),
+					__( 'Pin version %d', 'soapbox-for-blygger' ),
 					entry.version
 				),
 				{ type: 'button', class: 'button button-small' }
@@ -503,13 +503,13 @@ function renderItem( box, data ) {
 				const sure = window.confirm(
 					sprintf(
 						/* translators: %d: version number */
-						__( 'Pin version %d?', 'soapbox-blyg' ),
+						__( 'Pin version %d?', 'soapbox-for-blygger' ),
 						entry.version
 					) +
 						'\n\n' +
 						__(
 							'Pinning cannot be undone. This exact version will be served at its own address forever, including after later edits and if the post is withdrawn.',
-							'soapbox-blyg'
+							'soapbox-for-blygger'
 						)
 				);
 				if ( ! sure ) {

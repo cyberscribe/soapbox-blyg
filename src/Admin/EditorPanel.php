@@ -66,7 +66,7 @@ class EditorPanel {
 		}
 		add_meta_box(
 			'soapbox-blyg',
-			__( 'Blyg', 'soapbox-blyg' ),
+			__( 'Blyg', 'soapbox-for-blygger' ),
 			array( __CLASS__, 'render_meta_box' ),
 			$post_type,
 			'side',
@@ -86,7 +86,7 @@ class EditorPanel {
 		$data = AdminController::item_data( (int) $post->ID );
 		echo '<div data-soapbox-blyg-item="' . (int) $post->ID . '">';
 		if ( ! $data['item'] ) {
-			echo '<p>' . esc_html__( 'Not on the blyg yet. A post joins it when it is published.', 'soapbox-blyg' ) . '</p>';
+			echo '<p>' . esc_html__( 'Not on the blyg yet. A post joins it when it is published.', 'soapbox-for-blygger' ) . '</p>';
 		} else {
 			printf(
 				'<p><code style="font-size:11px">%1$s</code><br>%2$s &middot; <a href="%3$s" target="_blank" rel="noopener">%4$s</a></p>',
@@ -94,13 +94,13 @@ class EditorPanel {
 				esc_html(
 					sprintf(
 						/* translators: 1: version number, 2: kind (thread, fragment or withdrawn) */
-						__( 'Version %1$d, %2$s', 'soapbox-blyg' ),
+						__( 'Version %1$d, %2$s', 'soapbox-for-blygger' ),
 						(int) $data['item']['version'],
 						$data['item']['kind']
 					)
 				),
 				esc_url( $data['item']['url'] ),
-				esc_html__( 'Item document', 'soapbox-blyg' )
+				esc_html__( 'Item document', 'soapbox-for-blygger' )
 			);
 		}
 		echo '</div>';

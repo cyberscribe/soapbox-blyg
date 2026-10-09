@@ -5,7 +5,7 @@ msgfmt --check-format catches a wrong type or a missing one in strings it knows 
 strings. This also catches one that was added, and compares as a set, so that a translation may
 reorder positional placeholders freely but may not drop, repeat or invent one.
 
-    placeholders.py languages/soapbox-blyg-de_DE.po
+    placeholders.py languages/soapbox-for-blygger-de_DE.po
 
 Standard library only. Not part of the plugin.
 """

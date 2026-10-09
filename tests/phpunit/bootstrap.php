@@ -21,7 +21,7 @@ require_once $soapbox_blyg_tests_dir . '/includes/functions.php';
 tests_add_filter(
 	'muplugins_loaded',
 	static function () {
-		require dirname( __DIR__, 2 ) . '/soapbox-blyg.php';
+		require dirname( __DIR__, 2 ) . '/soapbox-for-blygger.php';
 	}
 );
 

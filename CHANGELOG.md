@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.1.2 (unreleased)
+
+For WordPress.org, whose review of 0.1.0 asked for a name that does not read as the Blygger
+project's own, and for no bundled translations.
+
+- **Renamed: "Soapbox for Blygger", slug `soapbox-for-blygger`.** The main file, the folder the
+  archive unpacks to, the text domain and the display name change. Nothing that is data or an
+  address does: `SOAPBOX_BLYG_SLUG` stays `soapbox-blyg` for good and still gives the table
+  prefix and the REST namespace; hooks, functions, options, the `SoapboxBlyg\` namespace, the admin
+  page slugs and `wp blyg` are as they were. A test pins them. The text domain is
+  `SOAPBOX_BLYG_TEXT_DOMAIN`.
+- The generator in every document is `soapbox-for-blygger/<version>` (`SOAPBOX_BLYG_GENERATOR`).
+- **Beside the plugin under its earlier name.** WordPress takes the two folders for two plugins.
+  The second to load stands down and says so; `Plugin::boot()` runs once whoever calls it. While
+  the earlier plugin is installed, "delete all data" is held off, in the option and on the
+  settings screen, because the earlier plugin's uninstall reads the same option and the tables
+  are the same tables. This plugin's own uninstall removes nothing while the earlier one is there.
+- **No translations in the plugin.** `load_plugin_textdomain()` is gone, the scripts' translations
+  are looked for in WordPress's languages directory, and `languages/` is not in the archive. The
+  repository keeps the `.pot` and the seven `.po` files as sources for translate.wordpress.org;
+  the compiled files are no longer tracked.
+- The build takes the slug from the header, not from the checkout's directory, and the archive's
+  one top folder is `soapbox-for-blygger`. `bin/rename.sh` is gone: it renamed the data's names,
+  which was only ever safe before a first release.
+- `bin/switchover.sh`: from 0.1.1 as Soapbox Blyg, with a ledger, to this release, in both orders.
+
 ## 0.1.1 (unreleased)
 
 From production (robertpeake.com, 2026-10-07):

@@ -470,7 +470,7 @@ class AdminTest extends TestCase {
 		};
 		$uninstall = static function () {
 			if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
-				define( 'WP_UNINSTALL_PLUGIN', 'soapbox-blyg/soapbox-blyg.php' );
+				define( 'WP_UNINSTALL_PLUGIN', 'soapbox-for-blygger/soapbox-for-blygger.php' );
 			}
 			if ( function_exists( 'soapbox_blyg_uninstall_site' ) ) {
 				soapbox_blyg_uninstall_site();

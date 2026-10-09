@@ -81,7 +81,7 @@ class Documents {
 	 * The generator string: this client's name and version (spec §3.2).
 	 */
 	public static function generator(): string {
-		return SOAPBOX_BLYG_SLUG . '/' . SOAPBOX_BLYG_VERSION;
+		return SOAPBOX_BLYG_GENERATOR . '/' . SOAPBOX_BLYG_VERSION;
 	}
 
 	/**

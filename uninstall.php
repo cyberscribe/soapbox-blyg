@@ -4,8 +4,8 @@
  *
  * By default it removes nothing. The ledger is the record of every id, version and pin the site
  * has published; it cannot be rebuilt, and without it every address the blyg has served is broken
- * for good. So the data stays unless the site owner ticked "Delete all Soapbox Blyg data when the
- * plugin is deleted" in the settings, where that consequence is spelled out.
+ * for good. So the data stays unless the site owner ticked "Delete all Soapbox for Blygger data
+ * when the plugin is deleted" in the settings, where that consequence is spelled out.
  *
  * On a network, each site decides for itself.
  *
@@ -19,6 +19,13 @@ defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
  */
 function soapbox_blyg_uninstall_site() {
 	global $wpdb;
+
+	// The plugin was first released as "Soapbox Blyg", in the folder soapbox-blyg, and that
+	// plugin uses the same tables, options and scheduled hooks. While it is installed, none of
+	// them is this plugin's to remove, whatever the setting says.
+	if ( file_exists( WP_PLUGIN_DIR . '/soapbox-blyg/soapbox-blyg.php' ) ) {
+		return;
+	}
 
 	// Housekeeping that is not the site's data goes whatever was chosen: markers the plugin wrote
 	// for itself on every site of a network, scheduled work, and an option earlier versions used.

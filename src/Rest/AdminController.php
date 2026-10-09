@@ -214,20 +214,20 @@ class AdminController {
 		$post_id = (int) $request['post'];
 		$status  = Plugin::instance()->ledger->status( PostTypeSource::ORIGIN, PostTypeSource::key( $post_id ) );
 		if ( ! $status ) {
-			return new WP_Error( 'soapbox_blyg_not_published', __( 'This post is not on the blyg, so it has nothing to pin.', 'soapbox-blyg' ), array( 'status' => 404 ) );
+			return new WP_Error( 'soapbox_blyg_not_published', __( 'This post is not on the blyg, so it has nothing to pin.', 'soapbox-for-blygger' ), array( 'status' => 404 ) );
 		}
 		try {
 			soapbox_blyg_pin( $status['id'], (int) $request['version'] );
 		} catch ( Throwable $e ) {
 			$reasons = array(
-				Ledger::PIN_NO_VERSION => __( 'That version does not exist.', 'soapbox-blyg' ),
-				Ledger::PIN_ENDCAP     => __( 'That version records the post being withdrawn. It has no content, and cannot be pinned.', 'soapbox-blyg' ),
-				Ledger::PIN_WITHDRAWN  => __( 'This post is withdrawn from the blyg, so no version of it can be pinned now.', 'soapbox-blyg' ),
-				Ledger::PIN_NOT_PUBLIC => __( 'This post is not public now, so no version of it can be pinned.', 'soapbox-blyg' ),
-				Ledger::PIN_CHANGED    => __( 'This post has changed since the blyg last took it in, so what would be pinned is not what it says now. Save the post, then pin. If its post type no longer publishes, its later changes are not on the blyg and it cannot be pinned.', 'soapbox-blyg' ),
-				Ledger::PIN_ALREADY    => __( 'That version is already pinned.', 'soapbox-blyg' ),
+				Ledger::PIN_NO_VERSION => __( 'That version does not exist.', 'soapbox-for-blygger' ),
+				Ledger::PIN_ENDCAP     => __( 'That version records the post being withdrawn. It has no content, and cannot be pinned.', 'soapbox-for-blygger' ),
+				Ledger::PIN_WITHDRAWN  => __( 'This post is withdrawn from the blyg, so no version of it can be pinned now.', 'soapbox-for-blygger' ),
+				Ledger::PIN_NOT_PUBLIC => __( 'This post is not public now, so no version of it can be pinned.', 'soapbox-for-blygger' ),
+				Ledger::PIN_CHANGED    => __( 'This post has changed since the blyg last took it in, so what would be pinned is not what it says now. Save the post, then pin. If its post type no longer publishes, its later changes are not on the blyg and it cannot be pinned.', 'soapbox-for-blygger' ),
+				Ledger::PIN_ALREADY    => __( 'That version is already pinned.', 'soapbox-for-blygger' ),
 			);
-			$message = isset( $reasons[ $e->getCode() ] ) ? $reasons[ $e->getCode() ] : __( 'That version could not be pinned. Try again in a moment.', 'soapbox-blyg' );
+			$message = isset( $reasons[ $e->getCode() ] ) ? $reasons[ $e->getCode() ] : __( 'That version could not be pinned. Try again in a moment.', 'soapbox-for-blygger' );
 			return new WP_Error( 'soapbox_blyg_not_pinned', $message, array( 'status' => 409 ) );
 		}
 		return rest_ensure_response( self::item_data( $post_id ) );
@@ -247,7 +247,7 @@ class AdminController {
 		// have been chosen, since a post's links are resolved against it. That is the order to do
 		// things in: look at what would be published, and then switch publishing on.
 		if ( ! $plugin->registry->has( PostTypeSource::ORIGIN ) && ! ( $dry && \SoapboxBlyg\Settings::get( 'setup' ) ) ) {
-			return new WP_Error( 'soapbox_blyg_disabled', __( 'Publishing is switched off for this site.', 'soapbox-blyg' ), array( 'status' => 409 ) );
+			return new WP_Error( 'soapbox_blyg_disabled', __( 'Publishing is switched off for this site.', 'soapbox-for-blygger' ), array( 'status' => 409 ) );
 		}
 		$offset  = $dry ? (int) $request['offset'] : 0; // A real run consumes its own queue; a dry run has to step through it.
 		$ids     = $plugin->posts->unpublished_ids();
@@ -299,7 +299,7 @@ class AdminController {
 					} else {
 						$failed[] = array(
 							'post'    => $id,
-							'message' => __( 'The post produced no item.', 'soapbox-blyg' ),
+							'message' => __( 'The post produced no item.', 'soapbox-for-blygger' ),
 						);
 					}
 				}

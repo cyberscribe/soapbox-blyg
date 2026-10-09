@@ -10,5 +10,5 @@
 		'wp-i18n',
 		'wp-plugins'
 	),
-	'version' => 'e50eb4c5a852f62d2b73'
+	'version' => '73d1a83c6b8547462d2c'
 );

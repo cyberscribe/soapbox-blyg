@@ -5,7 +5,7 @@ Every translation is the original wrapped in ⟦ ⟧ and padded to about 140% of
 placeholders left exactly as they were. A string that shows on screen without the brackets was
 never passed through a translation function; a layout that breaks was built for English lengths.
 
-    pseudo.py languages/soapbox-blyg.pot > soapbox-blyg-xx_XX.po
+    pseudo.py languages/soapbox-for-blygger.pot > soapbox-for-blygger-xx_XX.po
 
 Standard library only. Not part of the plugin.
 """
@@ -37,7 +37,7 @@ def main(path):
     out = [
         'msgid ""\nmsgstr ""\n"Language: xx_XX\\n"\n"MIME-Version: 1.0\\n"\n'
         '"Content-Type: text/plain; charset=UTF-8\\n"\n"Content-Transfer-Encoding: 8bit\\n"\n'
-        '"Plural-Forms: nplurals=2; plural=(n != 1);\\n"\n"X-Domain: soapbox-blyg\\n"'
+        '"Plural-Forms: nplurals=2; plural=(n != 1);\\n"\n"X-Domain: soapbox-for-blygger\\n"'
     ]
     for entry in entries[1:]:
         lines = entry.strip("\n").split("\n")

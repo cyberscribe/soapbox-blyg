@@ -1,18 +1,20 @@
-=== Soapbox Blyg ===
+=== Soapbox for Blygger ===
 Contributors: robertpeake
 Tags: blygger, feed, rss, webmention, syndication
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.1.1
+Stable tag: 0.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Publishes your posts as a blyg under the Blygger protocol: permanent ids, versions, pins, and a feed other Blygger clients can read and quote.
+Publish your posts as a blyg. An independent implementation of the Blygger protocol; not affiliated with the Blygger project.
 
 == Description ==
 
-Soapbox Blyg makes your WordPress site a publisher under the [Blygger protocol](https://blygger.org/spec/0.3/), an open protocol for publishing on your own domain in a way other people's software can subscribe to, archive completely, and quote exactly.
+An independent implementation of the Blygger protocol; not affiliated with the Blygger project.
+
+Soapbox for Blygger makes your WordPress site a publisher under the [Blygger protocol](https://blygger.org/spec/0.3/), an open protocol for publishing on your own domain in a way other people's software can subscribe to, archive completely, and quote exactly.
 
 Once it is switched on, every post you publish also becomes an item of your **blyg**, at an address such as `https://example.com/blyg/`. For each item the plugin keeps:
 
@@ -30,11 +32,11 @@ Readers get a manifest, an RSS feed that any feed reader can use, a complete arc
 **Nothing is published until you say so.** Activating the plugin publishes nothing. You choose where the blyg lives and how it is laid out, save that, and then switch publishing on. Before you run the backfill, which is the step that puts your existing posts out, do these four things:
 
 1. **Check what a post looks like on the blyg if you use a membership, paywall or content-restriction plugin.** The plugin renders each post as a logged-out visitor would see it, but not on the post's own page, and a plugin that hides content only there may not hide it here. See "Does it work with membership or paywall plugins?" below. Test this first: what the backfill publishes cannot be unpublished.
-2. **Run the backfill's dry run** (Tools > Soapbox Blyg). It renders every post and publishes nothing. Read some of what it shows.
+2. **Run the backfill's dry run** (Tools > Soapbox for Blygger). It renders every post and publishes nothing. Read some of what it shows.
 3. **Check Site Health** for the entries about the blyg, the one about caching above all. A cache that holds the blyg's documents would keep serving a post after you withdrew it.
 4. **Be sure of the mount path and the layout.** Both are permanent from the first item published.
 
-**This is an independent implementation.** Soapbox Blyg is not written by, endorsed by or affiliated with the authors of the Blygger protocol. The protocol's specification is at [blygger.org](https://blygger.org/spec/0.3/).
+**This is an independent implementation.** Soapbox for Blygger is not written by, endorsed by or affiliated with the authors of the Blygger protocol. The protocol's specification is at [blygger.org](https://blygger.org/spec/0.3/).
 
 = What it does not do =
 
@@ -45,7 +47,7 @@ Readers get a manifest, an RSS feed that any feed reader can use, a complete arc
 = Works the WordPress way =
 
 * Any post type can publish: tick it in the settings, or add `blyg` support to your own post type.
-* Settings are under Settings > Soapbox Blyg; the backfill and integrity checks are under Tools > Soapbox Blyg, and need no command line.
+* Settings are under Settings > Soapbox for Blygger; the backfill and integrity checks are under Tools > Soapbox for Blygger, and need no command line.
 * A panel in the editor shows each post's id, versions and pins.
 * Site Health checks that the blyg is reachable and that no cache in front of your site is holding it.
 * WP-CLI: `wp blyg backfill`, `status`, `pin`, `verify` and `origins`.
@@ -54,10 +56,10 @@ Readers get a manifest, an RSS feed that any feed reader can use, a complete arc
 == Installation ==
 
 1. Install and activate the plugin. Nothing is published yet.
-2. Go to Settings > Soapbox Blyg. Choose the mount path (the default, `/blyg/`, is the convention) and the surface layout, and save. **Both become permanent once anything is published**, so decide now.
+2. Go to Settings > Soapbox for Blygger. Choose the mount path (the default, `/blyg/`, is the convention) and the surface layout, and save. **Both become permanent once anything is published**, so decide now.
 3. On the same screen, tick "Publish this site's content as a blyg" and save again. The blyg now exists and is empty; from here on, a post joins it when you publish or update that post.
 4. Visit Tools > Site Health and check the entries about the blyg.
-5. Go to Tools > Soapbox Blyg and run a **dry run** of the backfill. It shows what each existing post would look like, and publishes nothing.
+5. Go to Tools > Soapbox for Blygger and run a **dry run** of the backfill. It shows what each existing post would look like, and publishes nothing.
 6. When you are happy with it, run the backfill. That publishes your existing posts.
 
 The plugin needs a permalink structure other than "Plain".
@@ -76,7 +78,7 @@ Partly, and it is worth understanding before you start.
 * **A pin cannot be undone.** A pinned version is served forever, even after the post is withdrawn. Pin deliberately.
 * **The address cannot be moved.** Once the blyg has an item, its mount path and layout are fixed.
 * **Deactivating the plugin** keeps all data and takes the blyg offline (its addresses answer 404) until you activate it again.
-* **Deleting the plugin** also keeps all data, unless you tick "Delete all Soapbox Blyg data when the plugin is deleted" in the settings. If you delete the data, every address the blyg ever served is broken for good, and reinstalling starts again with new ids.
+* **Deleting the plugin** also keeps all data, unless you tick "Delete all Soapbox for Blygger data when the plugin is deleted" in the settings. If you delete the data, every address the blyg ever served is broken for good, and reinstalling starts again with new ids.
 
 = Which surface layout should I choose? =
 
@@ -113,7 +115,7 @@ If your site still has that older rule, saving Breeze's settings once makes Bree
 
 Cloudways' Varnish keeps a document for as long as its own configuration says, whatever lifetime the response states. So whenever a document of the blyg changes, the plugin asks Breeze to purge its address from Varnish; see the next question.
 
-= Which caches does Soapbox Blyg purge? =
+= Which caches does Soapbox for Blygger purge? =
 
 When a post is published, edited, withdrawn or restored, or the blyg's settings change, the plugin works out which of the blyg's addresses changed (the manifest, the feed and the archive index; the item's own document, unless the item is new; the post's page, when an item is withdrawn or restored; and the mount, when the settings change) and tells the cache plugin beside it, once, at the end of the request:
 
@@ -127,7 +129,7 @@ Otherwise your server's cache defaults apply. A withdrawn item stops being serve
 
 = How long can a withdrawn post still be seen? =
 
-For as long as the cache lifetime under Settings > Soapbox Blyg > Caching: five minutes unless you change it, and one minute, fifteen minutes or an hour if you do. When you withdraw or edit a post, your site answers with the new state at once; readers and caches that already hold a copy may keep using it until that time is up, and then ask again. A reader behind a cache can hold one copy after the other, so allow twice the lifetime before expecting everyone to have seen a withdrawal. Shorter means a withdrawal is seen sooner; longer means fewer requests reach your site. The same time applies to "not found": an address asked for just before its item is published can answer 404 for that long.
+For as long as the cache lifetime under Settings > Soapbox for Blygger > Caching: five minutes unless you change it, and one minute, fifteen minutes or an hour if you do. When you withdraw or edit a post, your site answers with the new state at once; readers and caches that already hold a copy may keep using it until that time is up, and then ask again. A reader behind a cache can hold one copy after the other, so allow twice the lifetime before expecting everyone to have seen a withdrawal. Shorter means a withdrawal is seen sooner; longer means fewer requests reach your site. The same time applies to "not found": an address asked for just before its item is published can answer 404 for that long.
 
 Pinned versions are the exception. They never change, so they are cached for a year, and a pin cannot be withdrawn.
 
@@ -147,13 +149,13 @@ The protocol asks that an image address always serves the same picture once it h
 
 When another blyg quotes one of your items, answers it or forks it, that site can tell yours, by sending a Webmention. It is off by default.
 
-If you switch it on (Settings > Soapbox Blyg > Mentions), then for each mention your site receives it fetches the sender's page and its item document, and sometimes that blyg's manifest, to check that the document really refers to your item. See "External requests" below for exactly what that involves. Verified mentions are listed under Tools > Soapbox Blyg, for administrators. Nothing is shown to visitors, and nothing from the other site is stored except its address, its item's id and its author's published name.
+If you switch it on (Settings > Soapbox for Blygger > Mentions), then for each mention your site receives it fetches the sender's page and its item document, and sometimes that blyg's manifest, to check that the document really refers to your item. See "External requests" below for exactly what that involves. Verified mentions are listed under Tools > Soapbox for Blygger, for administrators. Nothing is shown to visitors, and nothing from the other site is stored except its address, its item's id and its author's published name.
 
 If the [Webmention](https://wordpress.org/plugins/webmention/) plugin is active, it keeps the Webmention endpoint advertised on your pages, and this plugin advertises its own only in the blyg's manifest.
 
 = Why did a post get a new version when I did not edit it? =
 
-A version is made when anything the blyg publishes about the post changes: its text, its title, its address (so a change of slug is a version), its author's name, its featured image, or the HTML readers are shown even where the Markdown comes out the same. It can also be a change made by a plugin or theme update that alters how the post's content is rendered. Tools > Soapbox Blyg > "Verify with render drift" lists posts that would publish a new version if saved now, so you can check after an update.
+A version is made when anything the blyg publishes about the post changes: its text, its title, its address (so a change of slug is a version), its author's name, its featured image, or the HTML readers are shown even where the Markdown comes out the same. It can also be a change made by a plugin or theme update that alters how the post's content is rendered. Tools > Soapbox for Blygger > "Verify with render drift" lists posts that would publish a new version if saved now, so you can check after an update.
 
 = Does it work with membership or paywall plugins? =
 
@@ -232,7 +234,7 @@ Rules for snapshots: `permalink` must be an absolute `http` or `https` URL, sinc
 
 **Actions:** `soapbox_blyg_register_origins`, `soapbox_blyg_event` (event, id, version, origin), `soapbox_blyg_pinned` (id, version, origin), `soapbox_blyg_mention` (status, mention, fields).
 
-**Actions:** `soapbox_blyg_purge_urls` (the addresses whose documents changed in this request; see "Which caches does Soapbox Blyg purge?"), `soapbox_blyg_event`, `soapbox_blyg_pinned`, `soapbox_blyg_forget_stale`.
+**Actions:** `soapbox_blyg_purge_urls` (the addresses whose documents changed in this request; see "Which caches does Soapbox for Blygger purge?"), `soapbox_blyg_event`, `soapbox_blyg_pinned`, `soapbox_blyg_forget_stale`.
 
 **Filters:** `soapbox_blyg_origin_args`, `soapbox_blyg_is_public`, `soapbox_blyg_snapshot`, `soapbox_blyg_rendered_body`, `soapbox_blyg_allowed_html`, `soapbox_blyg_cache_lifetime`, `soapbox_blyg_cache_control`, `soapbox_blyg_discovery_origin`, `soapbox_blyg_webmention_limits`, `soapbox_blyg_webmention_client`, `soapbox_blyg_fingerprint_meta`.
 
@@ -258,6 +260,12 @@ JavaScript sources are in `assets/src/`; the built files in `build/` are produce
 
 == Changelog ==
 
+= 0.1.2 =
+* The plugin is now called Soapbox for Blygger, and its folder is `soapbox-for-blygger`. It was Soapbox Blyg. Nothing a site has published moves: the blyg's addresses, its ids, its settings and its data are exactly where they were, and so are the plugin's hooks, functions and `wp blyg` commands.
+* If you installed it as Soapbox Blyg: install Soapbox for Blygger, activate it, deactivate Soapbox Blyg, then delete Soapbox Blyg. While both are active only one runs, and a notice says so. Until Soapbox Blyg has been deleted, "Delete all data when the plugin is deleted" is kept switched off, so that deleting it cannot delete your blyg.
+* No translations ship with the plugin any more. They come from translate.wordpress.org, as a language pack, once each language is approved there. Until then the plugin is in English, including in the seven languages earlier versions carried.
+* The documents name the software that wrote them as `soapbox-for-blygger`.
+
 = 0.1.1 =
 * With Breeze: a post set back to Draft or Pending no longer stays readable at its address from Breeze's page cache. Breeze looked for the page under the draft's `?p=` address; the plugin now gives it the address the post was published at.
 * The "Withdrawn" page is shown where WordPress used to redirect to the unpublished post itself, and so to a 404, because the address carried one of the post's earlier slugs.
@@ -270,6 +278,9 @@ JavaScript sources are in `assets/src/`; the built files in `build/` are produce
 * First release. Blygger 0.3, level 2. Posts and any post type with `blyg` support; versions, withdrawal and pins; templated and fixed surface layouts; an optional Webmention receiver with structural verification; Site Health tests; WP-CLI.
 
 == Upgrade Notice ==
+
+= 0.1.2 =
+Renamed from Soapbox Blyg. Your blyg, its addresses and its data do not move. Activate this plugin before you deactivate Soapbox Blyg, then delete Soapbox Blyg.
 
 = 0.1.1 =
 With Breeze, an unpublished post could stay readable from the page cache. Update, then purge your caches once.

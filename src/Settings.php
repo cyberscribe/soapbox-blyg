@@ -143,7 +143,7 @@ class Settings {
 		}
 		if ( ! $links ) {
 			$links[] = array(
-				'label' => __( 'Home', 'soapbox-blyg' ),
+				'label' => __( 'Home', 'soapbox-for-blygger' ),
 				'url'   => home_url( '/' ),
 			);
 		}

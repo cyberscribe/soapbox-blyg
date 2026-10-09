@@ -17,8 +17,8 @@ use SoapboxBlyg\Plugin;
 
 require_once ABSPATH . 'wp-admin/includes/admin.php';
 wp_set_current_user( (int) get_users( array( 'role' => 'administrator', 'number' => 1, 'fields' => 'ID' ) )[0] );
+// Nothing loads the translations here: WordPress finds them by itself, where a language pack goes.
 switch_to_locale( 'xx_XX' );
-Plugin::load_translations();
 
 $capture = static function ( callable $render ): string {
 	ob_start();
@@ -50,7 +50,7 @@ foreach ( array( 'permalinks', 'mount', 'ledger' ) as $test ) {
 
 // Text the plugin shows that is not the plugin's to translate: what the site owner typed, what
 // WordPress supplies in its own language files (post type names, dates), and names.
-$not_ours = array( get_bloginfo( 'name' ), get_bloginfo( 'description' ), 'Save Changes', 'Soapbox Blyg', 'templated', 'fixed' );
+$not_ours = array( get_bloginfo( 'name' ), get_bloginfo( 'description' ), 'Save Changes', 'Soapbox for Blygger', 'Soapbox Blyg', 'templated', 'fixed' );
 foreach ( get_post_types( array(), 'objects' ) as $type ) {
 	$not_ours[] = $type->labels->name;
 }

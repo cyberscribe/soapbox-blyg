@@ -19,7 +19,7 @@ use SoapboxBlyg\Surface\Locations;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Tools > Soapbox Blyg: what each blyg on the site holds, and the jobs that would otherwise need
+ * Tools > Soapbox for Blygger: what each blyg on the site holds, and the jobs that would otherwise need
  * a command line. The backfill and verify run as REST calls from this screen, in batches, so
  * they work on a site with no shell and do not depend on WP-Cron, which stalls on sites with
  * little traffic.
@@ -43,8 +43,8 @@ class ToolsPage {
 	 */
 	public static function menu(): void {
 		add_management_page(
-			__( 'Soapbox Blyg', 'soapbox-blyg' ),
-			__( 'Soapbox Blyg', 'soapbox-blyg' ),
+			__( 'Soapbox for Blygger', 'soapbox-for-blygger' ),
+			__( 'Soapbox for Blygger', 'soapbox-for-blygger' ),
 			Capabilities::MANAGE,
 			self::PAGE,
 			array( __CLASS__, 'render' )
@@ -77,9 +77,9 @@ class ToolsPage {
 		$asset  = include $asset_file;
 		$handle = SOAPBOX_BLYG_SLUG . '-' . $name;
 		wp_enqueue_script( $handle, plugins_url( 'build/' . $name . '.js', SOAPBOX_BLYG_FILE ), $asset['dependencies'], $asset['version'], true );
-		// The path is for the translations bundled with the plugin. A language pack from
-		// translate.wordpress.org, in WP_LANG_DIR, is looked for first and wins.
-		wp_set_script_translations( $handle, 'soapbox-blyg', dirname( SOAPBOX_BLYG_FILE ) . '/languages' );
+		// No path: the script's translations come with the language pack, in WordPress's own
+		// languages directory, and nothing ships with the plugin.
+		wp_set_script_translations( $handle, SOAPBOX_BLYG_TEXT_DOMAIN );
 		// A script's file name must not end in "min.js", "admin.js" included: WP-CLI's make-json
 		// takes that for a minified file and names its translations for a script that does not exist.
 		wp_add_inline_script(
@@ -115,25 +115,25 @@ class ToolsPage {
 			echo '<div class="notice notice-error"><p>';
 			echo esc_html(
 				'engine' === $problem
-					? __( 'Soapbox Blyg is not publishing, and its blyg is offline: its database tables are not using the InnoDB storage engine, which it needs in order to record what is published reliably. Ask your host to convert the soapbox_blyg tables to InnoDB, then deactivate and activate the plugin.', 'soapbox-blyg' )
-					: __( 'Soapbox Blyg is not publishing, and its blyg is offline: its database tables could not be brought up to date. It will try again; if this notice stays, deactivate and activate the plugin, and check that the database user may create and alter tables.', 'soapbox-blyg' )
+					? __( 'Soapbox for Blygger is not publishing, and its blyg is offline: its database tables are not using the InnoDB storage engine, which it needs in order to record what is published reliably. Ask your host to convert the soapbox_blyg tables to InnoDB, then deactivate and activate the plugin.', 'soapbox-for-blygger' )
+					: __( 'Soapbox for Blygger is not publishing, and its blyg is offline: its database tables could not be brought up to date. It will try again; if this notice stays, deactivate and activate the plugin, and check that the database user may create and alter tables.', 'soapbox-for-blygger' )
 			);
 			if ( ! $ours ) {
-				printf( ' <a href="%s">%s</a>', esc_url( wp_nonce_url( add_query_arg( 'soapbox_blyg_dismiss', '1' ), 'soapbox_blyg_dismiss' ) ), esc_html__( 'Dismiss', 'soapbox-blyg' ) );
+				printf( ' <a href="%s">%s</a>', esc_url( wp_nonce_url( add_query_arg( 'soapbox_blyg_dismiss', '1' ), 'soapbox_blyg_dismiss' ) ), esc_html__( 'Dismiss', 'soapbox-for-blygger' ) );
 			}
 			echo '</p></div>';
 		}
 		if ( $ours && ! Settings::get( 'enabled' ) && $registry->is_locked( PostTypeSource::ORIGIN ) ) {
 			echo '<div class="notice notice-warning"><p>';
-			echo esc_html__( 'Soapbox Blyg: this site has a blyg that has published, and publishing is switched off, so every address it published is answering 404. Switch publishing back on in the settings to serve it again.', 'soapbox-blyg' );
-			printf( ' <a href="%s">%s</a>', esc_url( admin_url( 'options-general.php?page=' . SettingsPage::PAGE ) ), esc_html__( 'Open the settings', 'soapbox-blyg' ) );
+			echo esc_html__( 'Soapbox for Blygger: this site has a blyg that has published, and publishing is switched off, so every address it published is answering 404. Switch publishing back on in the settings to serve it again.', 'soapbox-for-blygger' );
+			printf( ' <a href="%s">%s</a>', esc_url( admin_url( 'options-general.php?page=' . SettingsPage::PAGE ) ), esc_html__( 'Open the settings', 'soapbox-for-blygger' ) );
 			echo '</p></div>';
 		}
 		// Until the first-run setup is done the plugin publishes nothing, and says so.
 		if ( in_array( $where, array( 'plugins', 'tools_page_' . self::PAGE ), true ) && ! Settings::get( 'setup' ) && ! $registry->is_locked( PostTypeSource::ORIGIN ) ) {
 			echo '<div class="notice notice-info"><p>';
-			echo esc_html__( 'Soapbox Blyg is active but not publishing. Choose where the blyg lives and how it is laid out, then switch publishing on.', 'soapbox-blyg' );
-			printf( ' <a href="%s">%s</a>', esc_url( admin_url( 'options-general.php?page=' . SettingsPage::PAGE ) ), esc_html__( 'Open the settings', 'soapbox-blyg' ) );
+			echo esc_html__( 'Soapbox for Blygger is active but not publishing. Choose where the blyg lives and how it is laid out, then switch publishing on.', 'soapbox-for-blygger' );
+			printf( ' <a href="%s">%s</a>', esc_url( admin_url( 'options-general.php?page=' . SettingsPage::PAGE ) ), esc_html__( 'Open the settings', 'soapbox-for-blygger' ) );
 			echo '</p></div>';
 		}
 		foreach ( $registry->conflicts() as $key => $asked ) {
@@ -141,7 +141,7 @@ class ToolsPage {
 			echo esc_html(
 				sprintf(
 					/* translators: 1: origin key, 2: the path asked for, 3: the path it is locked to */
-					__( 'Soapbox Blyg: the blyg "%1$s" is configured for %2$s, but it has already published at %3$s and is still served there. Published addresses are permanent; put the configuration back to %3$s.', 'soapbox-blyg' ),
+					__( 'Soapbox for Blygger: the blyg "%1$s" is configured for %2$s, but it has already published at %3$s and is still served there. Published addresses are permanent; put the configuration back to %3$s.', 'soapbox-for-blygger' ),
 					$key,
 					$asked,
 					$registry->get( $key )->path
@@ -170,7 +170,7 @@ class ToolsPage {
 		}
 		$columns = get_current_screen() ? count( get_column_headers( get_current_screen() ) ) : 4;
 		echo '<tr class="plugin-update-tr active"><td colspan="' . (int) $columns . '" class="plugin-update colspanchange"><div class="notice inline notice-warning notice-alt"><p>';
-		esc_html_e( 'This site has published a blyg. Deactivating this plugin keeps all of its data, but takes the blyg offline: every address it serves will answer 404 until the plugin is activated again.', 'soapbox-blyg' );
+		esc_html_e( 'This site has published a blyg. Deactivating this plugin keeps all of its data, but takes the blyg offline: every address it serves will answer 404 until the plugin is activated again.', 'soapbox-for-blygger' );
 		echo '</p></div></td></tr>';
 	}
 
@@ -212,12 +212,12 @@ class ToolsPage {
 		$origins = $plugin->registry->all();
 		?>
 		<div class="wrap soapbox-blyg-tools">
-			<h1><?php esc_html_e( 'Soapbox Blyg', 'soapbox-blyg' ); ?></h1>
+			<h1><?php esc_html_e( 'Soapbox for Blygger', 'soapbox-for-blygger' ); ?></h1>
 
 			<?php if ( ! $origins ) : ?>
 				<p>
-					<?php esc_html_e( 'Publishing is switched off for this site, so there is no blyg to show.', 'soapbox-blyg' ); ?>
-					<a href="<?php echo esc_url( admin_url( 'options-general.php?page=' . SettingsPage::PAGE ) ); ?>"><?php esc_html_e( 'Settings', 'soapbox-blyg' ); ?></a>
+					<?php esc_html_e( 'Publishing is switched off for this site, so there is no blyg to show.', 'soapbox-for-blygger' ); ?>
+					<a href="<?php echo esc_url( admin_url( 'options-general.php?page=' . SettingsPage::PAGE ) ); ?>"><?php esc_html_e( 'Settings', 'soapbox-for-blygger' ); ?></a>
 				</p>
 		</div>
 				<?php
@@ -225,15 +225,15 @@ class ToolsPage {
 			endif;
 			?>
 
-			<h2><?php esc_html_e( 'Blygs on this site', 'soapbox-blyg' ); ?></h2>
+			<h2><?php esc_html_e( 'Blygs on this site', 'soapbox-for-blygger' ); ?></h2>
 			<table class="widefat striped" style="max-width:60rem">
 				<thead><tr>
-					<th scope="col"><?php esc_html_e( 'Address', 'soapbox-blyg' ); ?></th>
-					<th scope="col"><?php esc_html_e( 'Layout', 'soapbox-blyg' ); ?></th>
-					<th scope="col"><?php echo esc_html_x( 'Items', 'column heading: how many items a blyg has', 'soapbox-blyg' ); ?></th>
-					<th scope="col"><?php echo esc_html_x( 'Versions', 'column heading: how many versions a blyg has', 'soapbox-blyg' ); ?></th>
-					<th scope="col"><?php esc_html_e( 'Last updated', 'soapbox-blyg' ); ?></th>
-					<th scope="col"><?php esc_html_e( 'Documents', 'soapbox-blyg' ); ?></th>
+					<th scope="col"><?php esc_html_e( 'Address', 'soapbox-for-blygger' ); ?></th>
+					<th scope="col"><?php esc_html_e( 'Layout', 'soapbox-for-blygger' ); ?></th>
+					<th scope="col"><?php echo esc_html_x( 'Items', 'column heading: how many items a blyg has', 'soapbox-for-blygger' ); ?></th>
+					<th scope="col"><?php echo esc_html_x( 'Versions', 'column heading: how many versions a blyg has', 'soapbox-for-blygger' ); ?></th>
+					<th scope="col"><?php esc_html_e( 'Last updated', 'soapbox-for-blygger' ); ?></th>
+					<th scope="col"><?php esc_html_e( 'Documents', 'soapbox-for-blygger' ); ?></th>
 				</tr></thead>
 				<tbody>
 				<?php
@@ -244,14 +244,14 @@ class ToolsPage {
 					?>
 					<tr>
 						<td><code><?php echo esc_html( $origin->url() ); ?></code><br><span class="description"><?php echo esc_html( $origin->title ); ?></span></td>
-						<td><?php echo esc_html( 'fixed' === $origin->layout ? __( 'Fixed paths', 'soapbox-blyg' ) : __( 'Templated', 'soapbox-blyg' ) ); ?></td>
+						<td><?php echo esc_html( 'fixed' === $origin->layout ? __( 'Fixed paths', 'soapbox-for-blygger' ) : __( 'Templated', 'soapbox-for-blygger' ) ); ?></td>
 						<td><?php echo esc_html( number_format_i18n( $plugin->ledger->count_items( $origin->key ) ) ); ?></td>
 						<td><?php echo esc_html( number_format_i18n( $versions ) ); ?></td>
 						<td><?php echo esc_html( self::when( $plugin->ledger->latest_updated( $origin->key ) ) ); ?></td>
 						<td>
-							<a href="<?php echo esc_url( $plugin->locations->manifest( $origin ) ); ?>"><?php esc_html_e( 'Manifest', 'soapbox-blyg' ); ?></a> &middot;
-							<a href="<?php echo esc_url( $plugin->locations->feed( $origin ) ); ?>"><?php esc_html_e( 'Feed', 'soapbox-blyg' ); ?></a> &middot;
-							<a href="<?php echo esc_url( $plugin->locations->index( $origin ) ); ?>"><?php esc_html_e( 'Archive index', 'soapbox-blyg' ); ?></a>
+							<a href="<?php echo esc_url( $plugin->locations->manifest( $origin ) ); ?>"><?php esc_html_e( 'Manifest', 'soapbox-for-blygger' ); ?></a> &middot;
+							<a href="<?php echo esc_url( $plugin->locations->feed( $origin ) ); ?>"><?php esc_html_e( 'Feed', 'soapbox-for-blygger' ); ?></a> &middot;
+							<a href="<?php echo esc_url( $plugin->locations->index( $origin ) ); ?>"><?php esc_html_e( 'Archive index', 'soapbox-for-blygger' ); ?></a>
 						</td>
 					</tr>
 				<?php endforeach; ?>
@@ -268,7 +268,7 @@ class ToolsPage {
 					echo esc_html(
 						sprintf(
 							/* translators: 1: post id, 2: date and time, 3: error message */
-							__( 'Post %1$d was saved on %2$s but the blyg could not be brought into step with it: %3$s. The plugin keeps trying; saving the post again also retries.', 'soapbox-blyg' ),
+							__( 'Post %1$d was saved on %2$s but the blyg could not be brought into step with it: %3$s. The plugin keeps trying; saving the post again also retries.', 'soapbox-for-blygger' ),
 							(int) $error['post'],
 							self::when( $error['at'] ),
 							(string) $error['message']
@@ -281,39 +281,39 @@ class ToolsPage {
 			<?php $publishing = $plugin->registry->has( PostTypeSource::ORIGIN ); ?>
 			<?php if ( $publishing || Settings::get( 'setup' ) ) : ?>
 				<?php $waiting = count( $plugin->posts->unpublished_ids() ); ?>
-				<h2><?php esc_html_e( 'Backfill', 'soapbox-blyg' ); ?></h2>
+				<h2><?php esc_html_e( 'Backfill', 'soapbox-for-blygger' ); ?></h2>
 				<p>
 					<span data-soapbox-blyg-waiting>
 					<?php
 					echo esc_html(
 						sprintf(
 							/* translators: %s: number of posts, already formatted for the locale (for example 1,234) */
-							_n( '%s published post is not on the blyg yet.', '%s published posts are not on the blyg yet.', $waiting, 'soapbox-blyg' ),
+							_n( '%s published post is not on the blyg yet.', '%s published posts are not on the blyg yet.', $waiting, 'soapbox-for-blygger' ),
 							number_format_i18n( $waiting )
 						)
 					);
 					?>
 					</span>
-					<?php esc_html_e( 'A post joins the blyg when it is next saved; the backfill adds the ones published before the plugin was switched on, each as version 1, dated when the post was published.', 'soapbox-blyg' ); ?>
+					<?php esc_html_e( 'A post joins the blyg when it is next saved; the backfill adds the ones published before the plugin was switched on, each as version 1, dated when the post was published.', 'soapbox-for-blygger' ); ?>
 				</p>
 				<p>
-					<?php esc_html_e( 'A dry run renders every post and writes nothing, so you can read what would be published before it is. Publishing cannot be undone: an item can be withdrawn, but its address answers forever.', 'soapbox-blyg' ); ?>
+					<?php esc_html_e( 'A dry run renders every post and writes nothing, so you can read what would be published before it is. Publishing cannot be undone: an item can be withdrawn, but its address answers forever.', 'soapbox-for-blygger' ); ?>
 				</p>
 				<p>
-					<button type="button" class="button" data-soapbox-blyg="backfill-dry" <?php disabled( 0, $waiting ); ?>><?php esc_html_e( 'Dry run', 'soapbox-blyg' ); ?></button>
+					<button type="button" class="button" data-soapbox-blyg="backfill-dry" <?php disabled( 0, $waiting ); ?>><?php esc_html_e( 'Dry run', 'soapbox-for-blygger' ); ?></button>
 					<?php if ( $publishing ) : ?>
-						<button type="button" class="button button-primary" data-soapbox-blyg="backfill" <?php disabled( 0, $waiting ); ?>><?php esc_html_e( 'Run the backfill', 'soapbox-blyg' ); ?></button>
+						<button type="button" class="button button-primary" data-soapbox-blyg="backfill" <?php disabled( 0, $waiting ); ?>><?php esc_html_e( 'Run the backfill', 'soapbox-for-blygger' ); ?></button>
 					<?php endif; ?>
 				</p>
 				<?php if ( ! $publishing ) : ?>
-					<p class="description"><?php esc_html_e( 'Publishing is switched off, so only the dry run is available. Nothing is published by it, now or later. Switch publishing on in the settings when you have looked at what the dry run shows.', 'soapbox-blyg' ); ?></p>
+					<p class="description"><?php esc_html_e( 'Publishing is switched off, so only the dry run is available. Nothing is published by it, now or later. Switch publishing on in the settings when you have looked at what the dry run shows.', 'soapbox-for-blygger' ); ?></p>
 				<?php endif; ?>
 				<div data-soapbox-blyg-output="backfill" aria-live="polite"></div>
 			<?php endif; ?>
 
-			<h2><?php echo esc_html_x( 'Verify', 'section heading: checking the ledger', 'soapbox-blyg' ); ?></h2>
+			<h2><?php echo esc_html_x( 'Verify', 'section heading: checking the ledger', 'soapbox-for-blygger' ); ?></h2>
 			<p>
-				<?php esc_html_e( 'Recomputes the hash of every version ever published and checks that the ledger is complete. With render drift, it also compares the blyg with the site: posts that should be on it and are not, and posts that would publish a new version if saved now, which is worth knowing after a WordPress or plugin update.', 'soapbox-blyg' ); ?>
+				<?php esc_html_e( 'Recomputes the hash of every version ever published and checks that the ledger is complete. With render drift, it also compares the blyg with the site: posts that should be on it and are not, and posts that would publish a new version if saved now, which is worth knowing after a WordPress or plugin update.', 'soapbox-for-blygger' ); ?>
 			</p>
 			<?php
 			$last = get_option( Verifier::RESULT_OPTION );
@@ -325,9 +325,9 @@ class ToolsPage {
 						sprintf(
 							! empty( $last['passed'] )
 								/* translators: %s: date and time */
-								? __( 'Last verified %s: it passed.', 'soapbox-blyg' )
+								? __( 'Last verified %s: it passed.', 'soapbox-for-blygger' )
 								/* translators: %s: date and time */
-								: __( 'Last verified %s: it failed.', 'soapbox-blyg' ),
+								: __( 'Last verified %s: it failed.', 'soapbox-for-blygger' ),
 							self::when( $last['at'] )
 						)
 					);
@@ -335,21 +335,21 @@ class ToolsPage {
 				</p>
 			<?php endif; ?>
 			<p>
-				<button type="button" class="button" data-soapbox-blyg="verify"><?php esc_html_e( 'Verify the ledger', 'soapbox-blyg' ); ?></button>
-				<button type="button" class="button" data-soapbox-blyg="verify-render"><?php esc_html_e( 'Verify with render drift', 'soapbox-blyg' ); ?></button>
+				<button type="button" class="button" data-soapbox-blyg="verify"><?php esc_html_e( 'Verify the ledger', 'soapbox-for-blygger' ); ?></button>
+				<button type="button" class="button" data-soapbox-blyg="verify-render"><?php esc_html_e( 'Verify with render drift', 'soapbox-for-blygger' ); ?></button>
 			</p>
 			<div data-soapbox-blyg-output="verify" aria-live="polite"></div>
 
-			<h2><?php echo esc_html_x( 'Pins', 'section heading: the versions that have been pinned', 'soapbox-blyg' ); ?></h2>
+			<h2><?php echo esc_html_x( 'Pins', 'section heading: the versions that have been pinned', 'soapbox-for-blygger' ); ?></h2>
 			<?php $pins = self::pins(); ?>
 			<?php if ( ! $pins ) : ?>
-				<p><?php esc_html_e( 'Nothing is pinned. Pinning a version, from the post editor, promises to serve exactly that version at its own address forever.', 'soapbox-blyg' ); ?></p>
+				<p><?php esc_html_e( 'Nothing is pinned. Pinning a version, from the post editor, promises to serve exactly that version at its own address forever.', 'soapbox-for-blygger' ); ?></p>
 			<?php else : ?>
 				<table class="widefat striped" style="max-width:60rem">
 					<thead><tr>
-						<th scope="col"><?php echo esc_html_x( 'Item', 'column heading: an item of the blyg', 'soapbox-blyg' ); ?></th>
-						<th scope="col"><?php echo esc_html_x( 'Version', 'column heading: a version number', 'soapbox-blyg' ); ?></th>
-						<th scope="col"><?php echo esc_html_x( 'Pinned', 'column heading: the date a version was pinned', 'soapbox-blyg' ); ?></th>
+						<th scope="col"><?php echo esc_html_x( 'Item', 'column heading: an item of the blyg', 'soapbox-for-blygger' ); ?></th>
+						<th scope="col"><?php echo esc_html_x( 'Version', 'column heading: a version number', 'soapbox-for-blygger' ); ?></th>
+						<th scope="col"><?php echo esc_html_x( 'Pinned', 'column heading: the date a version was pinned', 'soapbox-for-blygger' ); ?></th>
 					</tr></thead>
 					<tbody>
 					<?php foreach ( $pins as $pin ) : ?>
@@ -370,34 +370,34 @@ class ToolsPage {
 			<?php endif; ?>
 
 			<?php if ( Documents::receives_mentions() ) : ?>
-				<h2><?php esc_html_e( 'Mentions', 'soapbox-blyg' ); ?></h2>
-				<p><?php esc_html_e( 'Other blygs that have told this site they quoted, answered or forked one of its items. A mention is verified when the other blyg\'s own document says so; nothing here is shown to visitors.', 'soapbox-blyg' ); ?></p>
+				<h2><?php esc_html_e( 'Mentions', 'soapbox-for-blygger' ); ?></h2>
+				<p><?php esc_html_e( 'Other blygs that have told this site they quoted, answered or forked one of its items. A mention is verified when the other blyg\'s own document says so; nothing here is shown to visitors.', 'soapbox-for-blygger' ); ?></p>
 				<?php $mentions = $plugin->mentions->query( array( 'limit' => 100 ) ); ?>
 				<?php if ( ! $mentions ) : ?>
-					<p><?php esc_html_e( 'No mentions yet.', 'soapbox-blyg' ); ?></p>
+					<p><?php esc_html_e( 'No mentions yet.', 'soapbox-for-blygger' ); ?></p>
 				<?php else : ?>
 					<?php
 					$statuses  = array(
-						Store::PENDING  => __( 'Waiting to be verified', 'soapbox-blyg' ),
-						Store::VERIFIED => __( 'Verified', 'soapbox-blyg' ),
-						Store::FAILED   => __( 'Not verified', 'soapbox-blyg' ),
-						Store::GONE     => __( 'Withdrawn by its author', 'soapbox-blyg' ),
+						Store::PENDING  => __( 'Waiting to be verified', 'soapbox-for-blygger' ),
+						Store::VERIFIED => __( 'Verified', 'soapbox-for-blygger' ),
+						Store::FAILED   => __( 'Not verified', 'soapbox-for-blygger' ),
+						Store::GONE     => __( 'Withdrawn by its author', 'soapbox-for-blygger' ),
 					);
 					$relations = array(
 						/* translators: %s: the address of one of this site's items, as a link. Another publication's item is a reply to it. */
-						'stub'         => __( 'Answers %s', 'soapbox-blyg' ),
+						'stub'         => __( 'Answers %s', 'soapbox-for-blygger' ),
 						/* translators: %s: the address of one of this site's items, as a link. Another publication's item quotes it. */
-						'transclusion' => __( 'Quotes %s', 'soapbox-blyg' ),
+						'transclusion' => __( 'Quotes %s', 'soapbox-for-blygger' ),
 						/* translators: %s: the address of one of this site's items, as a link. Another publication's item is a fork of it. */
-						'fork'         => __( 'Forked from %s', 'soapbox-blyg' ),
+						'fork'         => __( 'Forked from %s', 'soapbox-for-blygger' ),
 					);
 					?>
 					<table class="widefat striped" style="max-width:60rem">
 						<thead><tr>
-							<th scope="col"><?php echo esc_html_x( 'From', 'column heading: the publication a mention came from', 'soapbox-blyg' ); ?></th>
-							<th scope="col"><?php echo esc_html_x( 'About', 'column heading: the item a mention refers to', 'soapbox-blyg' ); ?></th>
-							<th scope="col"><?php echo esc_html_x( 'Status', 'column heading: whether a mention has been verified', 'soapbox-blyg' ); ?></th>
-							<th scope="col"><?php echo esc_html_x( 'Received', 'column heading: when a mention arrived', 'soapbox-blyg' ); ?></th>
+							<th scope="col"><?php echo esc_html_x( 'From', 'column heading: the publication a mention came from', 'soapbox-for-blygger' ); ?></th>
+							<th scope="col"><?php echo esc_html_x( 'About', 'column heading: the item a mention refers to', 'soapbox-for-blygger' ); ?></th>
+							<th scope="col"><?php echo esc_html_x( 'Status', 'column heading: whether a mention has been verified', 'soapbox-for-blygger' ); ?></th>
+							<th scope="col"><?php echo esc_html_x( 'Received', 'column heading: when a mention arrived', 'soapbox-for-blygger' ); ?></th>
 						</tr></thead>
 						<tbody>
 						<?php foreach ( $mentions as $mention ) : ?>

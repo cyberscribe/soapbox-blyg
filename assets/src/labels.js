@@ -32,7 +32,7 @@ export function versionLine( item ) {
 			_x(
 				'Version %d, withdrawn',
 				'an item’s current state',
-				'soapbox-blyg'
+				'soapbox-for-blygger'
 			),
 			item.version
 		);
@@ -43,14 +43,18 @@ export function versionLine( item ) {
 			_x(
 				'Version %d, fragment',
 				'an item’s current state',
-				'soapbox-blyg'
+				'soapbox-for-blygger'
 			),
 			item.version
 		);
 	}
 	return sprintf(
 		/* translators: %d: version number. "Thread" is the protocol's word for an ordinary item, such as a post. */
-		_x( 'Version %d, thread', 'an item’s current state', 'soapbox-blyg' ),
+		_x(
+			'Version %d, thread',
+			'an item’s current state',
+			'soapbox-for-blygger'
+		),
 		item.version
 	);
 }
@@ -68,7 +72,7 @@ export function eventLine( entry ) {
 				_x(
 					'Withdrawn, %s',
 					'an entry in an item’s history',
-					'soapbox-blyg'
+					'soapbox-for-blygger'
 				),
 				when( entry.at )
 			)
@@ -77,7 +81,7 @@ export function eventLine( entry ) {
 				_x(
 					'Published, %s',
 					'an entry in an item’s history',
-					'soapbox-blyg'
+					'soapbox-for-blygger'
 				),
 				when( entry.at )
 			);
@@ -96,11 +100,15 @@ export function pinnedLabel( entry ) {
 				_x(
 					'Pinned by %s',
 					'a version that has been pinned',
-					'soapbox-blyg'
+					'soapbox-for-blygger'
 				),
 				entry.pinned_by
 			)
-		: _x( 'Pinned', 'a version that has been pinned', 'soapbox-blyg' );
+		: _x(
+				'Pinned',
+				'a version that has been pinned',
+				'soapbox-for-blygger'
+			);
 }
 
 /**
@@ -115,7 +123,7 @@ export function versionLink( version ) {
 		_x(
 			'Version %d',
 			'link to a pinned version’s document',
-			'soapbox-blyg'
+			'soapbox-for-blygger'
 		),
 		version
 	);

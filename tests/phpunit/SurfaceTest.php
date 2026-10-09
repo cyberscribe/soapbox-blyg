@@ -53,7 +53,7 @@ class SurfaceTest extends TestCase {
 		$m = json_decode( $response['body'], true );
 		$this->assertSame( '0.3', $m['blyg'] );
 		$this->assertSame( 2, $m['level'] );
-		$this->assertSame( 'soapbox-blyg/' . SOAPBOX_BLYG_VERSION, $m['generator'] );
+		$this->assertSame( 'soapbox-for-blygger/' . SOAPBOX_BLYG_VERSION, $m['generator'] );
 		$this->assertSame( home_url( '/notes/' ), $m['site'] );
 		$this->assertSame( 'feed.xml', $m['feed'] );
 		$this->assertSame( 'items/index.json', $m['items'] );

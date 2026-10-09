@@ -2,14 +2,19 @@
 #
 # Builds the release archive with `wp dist-archive` and checks it, then runs Plugin Check on what
 # is in it. Uses wp-env's development container, which has WP-CLI; the archive lands in the
-# checkout as soapbox-blyg.zip (ignored by git).
+# checkout as <slug>.zip (ignored by git).
 #
 #   npx wp-env start && bin/dist.sh
 
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-SLUG="$(basename "$ROOT")"
+# Two names. DIR is this checkout's directory, which is where wp-env mounts it and what it names
+# its containers after. SLUG is the plugin's slug on WordPress.org, read from the header: the
+# archive, its one top folder and the main file all carry it, whatever the checkout is called.
+DIR="$(basename "$ROOT")"
+SLUG="$(sed -n 's/^ \* Text Domain: *//p' "$ROOT"/*.php | head -n 1)"
+[ -n "$SLUG" ] && [ -f "$ROOT/${SLUG}.php" ] || { echo "FAIL: no main file named after the header's Text Domain ('${SLUG}')" >&2; exit 1; }
 # What is built is what is committed, at one version. A dirty tree builds an archive no commit
 # describes, and the version is written in three places that must agree.
 "$ROOT/bin/check-tree.sh" "$ROOT" >/dev/null || exit 1
@@ -30,22 +35,7 @@ CONSTANT="$(sed -n "s/^const SOAPBOX_BLYG_VERSION *= *'\(.*\)';/\1/p" "$ROOT/${S
 STABLE="$(sed -n 's/^Stable tag: *//p' "$ROOT/readme.txt")"
 [ -n "$HEADER" ] && [ "$HEADER" = "$CONSTANT" ] && [ "$HEADER" = "$STABLE" ] || { echo "FAIL: versions disagree (header '$HEADER', constant '$CONSTANT', readme '$STABLE')" >&2; exit 1; }
 
-# The .po files are the translators' and are the source; the .mo, .l10n.php and .json beside
-# them are made from them by `bin/i18n.sh build` and committed. One that is older than its .po
-# is a translation that would not ship.
-for po in "$ROOT"/languages/*.po; do
-	[ -e "$po" ] || continue
-	base="${po%.po}"
-	for derived in "$base.mo" "$base.l10n.php"; do
-		[ -e "$derived" ] && [ ! "$po" -nt "$derived" ] || { echo "FAIL: $(basename "$derived") is missing or older than $(basename "$po"); run bin/i18n.sh build" >&2; exit 1; }
-	done
-	ls "$base"-*.json >/dev/null 2>&1 || { echo "FAIL: no script translations for $(basename "$po"); run bin/i18n.sh build" >&2; exit 1; }
-	for json in "$base"-*.json; do
-		[ ! "$po" -nt "$json" ] || { echo "FAIL: $(basename "$json") is older than $(basename "$po"); run bin/i18n.sh build" >&2; exit 1; }
-	done
-done
-
-CONTAINER="$(docker ps --filter "label=com.docker.compose.service=cli" --format '{{.Names}}' | grep "^wp-env-${SLUG}-" | head -n 1 || true)"
+CONTAINER="$(docker ps --filter "label=com.docker.compose.service=cli" --format '{{.Names}}' | grep "^wp-env-${DIR}-" | head -n 1 || true)"
 [ -n "$CONTAINER" ] || { echo "wp-env is not running (npx wp-env start)" >&2; exit 2; }
 run() { docker exec --user "$(id -u):$(id -g)" -e HOME=/tmp --workdir /var/www/html "$CONTAINER" "$@"; }
 
@@ -66,7 +56,7 @@ run sh -c "wp dist-archive --help >/dev/null 2>&1 || wp package install '${ARCHI
 run sh -c 'wp plugin is-installed plugin-check || wp plugin install plugin-check >/dev/null; wp plugin activate plugin-check >/dev/null'
 
 run rm -f "/tmp/${SLUG}.zip"
-run wp dist-archive "wp-content/plugins/${SLUG}" "/tmp/${SLUG}.zip"
+run wp dist-archive "wp-content/plugins/${DIR}" "/tmp/${SLUG}.zip" --plugin-dirname="${SLUG}"
 
 # Repack, so that the same commit always gives the same bytes. `wp dist-archive` zips a fresh copy
 # of the tree, and every entry then carries the time of the copy and whatever modes the checkout
@@ -84,11 +74,17 @@ echo "Version ${HEADER} at $(git -C "$ROOT" rev-parse --short HEAD), packed with
 echo "Archive: ${SLUG}.zip, ${BYTES} bytes, $(unzip -l "$ROOT/${SLUG}.zip" | tail -1 | awk '{print $2}') files"
 [ "$BYTES" -lt 10485760 ] || { echo "FAIL: the archive is over 10 MB" >&2; exit 1; }
 
-UNWANTED=$(unzip -Z1 "$ROOT/${SLUG}.zip" | grep -E '(^|/)(\.[^/]+|tests|docs|bin|node_modules|vendor)(/|$)|\.md$|composer\.(json|lock)$|package(-lock)?\.json$|\.dist$' || true)
+# WordPress.org installs a plugin into a folder named for its slug, and takes that from the archive.
+ENTRIES="$(unzip -Z1 "$ROOT/${SLUG}.zip")"
+TOP="$(cut -d/ -f1 <<<"$ENTRIES" | sort -u)"
+[ "$TOP" = "$SLUG" ] && grep -qx "${SLUG}/${SLUG}.php" <<<"$ENTRIES" || { echo "FAIL: the archive's top folder is '${TOP}', not one folder '${SLUG}' holding ${SLUG}.php" >&2; exit 1; }
+echo "One top folder, ${SLUG}/, holding ${SLUG}.php."
+
+UNWANTED=$(unzip -Z1 "$ROOT/${SLUG}.zip" | grep -E '(^|/)(\.[^/]+|tests|docs|bin|languages|node_modules|vendor)(/|$)|\.md$|composer\.(json|lock)$|package(-lock)?\.json$|\.dist$' || true)
 if [ -n "$UNWANTED" ]; then
 	echo "FAIL: the archive contains files that should not ship:"; echo "$UNWANTED"; exit 1
 fi
-echo "No tests, docs, dotfiles or dev tooling in the archive."
+echo "No tests, docs, translations, dotfiles or dev tooling in the archive."
 
 # Plugin Check, on exactly what ships.
 docker exec -u root "$CONTAINER" sh -c 'rm -rf /tmp/pcp && mkdir -p /tmp/pcp && chmod 777 /tmp/pcp'

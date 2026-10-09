@@ -1,4 +1,4 @@
-# Soapbox Blyg
+# Soapbox for Blygger
 
 A WordPress plugin that publishes a site's posts as a blyg under the
 [Blygger protocol](https://blygger.org/spec/0.3/): permanent ids, versions, withdrawal, pins, and a
@@ -13,7 +13,7 @@ listing. This file is for working on the plugin. The repository is
 
 | Path | What it is |
 |---|---|
-| `soapbox-blyg.php` | Plugin header, constants, autoloader, boot |
+| `soapbox-for-blygger.php` | Plugin header, constants, autoloader, boot |
 | `includes/functions.php` | The public API: the only stable interface |
 | `src/` | Internal classes, PSR-4 under `SoapboxBlyg\` |
 | `src/Ledger/` | Schema, ids, snapshots, the event table, verify |
@@ -49,6 +49,7 @@ npx wp-env start        # http://localhost:8888, admin / password
 | Webmention, end to end | `npx wp-env start --config tests/env/webmention.json && bin/rehearse-mention.sh` |
 | Coding standards | `vendor/bin/phpcs` |
 | Nothing tracked that should not be | `bin/check-tree.sh` |
+| The switch from Soapbox Blyg 0.1.1, both orders | `npx wp-env start --config tests/env/switchover.json`, `bin/dist.sh`, then `bin/switchover.sh <soapbox-blyg-0.1.1.zip>` |
 
 In `tests/conformance/`, `blyg-check.py` checks a live origin against the protocol from outside,
 and `scenario.sh` drives a post through its whole life. They know nothing of the plugin's
@@ -77,15 +78,18 @@ tracked, and `bin/dist.sh` runs it before it builds.
 
 ## Releasing
 
-`wp dist-archive .` builds the zip, leaving out everything in `.distignore`. Releases to
-WordPress.org are made by hand from that zip.
+`bin/dist.sh` builds `soapbox-for-blygger.zip` from a clean tree, leaving out everything in
+`.distignore`, checks what is in it and runs Plugin Check on it. The same commit gives the same
+bytes. Releases to WordPress.org are made by hand from that zip.
 
-## Renaming
+## Two names
 
-The slug is permanent once WordPress.org approves the plugin. Until then,
-`bin/rename.sh <new-slug> "<New Name>"` renames everything in one pass: the constant in the main
-file drives what PHP can derive at runtime, and the script handles what it cannot (text domain
-literals, function, hook and option names, the namespace, file names).
+The plugin was first released as "Soapbox Blyg". It is "Soapbox for Blygger" on WordPress.org, in
+the folder `soapbox-for-blygger`, with that text domain. Everything a site's data and published
+addresses are named by keeps the first name and always will: `SOAPBOX_BLYG_SLUG`, the tables, the
+options, the REST namespace `soapbox-blyg/v1`, the hooks and functions, `wp blyg`. A test pins
+them, and `bin/check-tree.sh` checks the constant. This checkout's directory may be called
+anything; the build reads the slug from the plugin's header.
 
 ## Licence
 

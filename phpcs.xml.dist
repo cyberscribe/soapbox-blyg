@@ -2,7 +2,7 @@
 <ruleset name="Soapbox Blyg">
 	<description>WordPress-Extra, plus the documentation rules, for the code that ships.</description>
 
-	<file>soapbox-blyg.php</file>
+	<file>soapbox-for-blygger.php</file>
 	<file>uninstall.php</file>
 	<file>includes</file>
 	<file>src</file>
@@ -27,7 +27,7 @@
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">
-				<element value="soapbox-blyg"/>
+				<element value="soapbox-for-blygger"/>
 			</property>
 		</properties>
 	</rule>

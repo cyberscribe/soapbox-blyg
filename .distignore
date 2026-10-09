@@ -9,6 +9,7 @@
 /.claude
 /release
 /bin
+/languages
 /docs
 /node_modules
 /tests

@@ -27,8 +27,8 @@ defined( 'ABSPATH' ) || exit;
 <?php if ( '' !== $data['origin']->description ) : ?>
 <p><?php echo esc_html( $data['origin']->description ); ?></p>
 <?php endif; ?>
-<p><?php esc_html_e( 'This is a blyg: a publication you can subscribe to with any Blygger reader, by pasting this address into it, or with any feed reader, using the feed below.', 'soapbox-blyg' ); ?></p>
-<p><a href="<?php echo esc_url( $data['feed'] ); ?>"><?php esc_html_e( 'Feed', 'soapbox-blyg' ); ?></a> &middot; <a href="<?php echo esc_url( $data['manifest'] ); ?>"><?php esc_html_e( 'Manifest', 'soapbox-blyg' ); ?></a> &middot; <a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php bloginfo( 'name' ); ?></a></p>
+<p><?php esc_html_e( 'This is a blyg: a publication you can subscribe to with any Blygger reader, by pasting this address into it, or with any feed reader, using the feed below.', 'soapbox-for-blygger' ); ?></p>
+<p><a href="<?php echo esc_url( $data['feed'] ); ?>"><?php esc_html_e( 'Feed', 'soapbox-for-blygger' ); ?></a> &middot; <a href="<?php echo esc_url( $data['manifest'] ); ?>"><?php esc_html_e( 'Manifest', 'soapbox-for-blygger' ); ?></a> &middot; <a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php bloginfo( 'name' ); ?></a></p>
 </main>
 </body>
 </html>

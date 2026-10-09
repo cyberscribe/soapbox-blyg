@@ -22,7 +22,7 @@ $soapbox_blyg_when = wp_date( get_option( 'date_format' ), strtotime( $data['wit
 <meta charset="<?php bloginfo( 'charset' ); ?>">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title><?php echo esc_html( sprintf( /* translators: %s: site name */ __( 'Withdrawn - %s', 'soapbox-blyg' ), get_bloginfo( 'name' ) ) ); ?></title>
+<title><?php echo esc_html( sprintf( /* translators: %s: site name */ __( 'Withdrawn - %s', 'soapbox-for-blygger' ), get_bloginfo( 'name' ) ) ); ?></title>
 <link rel="blyg" href="<?php echo esc_url( $data['origin']->url() ); ?>">
 <link rel="alternate" type="application/json" href="<?php echo esc_url( $data['item_url'] ); ?>">
 <?php if ( '' !== $data['webmention'] ) : ?>
@@ -32,13 +32,13 @@ $soapbox_blyg_when = wp_date( get_option( 'date_format' ), strtotime( $data['wit
 </head>
 <body>
 <main>
-<h1><?php echo esc_html_x( 'Withdrawn', 'page heading: this item has been withdrawn by its author', 'soapbox-blyg' ); ?></h1>
+<h1><?php echo esc_html_x( 'Withdrawn', 'page heading: this item has been withdrawn by its author', 'soapbox-for-blygger' ); ?></h1>
 <p>
 <?php
 echo esc_html(
 	sprintf(
 		/* translators: %s: date */
-		__( 'The author withdrew this item on %s. Its content is no longer published.', 'soapbox-blyg' ),
+		__( 'The author withdrew this item on %s. Its content is no longer published.', 'soapbox-for-blygger' ),
 		$soapbox_blyg_when
 	)
 );

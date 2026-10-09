@@ -83,7 +83,7 @@ function BlygPanel() {
 	return (
 		<PluginDocumentSettingPanel
 			name="soapbox-blyg"
-			title={ __( 'Blyg', 'soapbox-blyg' ) }
+			title={ __( 'Blyg', 'soapbox-for-blygger' ) }
 			className="soapbox-blyg-panel"
 		>
 			{ error && (
@@ -96,7 +96,7 @@ function BlygPanel() {
 				<p>
 					{ __(
 						'Not on the blyg yet. A post joins it when it is published.',
-						'soapbox-blyg'
+						'soapbox-for-blygger'
 					) }
 				</p>
 			) }
@@ -115,7 +115,7 @@ function BlygPanel() {
 						{ versionLine( item ) }
 						<br />
 						<ExternalLink href={ item.url }>
-							{ __( 'Item document', 'soapbox-blyg' ) }
+							{ __( 'Item document', 'soapbox-for-blygger' ) }
 						</ExternalLink>
 					</p>
 					{ item.mentions !== null && item.mentions > 0 && (
@@ -126,7 +126,7 @@ function BlygPanel() {
 									'%d verified mention',
 									'%d verified mentions',
 									item.mentions,
-									'soapbox-blyg'
+									'soapbox-for-blygger'
 								),
 								item.mentions
 							) }
@@ -137,7 +137,7 @@ function BlygPanel() {
 							<p className="description">
 								{ __(
 									'A pinned version stays public for good, even if the post is later unpublished or deleted.',
-									'soapbox-blyg'
+									'soapbox-for-blygger'
 								) }
 							</p>
 						) }
@@ -181,7 +181,7 @@ function BlygPanel() {
 												/* translators: %d: version number */
 												__(
 													'Pin version %d',
-													'soapbox-blyg'
+													'soapbox-for-blygger'
 												),
 												entry.version
 											) }
@@ -197,7 +197,7 @@ function BlygPanel() {
 				<Modal
 					title={ sprintf(
 						/* translators: %d: version number */
-						__( 'Pin version %d?', 'soapbox-blyg' ),
+						__( 'Pin version %d?', 'soapbox-for-blygger' ),
 						confirming
 					) }
 					onRequestClose={ () => setConfirming( null ) }
@@ -205,13 +205,13 @@ function BlygPanel() {
 					<p>
 						{ __(
 							'Pinning cannot be undone. This exact version will be served at its own address forever, including after later edits and if the post is withdrawn.',
-							'soapbox-blyg'
+							'soapbox-for-blygger'
 						) }
 					</p>
 					<p>
 						{ __(
 							'Pin a version when someone needs to be able to cite it and find the same words there later.',
-							'soapbox-blyg'
+							'soapbox-for-blygger'
 						) }
 					</p>
 					<div
@@ -225,7 +225,7 @@ function BlygPanel() {
 							variant="tertiary"
 							onClick={ () => setConfirming( null ) }
 						>
-							{ __( 'Cancel', 'soapbox-blyg' ) }
+							{ __( 'Cancel', 'soapbox-for-blygger' ) }
 						</Button>
 						<Button
 							variant="primary"
@@ -233,7 +233,10 @@ function BlygPanel() {
 							disabled={ pinning }
 							onClick={ () => pin( confirming ) }
 						>
-							{ __( 'Pin it permanently', 'soapbox-blyg' ) }
+							{ __(
+								'Pin it permanently',
+								'soapbox-for-blygger'
+							) }
 						</Button>
 					</div>
 				</Modal>

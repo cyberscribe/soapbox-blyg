@@ -2,9 +2,7 @@
 #
 # Translation files. Uses wp-env's development container, which has WP-CLI.
 #
-#   bin/i18n.sh pot      Regenerate languages/soapbox-blyg.pot from the code.
-#   bin/i18n.sh build    From every languages/*.po, make the .mo, the .l10n.php and the JSON files
-#                        the scripts load. Run after copying in or changing a .po.
+#   bin/i18n.sh pot      Regenerate languages/<text domain>.pot from the code.
 #   bin/i18n.sh check    msgfmt's checks on every .po, and that each translation has exactly
 #                        the placeholders of its original.
 #   bin/i18n.sh pseudo   Install a pseudo-locale (xx_XX) on the development site, switch the
@@ -12,37 +10,27 @@
 #                        Leaves the site in xx_XX for a look in the browser; `bin/i18n.sh
 #                        english` puts it back.
 #
-# The .po files are written by translators and are the source. Everything else in languages/
-# is derived from them and from the code, and is rebuilt, never edited.
+# Nothing in languages/ ships with the plugin, and nothing in it is compiled. The .pot is made
+# from the code; the .po files are the translators', kept here as the source to import into
+# translate.wordpress.org, which is where a site's language pack comes from. The pseudo-locale is
+# installed where a language pack goes, in WordPress's own languages directory, so it tests the
+# path a real translation takes.
 
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-SLUG="$(basename "$ROOT")"
+# Where wp-env mounts this checkout, which is named after its directory, and the text domain,
+# which is the plugin's slug on WordPress.org and is read from its header. They differ.
+DIR="$(basename "$ROOT")"
+SLUG="$(sed -n 's/^ \* Text Domain: *//p' "$ROOT"/*.php | head -n 1)"
+[ -n "$SLUG" ] || { echo "no Text Domain in the plugin's header" >&2; exit 2; }
 WP="$ROOT/bin/wp-env-wp"
-IN="wp-content/plugins/${SLUG}"
+IN="wp-content/plugins/${DIR}"
 EXCLUDE="vendor,vendor-prefixed,node_modules,tests,assets/src,bin,docs"
 
 case "${1:-}" in
 pot)
 	$WP i18n make-pot "$IN" "$IN/languages/${SLUG}.pot" --exclude="$EXCLUDE"
-	;;
-build)
-	ls "$ROOT"/languages/*.po >/dev/null 2>&1 || { echo "no .po files in languages/"; exit 0; }
-	# Derived files are made afresh, so that one whose source string has gone does not linger.
-	rm -f "$ROOT"/languages/*.mo "$ROOT"/languages/*.json "$ROOT"/languages/*.l10n.php
-	$WP i18n make-mo "$IN/languages"
-	$WP i18n make-php "$IN/languages"
-	$WP i18n make-json "$IN/languages" --no-purge
-	# WordPress looks for a script's translations by the md5 of the script's path. Every built
-	# script must have its file, in every locale, or that script stays in English and nothing says so.
-	for po in "$ROOT"/languages/*.po; do
-		for js in "$ROOT"/build/*.js; do
-			want="${po%.po}-$(printf 'build/%s' "$(basename "$js")" | md5 2>/dev/null || printf 'build/%s' "$(basename "$js")" | md5sum | cut -d' ' -f1).json"
-			[ -e "$want" ] || { echo "FAIL: no translations for $(basename "$js") in $(basename "$po"): expected $(basename "$want")" >&2; exit 1; }
-		done
-	done
-	echo "$(ls "$ROOT"/languages/*.po | wc -l | tr -d ' ') locales: $(ls "$ROOT"/languages/*.mo | wc -l | tr -d ' ') .mo, $(ls "$ROOT"/languages/*.l10n.php | wc -l | tr -d ' ') .l10n.php, $(ls "$ROOT"/languages/*.json | wc -l | tr -d ' ') .json"
 	;;
 check)
 	fails=0
@@ -55,7 +43,7 @@ check)
 	;;
 pseudo)
 	python3 "$ROOT/tests/i18n/pseudo.py" "$ROOT/languages/${SLUG}.pot" > "/tmp/${SLUG}-xx_XX.po"
-	CONTAINER="$(docker ps --filter "label=com.docker.compose.service=cli" --format '{{.Names}}' | grep "^wp-env-${SLUG}-" | head -n 1)"
+	CONTAINER="$(docker ps --filter "label=com.docker.compose.service=cli" --format '{{.Names}}' | grep "^wp-env-${DIR}-" | head -n 1)"
 	# Into WordPress's own languages directory, where a language pack would go: never into the plugin.
 	docker exec -u root "$CONTAINER" sh -c 'mkdir -p /var/www/html/wp-content/languages/plugins && chmod -R 777 /var/www/html/wp-content/languages'
 	docker cp "/tmp/${SLUG}-xx_XX.po" "$CONTAINER:/var/www/html/wp-content/languages/plugins/${SLUG}-xx_XX.po" >/dev/null
