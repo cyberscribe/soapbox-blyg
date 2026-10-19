@@ -17,3 +17,16 @@ add_filter(
 	10,
 	2
 );
+
+/*
+ * The stub listens on 8090, not 8080, which other local projects tend to hold. WordPress allows
+ * outbound requests on 80, 443 and 8080 only; this adds 8090 for the stub's host alone.
+ */
+add_filter(
+	'http_allowed_safe_ports',
+	static function ( $ports, $host ) {
+		return 'host.docker.internal' === $host ? array_merge( (array) $ports, array( 8090 ) ) : $ports;
+	},
+	10,
+	2
+);

@@ -4,7 +4,7 @@ Tags: blygger, feed, rss, webmention, syndication
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.1.2
+Stable tag: 0.1.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -14,7 +14,7 @@ Publish your posts as a blyg. An independent implementation of the Blygger proto
 
 An independent implementation of the Blygger protocol; not affiliated with the Blygger project.
 
-Soapbox for Blygger makes your WordPress site a publisher under the [Blygger protocol](https://blygger.org/spec/0.3/), an open protocol for publishing on your own domain in a way other people's software can subscribe to, archive completely, and quote exactly.
+Soapbox for Blygger makes your WordPress site a publisher under the [Blygger protocol](https://blygger.org/spec/0.4/), an open protocol for publishing on your own domain in a way other people's software can subscribe to, archive completely, and quote exactly.
 
 Once it is switched on, every post you publish also becomes an item of your **blyg**, at an address such as `https://example.com/blyg/`. For each item the plugin keeps:
 
@@ -27,7 +27,7 @@ Readers get a manifest, an RSS feed that any feed reader can use, a complete arc
 
 = Before you publish =
 
-**The protocol is a draft.** This plugin implements Blygger 0.3, which is before 1.0. Its wire format may change, and the plugin will follow it. What will not change is what publishing means: every address your blyg serves is a promise to keep answering there, and a pin cannot be undone. Read "Can I undo this?" below first.
+**The protocol is a draft.** This plugin implements Blygger 0.4. Like every version before 1.0 it is a draft: its wire format may change, and the plugin will follow it. What will not change is what publishing means: every address your blyg serves is a promise to keep answering there, and a pin cannot be undone. Read "Can I undo this?" below first.
 
 **Nothing is published until you say so.** Activating the plugin publishes nothing. You choose where the blyg lives and how it is laid out, save that, and then switch publishing on. Before you run the backfill, which is the step that puts your existing posts out, do these four things:
 
@@ -36,7 +36,7 @@ Readers get a manifest, an RSS feed that any feed reader can use, a complete arc
 3. **Check Site Health** for the entries about the blyg, the one about caching above all. A cache that holds the blyg's documents would keep serving a post after you withdrew it.
 4. **Be sure of the mount path and the layout.** Both are permanent from the first item published.
 
-**This is an independent implementation.** Soapbox for Blygger is not written by, endorsed by or affiliated with the authors of the Blygger protocol. The protocol's specification is at [blygger.org](https://blygger.org/spec/0.3/).
+**This is an independent implementation.** Soapbox for Blygger is not written by, endorsed by or affiliated with the authors of the Blygger protocol. The protocol's specification is at [blygger.org](https://blygger.org/spec/0.4/).
 
 = What it does not do =
 
@@ -82,9 +82,9 @@ Partly, and it is worth understanding before you start.
 
 = Which surface layout should I choose? =
 
-**Fixed paths** (selected to begin with) serves the protocol's own file names under the mount: `feed.xml`, `items/index.json`, `items/{id}.json`. This is Blygger 0.3 as published, and every reader understands it. Many hosts cache addresses ending in `.json` and `.xml` aggressively, so check Site Health after you choose it; see the next question.
+**Fixed paths** (selected to begin with) serves the protocol's own file names under the mount: `feed.xml`, `items/index.json`, `items/{id}.json`. These are the protocol's default paths, unchanged since 0.3, so readers of any version find them. Many hosts cache addresses ending in `.json` and `.xml` aggressively, so check Site Health after you choose it; see the next question.
 
-**Templated** serves the manifest at `/blyg/blyg.json` and everything else through the WordPress REST API, at addresses the manifest names. It avoids the paths hosts cache, but it follows a construct the protocol has ruled on for version 0.4 and not yet published as part of 0.3 (the manifest locates the surface). A reader has to support that, and most do not yet: one that does not will find the manifest and then get 404s. Choose it only if you know your readers can use it.
+**Templated** serves the manifest at `/blyg/blyg.json` and everything else through the WordPress REST API, at addresses the manifest names. It avoids the paths hosts cache. It uses the manifest-located surface, which is part of Blygger 0.4: readers built to 0.4 must follow it, and the reference client does. A reader built only to 0.3 will find the manifest and then get 404s.
 
 The choice is permanent once the blyg has an item, so it is made by you, on the settings screen, before publishing can be switched on.
 
@@ -147,7 +147,7 @@ The protocol asks that an image address always serves the same picture once it h
 
 = What are Webmentions, and what happens if I switch them on? =
 
-When another blyg quotes one of your items, answers it or forks it, that site can tell yours, by sending a Webmention. It is off by default.
+When another blyg quotes one of your items, answers it, forks it or has machine-generated text that drew on it, that site can tell yours, by sending a Webmention. It is off by default.
 
 If you switch it on (Settings > Soapbox for Blygger > Mentions), then for each mention your site receives it fetches the sender's page and its item document, and sometimes that blyg's manifest, to check that the document really refers to your item. See "External requests" below for exactly what that involves. Verified mentions are listed under Tools > Soapbox for Blygger, for administrators. Nothing is shown to visitors, and nothing from the other site is stored except its address, its item's id and its author's published name.
 
@@ -160,6 +160,10 @@ A version is made when anything the blyg publishes about the post changes: its t
 = Does it work with membership or paywall plugins? =
 
 Test it before you publish anything, and above all before you run the backfill: what is published cannot be unpublished, only withdrawn. The plugin renders each post as a logged-out visitor would see it, by running the post through `the_content` outside the main loop. A plugin that hides content only inside the loop, or only on the post's own page, may not hide it there, and the full text would then be published in the blyg. Publish a test post, open its item document from the Blyg panel in the editor, and look at what it contains. If it shows more than a visitor should see, leave that post type unticked, or exclude posts with the `soapbox_blyg_is_public` filter.
+
+= Can I help translate it? =
+
+Yes, at [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/soapbox-for-blygger/). The plugin ships in English; each language reaches sites as a language pack once its translations are approved there.
 
 = Does it work on multisite? =
 
@@ -179,7 +183,7 @@ If, and only if, you switch on "Accept Webmentions from other blygs":
 
 How a mention is handled. Your site answers the sender at once and looks nothing up while it does: the sender's address is resolved, checked and fetched afterwards, by a background job. That job stops after twenty seconds in all, checked between each step; one step it cannot cut short is a DNS lookup, which can take as long as your server's own resolver allows. Each sender is limited by the number of requests it makes, whether or not they are accepted.
 
-Known limits. Each request is pinned to the address that was checked, which closes DNS rebinding. That needs PHP's curl extension, which nearly every host has. A site without it, or one that sends its outbound requests through a proxy (`WP_PROXY_HOST`), cannot pin a request, so it verifies no Webmentions: they are accepted and then marked as failed. The templated layout's manifest declares Blygger "0.3", because the specification does not say what a manifest that uses the 0.4 construct should declare. IPv6-only senders are refused: a sender's host must have an IPv4 address, and no address it has, in either family, may be private. WordPress only allows such requests on ports 80, 443 and 8080; a sender on another port is refused unless you add it with WordPress's `http_allowed_safe_ports` filter. A mention is believed only when its item document is at exactly the address its own blyg gives for it, written plainly: an address with `..` in it, or with characters percent-encoded that need not be, is refused. A document kept on another host than its blyg (a CDN, say) cannot be sent as the source itself; send the page that links to it, which must be on the blyg's own host. In the templated layout, your own items are at addresses only your manifest names, so a receiver that implements Blygger 0.3 alone cannot verify a mention that names one of your items as its source; a receiver that reads the manifest's templates can. That is one more reason the fixed layout is the one selected to begin with.
+Known limits. Each request is pinned to the address that was checked, which closes DNS rebinding. That needs PHP's curl extension, which nearly every host has. A site without it, or one that sends its outbound requests through a proxy (`WP_PROXY_HOST`), cannot pin a request, so it verifies no Webmentions: they are accepted and then marked as failed. IPv6-only senders are refused: a sender's host must have an IPv4 address, and no address it has, in either family, may be private. WordPress only allows such requests on ports 80, 443 and 8080; a sender on another port is refused unless you add it with WordPress's `http_allowed_safe_ports` filter. A mention is believed only when its item document is at exactly the address its own blyg gives for it, written plainly: an address with `..` in it, or with characters percent-encoded that need not be, is refused. A document kept on another host than its blyg (a CDN, say) cannot be sent as the source itself; send the page that links to it, which must be on the blyg's own host. In the templated layout, your own items are at addresses only your manifest names, so a receiver that implements Blygger 0.3 alone cannot verify a mention that names one of your items as its source; a receiver that reads the manifest's templates can. That is one more reason the fixed layout is the one selected to begin with.
 
 Caching. The plugin states its lifetime first, and relies on caches using the first of a repeated instruction, as RFC 9111 says and Varnish does. A cache that does not follow that rule could still use a lifetime your host appends. nginx's `proxy_cache` and `fastcgi_cache` are one such case: when the host's instruction arrives as a separate `Cache-Control` header line after the plugin's, nginx uses the last line. This has not been tested with nginx in front. Site Health asks for the documents as a reader would and compares what it is given with the documents as they are now; if it is given an old copy, purge that cache and exclude the blyg's paths from it as described above.
 
@@ -260,6 +264,13 @@ JavaScript sources are in `assets/src/`; the built files in `build/` are produce
 
 == Changelog ==
 
+= 0.1.3 =
+* Publishes under Blygger 0.4, the protocol's published version: every document says `"blyg": "0.4"`, in both layouts. Nothing else in them changes. Every 0.3 document is a valid 0.4 document, and readers accept any 0.x.
+* Pinned versions say "0.4" too, so their files change by those three characters. A pin promises its content, which the content hash covers, and that is unchanged.
+* The manifest names where the plugin's source is (`generator_url`), as 0.4 recommends.
+* Webmentions: a mention from an item whose machine-generated text drew on one of yours now verifies, as 0.4's fourth relation ("Drew on" under Tools).
+* With Soapbox Blyg still installed, the settings now say that "Delete all data" has been switched off and does not come back on by itself.
+
 = 0.1.2 =
 * The plugin is now called Soapbox for Blygger, and its folder is `soapbox-for-blygger`. It was Soapbox Blyg. Nothing a site has published moves: the blyg's addresses, its ids, its settings and its data are exactly where they were, and so are the plugin's hooks, functions and `wp blyg` commands.
 * If you installed it as Soapbox Blyg: install Soapbox for Blygger, activate it, deactivate Soapbox Blyg, then delete Soapbox Blyg. While both are active only one runs, and a notice says so. Until Soapbox Blyg has been deleted, "Delete all data when the plugin is deleted" is kept switched off, so that deleting it cannot delete your blyg.
@@ -278,6 +289,9 @@ JavaScript sources are in `assets/src/`; the built files in `build/` are produce
 * First release. Blygger 0.3, level 2. Posts and any post type with `blyg` support; versions, withdrawal and pins; templated and fixed surface layouts; an optional Webmention receiver with structural verification; Site Health tests; WP-CLI.
 
 == Upgrade Notice ==
+
+= 0.1.3 =
+Moves your blyg to Blygger 0.4. No address, id or version changes.
 
 = 0.1.2 =
 Renamed from Soapbox Blyg. Your blyg, its addresses and its data do not move. Activate this plugin before you deactivate Soapbox Blyg, then delete Soapbox Blyg.

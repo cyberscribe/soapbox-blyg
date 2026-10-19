@@ -51,16 +51,16 @@ class SurfaceTest extends TestCase {
 		$this->assertSame( Http::JSON, $response['type'] );
 
 		$m = json_decode( $response['body'], true );
-		$this->assertSame( '0.3', $m['blyg'] );
+		$this->assertSame( '0.4', $m['blyg'] );
 		$this->assertSame( 2, $m['level'] );
 		$this->assertSame( 'soapbox-for-blygger/' . SOAPBOX_BLYG_VERSION, $m['generator'] );
+		$this->assertSame( 'https://github.com/cyberscribe/soapbox-blyg', $m['generator_url'], 'RECOMMENDED in 0.4 (spec §6.1)' );
 		$this->assertSame( home_url( '/notes/' ), $m['site'] );
 		$this->assertSame( 'feed.xml', $m['feed'] );
 		$this->assertSame( 'items/index.json', $m['items'] );
-		$this->assertArrayNotHasKey( 'item', $m, 'absent means default (v0.4-plan 7.5)' );
+		$this->assertArrayNotHasKey( 'item', $m, 'absent means default (spec §6.1)' );
 		$this->assertArrayNotHasKey( 'pin', $m );
 		$this->assertArrayNotHasKey( 'webmention', $m, 'the receiver is off by default' );
-		$this->assertArrayNotHasKey( 'generator_url', $m );
 		$this->assertArrayNotHasKey( 'blogroll', $m );
 		$this->assertSame( '2026-03-05T10:00:00Z', $m['updated'] );
 	}
@@ -74,7 +74,7 @@ class SurfaceTest extends TestCase {
 		$this->assertSame( $base . '/items', $m['items'] );
 		$this->assertSame( $base . '/items/{id}', $m['item'] );
 		$this->assertSame( $base . '/items/{id}/v/{n}', $m['pin'] );
-		$this->assertSame( home_url( '/notes/' ), $m['site'], 'identity stays at the mount (spec 16.6e)' );
+		$this->assertSame( home_url( '/notes/' ), $m['site'], 'identity stays at the mount (spec §12.2)' );
 
 		$origin    = Plugin::instance()->registry->get( 'notes' );
 		$locations = Plugin::instance()->locations;
@@ -167,7 +167,7 @@ class SurfaceTest extends TestCase {
 		$ids = $this->seed();
 		$doc = json_decode( $this->respond( "items/{$ids['a']}.json" )['body'], true );
 
-		$this->assertSame( '0.3', $doc['blyg'] );
+		$this->assertSame( '0.4', $doc['blyg'] );
 		$this->assertSame( 'fragment', $doc['kind'] );
 		$this->assertSame( home_url( '/notes/' ), $doc['origin'] );
 		$this->assertSame( home_url( '/notes/' ), $doc['page'] );

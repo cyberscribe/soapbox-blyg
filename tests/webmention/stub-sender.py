@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 """A stand-in for another Blygger client, for rehearsing the Webmention receiver locally.
 
-It serves one blyg at http://host.docker.internal:8080/blyg/ (which is how a wp-env container
+It serves one blyg at http://host.docker.internal:8090/blyg/ (which is how a wp-env container
 reaches this machine) containing one thread whose document refers to an item of the site under
 test. Standard library only. Not part of the plugin.
 
-    stub-sender.py <target origin> <target item id> [transclusion|stub|none|withdrawn]
+    stub-sender.py <target origin> <target item id> [transclusion|stub|source|none|withdrawn]
 
 The mode decides what the thread's document says about the target:
   transclusion  a transclusions[] entry naming it (the default; what the reference client sends)
   stub          a stub_of naming it
+  source        a generated[].sources[] entry naming it, in a 0.4 document (spec 0.4 §5.7)
   none          a real item document that does not reference it
   withdrawn     the thread has been withdrawn
 
@@ -32,7 +33,7 @@ import json
 import sys
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-HOST = "http://host.docker.internal:8080"
+HOST = "http://host.docker.internal:8090"
 ORIGIN = HOST + "/blyg/"
 ITEM = "1vgtgz0gq5b2c9k7d3m8r4n6xy"
 
@@ -54,6 +55,9 @@ def document():
         doc["transclusions"] = [reference]
     elif mode == "stub":
         doc["stub_of"] = reference
+    elif mode == "source":
+        doc["blyg"] = "0.4"
+        doc["generated"] = [{"sources": [reference], "model": "stub-model", "at": "2026-10-01T00:00:00Z"}]
     elif mode == "withdrawn":
         doc.update(kind="withdrawn", content_md="", content_html="")
     return doc
@@ -119,4 +123,4 @@ class Handler(BaseHTTPRequestHandler):
 
 
 print("%st/%s/" % (ORIGIN, ITEM), flush=True)
-HTTPServer(("0.0.0.0", 8080), Handler).serve_forever()
+HTTPServer(("0.0.0.0", 8090), Handler).serve_forever()

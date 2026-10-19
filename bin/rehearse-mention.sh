@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Rehearses the Webmention half of the protocol's 0.4 gate (spec 0.3 §16.6e) on this machine: a stub
+# Rehearses the Webmention half of the protocol's 0.4 gate (spec 0.4 §16.6e, now §15.4) on this machine: a stub
 # standing in for another Blygger client publishes a thread that quotes one of our items and sends
 # us a mention, and we verify it by fetching the stub's page and document.
 #
@@ -36,7 +36,7 @@ stub() { # mode
   [ -n "$STUB_PID" ] && kill "$STUB_PID" 2>/dev/null && wait "$STUB_PID" 2>/dev/null
   python3 "$ROOT/tests/webmention/stub-sender.py" "$ORIGIN" "$TARGET_ID" "$1" >/tmp/soapbox-stub.out 2>/tmp/soapbox-stub.log &
   STUB_PID=$!
-  for _ in 1 2 3 4 5 6 7 8 9 10; do curl -s -o /dev/null "http://localhost:8080/blyg/blyg.json" && break; sleep 0.3; done
+  for _ in 1 2 3 4 5 6 7 8 9 10; do curl -s -o /dev/null "http://localhost:8090/blyg/blyg.json" && break; sleep 0.3; done
   SOURCE=$(head -1 /tmp/soapbox-stub.out)
 }
 trap '[ -n "$STUB_PID" ] && kill "$STUB_PID" 2>/dev/null' EXIT
@@ -71,7 +71,14 @@ stub transclusion
 run_queue
 [[ "$(mention_field status)" == "verified" && "$(mention_field relation)" == "transclusion" ]] && ok "verified, relation transclusion" || bad "did not verify: $(mention_field status) / $(mention_field reason)"
 [[ "$(sender_fetches)" == "2" ]] && ok "exactly two fetches: the page, then its document" || bad "$(sender_fetches) fetches"
-[[ "$(mention_field source_origin)" == "http://host.docker.internal:8080/blyg/" ]] && ok "recorded the sender's origin, item and author, and no content" || bad "wrong source origin"
+[[ "$(mention_field source_origin)" == "http://host.docker.internal:8090/blyg/" ]] && ok "recorded the sender's origin, item and author, and no content" || bad "wrong source origin"
+
+step "a re-sent mention from a 0.4 document whose generated text drew on our item: relation source"
+stub source
+$WP eval 'global $wpdb; $wpdb->query( "UPDATE " . SoapboxBlyg\Ledger\Schema::table( "mentions" ) . " SET received_at = \"2026-01-01T00:00:00Z\"" );' >/dev/null
+[[ "$(post "$SOURCE" "$PAGE")" == "202" ]] && ok "re-sent: 202" || bad "re-send refused: $(cat /tmp/soapbox-mention-body)"
+run_queue
+[[ "$(mention_field status)" == "verified" && "$(mention_field relation)" == "source" ]] && ok "verified, relation source" || bad "did not verify as source: $(mention_field status) / $(mention_field reason) / $(mention_field relation)"
 
 step "a re-sent mention for a withdrawn source is marked gone"
 stub withdrawn
@@ -82,29 +89,29 @@ run_queue
 
 step "a document that does not cite the target is rejected"
 stub none
-[[ "$(post "http://host.docker.internal:8080/blyg/items/1vgtgz0gq5b2c9k7d3m8r4n6xy.json" "$PAGE")" == "202" ]] && ok "202" || bad "not accepted"
+[[ "$(post "http://host.docker.internal:8090/blyg/items/1vgtgz0gq5b2c9k7d3m8r4n6xy.json" "$PAGE")" == "202" ]] && ok "202" || bad "not accepted"
 run_queue
 [[ "$(mention_field status)" == "failed" && "$(mention_field reason)" == "no-reference" ]] && ok "failed: no-reference" || bad "status $(mention_field status) / $(mention_field reason)"
 
 step "two blygs on one host: one cannot speak as the other (blygger-spec decision #61)"
 : > /tmp/soapbox-stub.log
-BOB="http://host.docker.internal:8080/bob/blyg/items/1vgtgz0gq5b2c9k7d3m8r4n6xy.json"
+BOB="http://host.docker.internal:8090/bob/blyg/items/1vgtgz0gq5b2c9k7d3m8r4n6xy.json"
 [[ "$(post "$BOB" "$PAGE")" == "202" ]] && ok "202 for Bob's document, which says its origin is Alice's" || bad "not accepted: $(cat /tmp/soapbox-mention-body)"
 run_queue
 [[ "$(mention_field status)" == "failed" && "$(mention_field reason)" == "origin-mismatch" ]] && ok "failed: origin-mismatch" || bad "status $(mention_field status) / $(mention_field reason)"
 [[ "$(grep -a -c 'GET /bob/blyg/items/' /tmp/soapbox-stub.log) $(grep -a -c 'GET /alice/blyg/blyg.json' /tmp/soapbox-stub.log) $(grep -a -c 'GET ' /tmp/soapbox-stub.log)" == "1 1 2" ]] && ok "two fetches: the document, then the manifest of the origin it named, which does not lead to it" || bad "fetched: $(grep -a -o 'GET [^ ]*' /tmp/soapbox-stub.log | paste -sd' ' -)"
 
-step "a templated sender verifies through its manifest (decision #61, spec 16.6e)"
+step "a templated sender verifies through its manifest (spec §15.4 step 2)"
 : > /tmp/soapbox-stub.log
-TPL="http://host.docker.internal:8080/tpl/api/items/1vgtgz0gq5b2c9k7d3m8r4n6xy"
+TPL="http://host.docker.internal:8090/tpl/api/items/1vgtgz0gq5b2c9k7d3m8r4n6xy"
 [[ "$(post "$TPL" "$PAGE")" == "202" ]] && ok "202 for a document at a templated address" || bad "not accepted: $(cat /tmp/soapbox-mention-body)"
 run_queue
-[[ "$(mention_field status)" == "verified" && "$(mention_field source_origin)" == "http://host.docker.internal:8080/tpl/blyg/" ]] && ok "verified, for the origin whose manifest led to it" || bad "status $(mention_field status) / $(mention_field reason) / $(mention_field source_origin)"
+[[ "$(mention_field status)" == "verified" && "$(mention_field source_origin)" == "http://host.docker.internal:8090/tpl/blyg/" ]] && ok "verified, for the origin whose manifest led to it" || bad "status $(mention_field status) / $(mention_field reason) / $(mention_field source_origin)"
 [[ "$(grep -a -o 'GET [^ ]*' /tmp/soapbox-stub.log | paste -sd' ' -)" == "GET /tpl/api/items/1vgtgz0gq5b2c9k7d3m8r4n6xy GET /tpl/blyg/blyg.json" ]] && ok "two fetches: the document, then that origin's manifest" || bad "fetched: $(grep -a -o 'GET [^ ]*' /tmp/soapbox-stub.log | paste -sd' ' -)"
 
 step "a gzip bomb is refused without being inflated (review A7)"
 : > /tmp/soapbox-stub.log
-BOMB="http://host.docker.internal:8080/blyg/bomb.json"
+BOMB="http://host.docker.internal:8090/blyg/bomb.json"
 $WP eval 'file_put_contents( WP_CONTENT_DIR . "/debug.log", "" );' >/dev/null 2>&1
 [[ "$(post "$BOMB" "$PAGE")" == "202" ]] && ok "202" || bad "not accepted: $(cat /tmp/soapbox-mention-body)"
 $WP cron event run soapbox_blyg_verify_mention >/tmp/soapbox-cron.out 2>&1 && ok "the verification run finished" || bad "the verification run died: $(tail -3 /tmp/soapbox-cron.out)"
@@ -121,7 +128,7 @@ $WP eval 'global $wpdb; $id = (int) $wpdb->get_var( "SELECT mention_id FROM " . 
 
 step "a response that never ends is cut off at the size limit (review B4)"
 : > /tmp/soapbox-stub.log
-[[ "$(post "http://host.docker.internal:8080/blyg/endless.json" "$PAGE")" == "202" ]] && ok "202" || bad "not accepted: $(cat /tmp/soapbox-mention-body)"
+[[ "$(post "http://host.docker.internal:8090/blyg/endless.json" "$PAGE")" == "202" ]] && ok "202" || bad "not accepted: $(cat /tmp/soapbox-mention-body)"
 STARTED=$(date +%s)
 run_queue
 TOOK=$(( $(date +%s) - STARTED ))

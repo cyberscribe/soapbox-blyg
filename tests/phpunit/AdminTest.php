@@ -283,6 +283,25 @@ class AdminTest extends TestCase {
 		$this->assertNotContains( 'wp-edit-post', $scripts->registered['soapbox-blyg-editor-panel']->deps, 'the panel comes from wp-editor, as it has since 6.6' );
 	}
 
+	public function test_the_settings_screen_cites_the_published_protocol_version() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+		ob_start();
+		SettingsPage::render();
+		$screen = (string) ob_get_clean();
+		$this->assertStringContainsString( 'href="https://blygger.org/spec/0.4/"', $screen );
+		$this->assertStringContainsString( 'version 0.4', $screen );
+		$this->assertStringContainsString( 'before 1.0', $screen, '0.4 is still a draft (its Status line)' );
+
+		ob_start();
+		SettingsPage::field( array( 'key' => 'layout' ) );
+		$layouts = (string) ob_get_clean();
+		$this->assertStringContainsString( 'Readers built to 0.4 must follow it, and the reference client does', $layouts );
+		// Nothing about reader support that cannot be sourced, and no working-paper citations.
+		foreach ( array( 'decision #', 'most don', 'understood by every reader', 'draft' ) as $unsourced ) {
+			$this->assertStringNotContainsString( $unsourced, $layouts, $unsourced );
+		}
+	}
+
 	public function test_settings_are_sanitised_by_type() {
 		update_option(
 			Settings::OPTION,

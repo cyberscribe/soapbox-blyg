@@ -455,7 +455,7 @@ class Verifier {
 		}
 		$fetched_from = self::address( $document_url );
 		if ( $speaker . 'items/' . $id . '.json' !== $fetched_from ) {
-			// Not at the fixed address, so the origin may publish its items by template (§16.6e).
+			// Not at the fixed address, so the origin may publish its items by template (spec §6.1, §15.4).
 			// Its manifest says where, and is the third and last document fetched: the page, the
 			// item document, and this. It is asked for at the claimed origin and nowhere else, so
 			// a redirect away from that address is not an answer.
@@ -476,7 +476,7 @@ class Verifier {
 			}
 			$template = isset( $manifest['body'] ) && self::is_plain( $manifest['url'] ) && self::address( $manifest['url'] ) === $speaker . 'blyg.json' ? json_decode( $manifest['body'], true ) : null;
 			$template = is_array( $template ) && isset( $template['item'] ) && is_string( $template['item'] ) ? $template['item'] : '';
-			// {id} is the only expression a template may hold (URI Template level 1, spec §16.6e).
+			// {id} is the only expression a template may hold (URI Template level 1, spec §6.1).
 			$expanded = str_replace( '{id}', rawurlencode( $id ), $template );
 			if ( false === strpos( $template, '{id}' ) || false !== strpbrk( $expanded, '{}' ) || self::address( $expanded ) !== $fetched_from ) {
 				return $failed( 'origin-mismatch' );
@@ -534,13 +534,14 @@ class Verifier {
 
 	/**
 	 * How a document refers to one of our items, if it does (spec §15.4), in the protocol's order:
-	 * a stub of it, a transclusion of it, or a fork of a pinned version of it. Only the three
-	 * identity members of a reference are read; `cited` and `selector` are never consulted.
+	 * a stub of it, a transclusion of it, a fork of a pinned version of it, or a generation source
+	 * drawn from it. Only the identity members of a reference are read; `cited` and `selector`
+	 * are never consulted.
 	 *
 	 * @param array  $document  The source's item document.
 	 * @param string $our_url   This origin's URL: its identity.
 	 * @param string $target_id Our item's id.
-	 * @return string|null stub, transclusion, fork or null.
+	 * @return string|null stub, transclusion, fork, source or null.
 	 */
 	private function relation( array $document, string $our_url, string $target_id ) {
 		$ours  = self::identity( $our_url );
@@ -569,6 +570,21 @@ class Verifier {
 			$row     = $version > 0 ? $this->ledger->version_row( $target_id, $version ) : null;
 			if ( $row && (int) $row['pinned'] ) {
 				return 'fork';
+			}
+		}
+		// A generation source (spec 0.4 §5.7): one of our items that machine-generated text in the
+		// document drew on. Each span of `generated` lists its sources as references; one without
+		// an origin is the sender's own item. Nothing is promised of the version, so no pin check.
+		if ( isset( $document['generated'] ) && is_array( $document['generated'] ) ) {
+			foreach ( $document['generated'] as $span ) {
+				if ( ! is_array( $span ) || ! isset( $span['sources'] ) || ! is_array( $span['sources'] ) ) {
+					continue;
+				}
+				foreach ( $span['sources'] as $entry ) {
+					if ( $names( $entry ) ) {
+						return 'source';
+					}
+				}
 			}
 		}
 		return null;

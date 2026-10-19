@@ -694,6 +694,67 @@ class MentionsTest extends TestCase {
 	}
 
 	/**
+	 * Spec 0.4 §15.4 step 4 and §5.7: a generation source naming us is the fourth relation, and
+	 * the last in order. Unlike a fork it is not checked against our pins.
+	 */
+	public function test_a_generation_source_is_the_fourth_relation() {
+		$doc = function ( array $extra ) {
+			$this->web = array( self::THEIR_DOC => array( 200, $this->their_document( $extra ) ) );
+			global $wpdb;
+			$wpdb->query( 'DELETE FROM ' . \SoapboxBlyg\Ledger\Schema::table( 'mentions' ) ); // phpcs:ignore
+			$this->receive( self::THEIR_DOC, home_url( '/notes/a/' ) );
+			$this->run_queue();
+			return $this->mention();
+		};
+		$generated = function ( array ...$sources ) {
+			return array(
+				array(
+					'sources' => $sources,
+					'model'   => 'a-model',
+					'at'      => '2026-10-10T17:40:00Z',
+				),
+			);
+		};
+		$ours  = $this->our_reference( array( 'cited' => array( 'retrieved' => '2026-10-10T17:40:00Z' ) ) );
+		$other = array( 'origin' => 'https://someone.example/blyg/', 'id' => $this->ours, 'version' => 1 );
+
+		$source = $doc( array( 'generated' => array_merge( array( array( 'sources' => array() ) ), $generated( $other, $ours ) ) ) );
+		$this->assertSame( array( Store::VERIFIED, 'source' ), array( $source['status'], $source['relation'] ), (string) $source['reason'] );
+		$this->assertSame( self::THEIR_ID, $source['source_id'] );
+
+		$this->assertSame( 'source', $doc( array( 'generated' => $generated( $this->our_reference( array( 'version' => 7 ) ) ) ) )['relation'], 'a source of an unpinned version verifies: no pin is promised' );
+
+		$this->assertSame( 'transclusion', $doc( array( 'transclusions' => array( $this->our_reference() ), 'generated' => $generated( $ours ) ) )['relation'], 'quoted and drawn on: a transclusion' );
+		$this->assertSame( 'stub', $doc( array( 'stub_of' => $this->our_reference(), 'generated' => $generated( $ours ) ) )['relation'] );
+		soapbox_blyg_pin( $this->ours, 1 );
+		$this->assertSame( 'fork', $doc( array( 'forked_from' => $this->our_reference(), 'generated' => $generated( $ours ) ) )['relation'] );
+
+		$fails = array(
+			'another origin, our id'      => array( 'generated' => $generated( $other ) ),
+			'our origin, another id'      => array( 'generated' => $generated( array( 'origin' => home_url( '/notes/' ), 'id' => 'ffffffffffffffffffffffffff', 'version' => 1 ) ) ),
+			'no origin: their own item'   => array( 'generated' => $generated( array( 'id' => $this->ours, 'version' => 1 ) ) ),
+			'only in cited'               => array( 'generated' => $generated( array( 'id' => 'ffffffffffffffffffffffffff', 'cited' => array( 'url' => home_url( '/notes/a/' ), 'retrieved' => '2026-10-10T17:40:00Z' ) ) ) ),
+			'generated is not a list'     => array( 'generated' => 'drawn on ' . $this->ours ),
+			'sources is not a list'       => array( 'generated' => array( array( 'sources' => $ours ) ) ),
+			'a span that is not an object' => array( 'generated' => array( 'x', 3, null ) ),
+			'an entry that is not a ref'  => array( 'generated' => array( array( 'sources' => array( 'x', 3, null, array( 'origin' => array( 'x' ) ) ) ) ) ),
+		);
+		foreach ( $fails as $what => $extra ) {
+			$mention = $doc( $extra );
+			$this->assertSame( array( Store::FAILED, 'no-reference' ), array( $mention['status'], $mention['reason'] ), $what );
+		}
+	}
+
+	public function test_a_sender_at_any_0x_version_verifies() {
+		// Spec §3.1: readers accept any 0.x. A 0.4 receiver verifies 0.3 senders (every other
+		// fixture here) and later ones alike.
+		$this->web[ self::THEIR_DOC ] = array( 200, $this->their_document( array( 'blyg' => '0.9', 'stub_of' => $this->our_reference() ) ) );
+		$this->receive( self::THEIR_DOC, home_url( '/notes/a/' ) );
+		$this->run_queue();
+		$this->assertSame( array( Store::VERIFIED, 'stub' ), array( $this->mention()['status'], $this->mention()['relation'] ) );
+	}
+
+	/**
 	 * @dataProvider documents_that_do_not_verify
 	 */
 	public function test_documents_that_do_not_verify( string $reason, $document ) {
@@ -1056,7 +1117,7 @@ class MentionsTest extends TestCase {
 	}
 
 	/**
-	 * Spec 16.6e, and the protocol lead's note on blygger-spec#2: a mention's target is checked
+	 * Spec §15.3 and §15.4, and the protocol lead's note on blygger-spec#2: a mention's target is checked
 	 * against this origin's own templates and permalinks, in whichever layout it has, and not
 	 * against the protocol's default paths.
 	 *

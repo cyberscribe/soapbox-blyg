@@ -1,7 +1,7 @@
 # Soapbox for Blygger
 
 A WordPress plugin that publishes a site's posts as a blyg under the
-[Blygger protocol](https://blygger.org/spec/0.3/): permanent ids, versions, withdrawal, pins, and a
+[Blygger protocol](https://blygger.org/spec/0.4/): permanent ids, versions, withdrawal, pins, and a
 surface other Blygger clients can subscribe to and quote. An independent implementation, not
 affiliated with the protocol's authors.
 
@@ -49,6 +49,7 @@ npx wp-env start        # http://localhost:8888, admin / password
 | Webmention, end to end | `npx wp-env start --config tests/env/webmention.json && bin/rehearse-mention.sh` |
 | Coding standards | `vendor/bin/phpcs` |
 | Nothing tracked that should not be | `bin/check-tree.sh` |
+| An update in place from the previous release | `npx wp-env start --config tests/env/switchover.json`, `bin/dist.sh`, then `bin/upgrade.sh <previous release zip>` |
 | The switch from Soapbox Blyg 0.1.1, both orders | `npx wp-env start --config tests/env/switchover.json`, `bin/dist.sh`, then `bin/switchover.sh <soapbox-blyg-0.1.1.zip>` |
 
 In `tests/conformance/`, `blyg-check.py` checks a live origin against the protocol from outside,

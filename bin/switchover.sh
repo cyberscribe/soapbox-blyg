@@ -27,6 +27,9 @@ SITE="http://localhost:8898"
 TWO="$SITE/two"
 OLD=soapbox-blyg
 NEW=soapbox-for-blygger
+# The version the new archive declares, from its main file's header, as dist.sh reads the slug.
+NEW_VERSION="$(unzip -p "$NEW_ZIP" "$NEW/$NEW.php" | sed -n 's/^ \* Version: *//p' | head -n 1)"
+[ -n "$NEW_VERSION" ] || { echo "no Version header in $NEW_ZIP" >&2; exit 2; }
 CLI="$(docker ps --format '{{.Names}}' | grep '^wp-env-env-switchover-.*-cli-1$' | grep -v tests | head -n 1)"
 [ -n "$CLI" ] || { echo "the switchover cell is not running (npx wp-env start --config tests/env/switchover.json)" >&2; exit 2; }
 T="$(mktemp -d)"
@@ -96,7 +99,7 @@ wp2 cron event list --fields=hook --format=csv | grep -q '^soapbox_blyg_sweep_me
 echo "       ledger: $LEDGER"
 
 "$WP" plugin install /tmp/new.zip >/dev/null 2>&1
-[[ "$("$WP" plugin get $NEW --field=version 2>/dev/null)" == "0.1.2" && "$(active)" == "$OLD " ]] && ok "Soapbox for Blygger 0.1.2 is installed, inactive" || bad "the new plugin is not installed inactive: $(active)"
+[[ "$("$WP" plugin get $NEW --field=version 2>/dev/null)" == "$NEW_VERSION" && "$(active)" == "$OLD " ]] && ok "Soapbox for Blygger $NEW_VERSION is installed, inactive" || bad "the new plugin is not installed inactive: $(active)"
 snapshot "$T/now"; state "with the new plugin only installed" "$T/now" etags
 
 step "order 1: deactivate the earlier plugin, then activate this one"
@@ -106,7 +109,7 @@ echo "       in the gap, with neither active, the six addresses answer: $GAP"
 [[ "$GAP" == "404 404 404 404 404 404 " ]] && ok "the gap is a 404 at every address, as deactivating has always been" || bad "the gap is not what deactivating was known to do: $GAP"
 wp2 plugin activate $NEW >/dev/null 2>&1
 snapshot "$T/now"; state "order 1, first requests after activating" "$T/now"
-[[ "$(generator)" == "soapbox-for-blygger/0.1.2" && "$(active)" == "$NEW " ]] && ok "this plugin is serving: $(generator)" || bad "active: $(active); generator: $(generator)"
+[[ "$(generator)" == "soapbox-for-blygger/$NEW_VERSION" && "$(active)" == "$NEW " ]] && ok "this plugin is serving: $(generator)" || bad "active: $(active); generator: $(generator)"
 [[ "$(ledger)" == "$LEDGER" ]] && ok "the ledger verifies with the same counts" || bad "the ledger differs: $(ledger)"
 [[ "$(settings)" == "$SETTINGS" ]] && ok "the settings are unchanged" || bad "the settings changed: $(settings)"
 
@@ -131,7 +134,7 @@ for first in "$MANIFEST" "$ITEM" "$PIN" "$PAGE"; do
   snapshot "$T/now"; state "  and then the rest" "$T/now"
   [[ "$first" == "$PAGE" ]] || { wp2 plugin activate $OLD >/dev/null 2>&1; }
 done
-[[ "$(generator)" == "soapbox-for-blygger/0.1.2" && "$(active)" == "$NEW " ]] && ok "this plugin is serving: $(generator)" || bad "active: $(active); generator: $(generator)"
+[[ "$(generator)" == "soapbox-for-blygger/$NEW_VERSION" && "$(active)" == "$NEW " ]] && ok "this plugin is serving: $(generator)" || bad "active: $(active); generator: $(generator)"
 [[ "$(ledger)" == "$LEDGER" ]] && ok "the ledger verifies with the same counts" || bad "the ledger differs: $(ledger)"
 [[ "$(settings)" == "$SETTINGS" ]] && ok "the settings are unchanged" || bad "the settings changed: $(settings)"
 curl -s -o /dev/null "$TWO/"
@@ -145,7 +148,7 @@ wp2 plugin deactivate $NEW >/dev/null 2>&1; wp2 plugin activate $OLD >/dev/null 
 "$WP" plugin activate $NEW --network >/dev/null 2>&1
 [[ "$(active)" == "$OLD $NEW(network) " ]] && ok "active: $(active)" || bad "active: $(active)"
 snapshot "$T/now"; state "both loaded, this one first" "$T/now"
-[[ "$(generator)" == "soapbox-for-blygger/0.1.2" ]] && ok "this plugin runs, once: $(generator)" || bad "generator: $(generator)"
+[[ "$(generator)" == "soapbox-for-blygger/$NEW_VERSION" ]] && ok "this plugin runs, once: $(generator)" || bad "generator: $(generator)"
 N=$(wp2 eval 'global $wp_filter; $n = 0; foreach ( $wp_filter["soapbox_blyg_event"]->callbacks as $c ) { $n += count( $c ); } echo $n;' 2>/dev/null)
 "$WP" plugin deactivate $NEW --network >/dev/null 2>&1; wp2 plugin deactivate $OLD >/dev/null 2>&1; wp2 plugin activate $NEW >/dev/null 2>&1
 M=$(wp2 eval 'global $wp_filter; $n = 0; foreach ( $wp_filter["soapbox_blyg_event"]->callbacks as $c ) { $n += count( $c ); } echo $n;' 2>/dev/null)

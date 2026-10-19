@@ -35,6 +35,11 @@ final class Plugin {
 	const VERSION_OPTION = 'soapbox_blyg_plugin_version';
 
 	/**
+	 * The WP-CLI command: `wp blyg`.
+	 */
+	const CLI_COMMAND = 'blyg';
+
+	/**
 	 * The one instance.
 	 *
 	 * @var Plugin|null
@@ -202,7 +207,7 @@ final class Plugin {
 		};
 
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
-			\WP_CLI::add_command( 'blyg', Cli\Command::class );
+			\WP_CLI::add_command( self::CLI_COMMAND, Cli\Command::class );
 		}
 	}
 
@@ -238,7 +243,8 @@ final class Plugin {
 	 * earlier plugin's uninstall, which reads that setting and, finding it on, drops the tables
 	 * this plugin is serving from: every id and every address the site has published. Nothing in
 	 * this plugin runs at that moment, so the setting is switched off beforehand, here, and the
-	 * settings screen will not switch it on again until the earlier plugin has gone.
+	 * settings screen will not switch it on again until the earlier plugin has gone. Nor does
+	 * anything else: the owner ticks it again.
 	 *
 	 * The file is looked for only when the setting is on, so an ordinary request reads nothing extra.
 	 */
@@ -262,7 +268,7 @@ final class Plugin {
 		if ( ! in_array( $screen->id, array( 'plugins', 'plugins-network' ), true ) && false === strpos( (string) $screen->id, SOAPBOX_BLYG_SLUG ) ) {
 			return;
 		}
-		echo '<div class="notice notice-info"><p>' . esc_html__( 'Soapbox Blyg, the earlier name of Soapbox for Blygger, is still installed. It can be deleted: this plugin has taken over the same blyg, at the same addresses. Until it has gone, "Delete all data when the plugin is deleted" is kept switched off, because deleting Soapbox Blyg with that setting on would delete the record of everything this site has published.', 'soapbox-for-blygger' ) . '</p></div>';
+		echo '<div class="notice notice-info"><p>' . esc_html__( 'Soapbox Blyg, the earlier name of Soapbox for Blygger, is still installed. It can be deleted: this plugin has taken over the same blyg, at the same addresses. Until it has gone, "Delete all data when the plugin is deleted" stays switched off, because deleting Soapbox Blyg with that setting on would delete the record of everything this site has published. It does not come back on by itself: after deleting Soapbox Blyg, tick it again if you want it.', 'soapbox-for-blygger' ) . '</p></div>';
 	}
 
 	/**

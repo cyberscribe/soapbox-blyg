@@ -615,14 +615,15 @@ class ExternalReviewTest extends TestCase {
 	}
 
 	public function test_f11_both_layouts_declare_the_protocol_version_the_specification_gives() {
-		// Spec 0.3 section 16.6e calls a templated surface a 0.4 construct and names no version
-		// for its manifest to declare, so none is invented.
+		// Spec 0.4 §3.1: a deployment serving the 0.4 surfaces emits "0.4". The fixed layout's
+		// documents are 0.3 documents, and every one of those is a valid 0.4 document, so both
+		// layouts declare the version the plugin implements.
 		$plugin = Plugin::instance();
 		$origin = $plugin->registry->get( 'posts' );
 		foreach ( array( 'templated', 'fixed' ) as $layout ) {
 			$as         = clone $origin;
 			$as->layout = $layout;
-			$this->assertSame( '0.3', json_decode( $plugin->documents->manifest( $as )[0], true )['blyg'], $layout );
+			$this->assertSame( '0.4', json_decode( $plugin->documents->manifest( $as )[0], true )['blyg'], $layout );
 		}
 	}
 

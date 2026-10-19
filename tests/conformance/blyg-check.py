@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Black-box conformance check for one blyg origin: Blygger Protocol 0.3, publish side, with the
-0.4 templated surface (spec 0.3 §16.6e, decision #51).
+"""Black-box conformance check for one blyg origin: Blygger Protocol 0.4, publish side, both the
+default paths and the manifest-located surface (spec §4, §6.1).
 
-It checks what the Blygger specification (https://blygger.org/spec/0.3/) requires of a publisher
+It checks what the Blygger specification (https://blygger.org/spec/0.4/) requires of a publisher
 at level 2: the manifest, the feed, the archive index, item and pinned documents, an absolute
 `page` for every item, and discovery. Each failure is labelled with the checker's own name for
 the check (AC-1 to AC-16, T1); "spec §n" in a message is a section of that specification.
@@ -43,7 +43,7 @@ NS_DC = "http://purl.org/dc/elements/1.1/"
 ID_RE = re.compile(r"^[0-9a-hjkmnp-tv-z]{26}$")
 ISO_Z_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$")
 FEED_WINDOW = 50
-PROTOCOL_VERSIONS = {"0.3"}
+PROTOCOL_VERSION_RE = re.compile(r"^0\.\d+$")  # Readers accept any 0.x (spec §3.1).
 DEFAULTS = {"feed": "feed.xml", "items": "items/index.json",
             "item": "items/{id}.json", "pin": "items/{id}/v{n}.json"}
 
@@ -207,8 +207,8 @@ def check_manifest(origin):
     if not isinstance(m, dict) or "blyg" not in m:
         fail("AC-1", "blyg.json is not an object with a 'blyg' key")
         return None
-    if m.get("blyg") not in PROTOCOL_VERSIONS:
-        fail("AC-1", f"blyg = {m.get('blyg')!r}, want one of {sorted(PROTOCOL_VERSIONS)}")
+    if not isinstance(m.get("blyg"), str) or not PROTOCOL_VERSION_RE.match(m["blyg"]):
+        fail("AC-1", f"blyg = {m.get('blyg')!r}, want 0.x")
     if m.get("level") != EXPECT_LEVEL:
         fail("AC-1", f"level = {m.get('level')!r}, want {EXPECT_LEVEL}")
     if m.get("site") != origin:
@@ -294,7 +294,7 @@ def check_item(origin, entry):
     for k in ("version", "kind", "updated"):
         if d.get(k) != entry.get(k):
             fail("AC-4", f"{label}: {k} {d.get(k)!r} disagrees with index {entry.get(k)!r}")
-    if d.get("blyg") not in PROTOCOL_VERSIONS:
+    if not isinstance(d.get("blyg"), str) or not PROTOCOL_VERSION_RE.match(d["blyg"]):
         fail("AC-5", f"{label}: blyg = {d.get('blyg')!r}")
     check_page(origin, d, label)
     if d.get("id") != iid:
@@ -372,7 +372,7 @@ def check_pins(origin, d):
             continue
         check_cors(r, f"{label} v{n}")
         p = r.json()
-        if p.get("blyg") not in PROTOCOL_VERSIONS:
+        if not isinstance(p.get("blyg"), str) or not PROTOCOL_VERSION_RE.match(p["blyg"]):
             fail("AC-6", f"{label} v{n}: blyg = {p.get('blyg')!r}")
         if p.get("version") != n or p.get("id") != iid or p.get("pinned") is not True:
             fail("AC-6", f"{label} v{n}: id/version/pinned fields wrong")
@@ -588,7 +588,7 @@ def check_discovery(origin, home):
     if len(lf.blyg) != 1:
         fail("AC-13", f"home carries {len(lf.blyg)} rel=blyg links, want exactly 1")
     else:
-        # §12.1 step 4 as extended by §16.6e: the href may be the manifest itself, else an origin.
+        # §12.1 step 4 (0.4): the href may be the manifest itself, else an origin.
         href = urllib.parse.urljoin(home, lf.blyg[0])
         hr = fetch(href)
         manifest_url = None

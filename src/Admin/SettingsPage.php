@@ -463,11 +463,11 @@ class SettingsPage {
 				$layouts = array(
 					'fixed'     => array(
 						__( 'Fixed paths', 'soapbox-for-blygger' ),
-						__( 'Blygger 0.3, understood by every reader. The protocol\'s own file names under the mount (feed.xml, items/index.json, items/{id}.json). Check Site Health afterwards: if your host caches them at the edge, exclude the mount path from that cache.', 'soapbox-for-blygger' ),
+						__( 'The protocol\'s default paths under the mount (feed.xml, items/index.json, items/{id}.json), unchanged since 0.3: readers of any version find them. Check Site Health afterwards: if your host caches them at the edge, exclude the mount path from that cache.', 'soapbox-for-blygger' ),
 					),
 					'templated' => array(
 						__( 'Templated', 'soapbox-for-blygger' ),
-						__( 'Blygger 0.4 draft (decision #51). Needs a reader that supports manifest-located surfaces; most don\'t yet. The manifest says where everything else is, and the documents are served through the REST API. Managed hosts often cache paths ending in .json and .xml for weeks, which would keep serving an item after you withdrew it; this layout avoids those paths.', 'soapbox-for-blygger' ),
+						__( 'Blygger 0.4\'s manifest-located surface: the manifest says where everything else is, and the documents are served through the REST API. Readers built to 0.4 must follow it, and the reference client does; a reader built only to 0.3 finds the manifest and then gets 404s. Managed hosts often cache paths ending in .json and .xml for weeks, which would keep serving an item after you withdrew it; this layout avoids those paths.', 'soapbox-for-blygger' ),
 					),
 				);
 				echo '<fieldset>';
@@ -553,7 +553,7 @@ class SettingsPage {
 						esc_attr( $id ),
 						esc_html__( 'Delete all Soapbox for Blygger data when the plugin is deleted', 'soapbox-for-blygger' )
 					);
-					$note( __( 'Kept off while Soapbox Blyg, this plugin\'s earlier name, is still installed: the two share one record of what has been published, and deleting Soapbox Blyg with this on would delete it. Delete Soapbox Blyg from the Plugins screen first.', 'soapbox-for-blygger' ) );
+					$note( __( 'Switched off while Soapbox Blyg, this plugin\'s earlier name, is still installed: the two share one record of what has been published, and deleting Soapbox Blyg with this on would delete it. It does not come back on by itself: delete Soapbox Blyg from the Plugins screen, then tick this again if you want it.', 'soapbox-for-blygger' ) );
 					break;
 				}
 				$check( __( 'Delete all Soapbox for Blygger data when the plugin is deleted', 'soapbox-for-blygger' ) );
@@ -580,9 +580,9 @@ class SettingsPage {
 					echo wp_kses(
 						sprintf(
 							/* translators: 1: protocol version, 2: URL of the protocol specification */
-							__( 'This plugin publishes under the <a href="%2$s">Blygger protocol</a>, version %1$s, which is a draft: its wire format may change before 1.0, and this plugin will follow it. What does not change is the promise you make by publishing. Every address the blyg serves is meant to keep answering, and a pinned version is served forever. Soapbox for Blygger is an independent implementation and is not affiliated with the protocol\'s authors.', 'soapbox-for-blygger' ),
+							__( 'This plugin publishes under the <a href="%2$s">Blygger protocol</a>, version %1$s. Like every version before 1.0 it is a draft: its wire format may change, and this plugin will follow it. What does not change is the promise you make by publishing. Every address the blyg serves is meant to keep answering, and a pinned version is served forever. Soapbox for Blygger is an independent implementation and is not affiliated with the protocol\'s authors.', 'soapbox-for-blygger' ),
 							esc_html( \SoapboxBlyg\Surface\Documents::PROTOCOL ),
-							esc_url( 'https://blygger.org/spec/0.3/' )
+							esc_url( 'https://blygger.org/spec/' . \SoapboxBlyg\Surface\Documents::PROTOCOL . '/' )
 						),
 						array( 'a' => array( 'href' => true ) )
 					);

@@ -29,6 +29,11 @@ class ToolsPage {
 	const PAGE = 'soapbox-blyg-tools';
 
 	/**
+	 * The user meta that records which schema problem a person has dismissed.
+	 */
+	const DISMISSED_META = 'soapbox_blyg_dismissed_problem';
+
+	/**
 	 * Hooks.
 	 */
 	public static function register(): void {
@@ -109,9 +114,9 @@ class ToolsPage {
 		$problem = Schema::blocked();
 		$stamp   = Schema::problem_key();
 		if ( '' !== $problem && isset( $_GET['soapbox_blyg_dismiss'] ) && check_admin_referer( 'soapbox_blyg_dismiss' ) ) {
-			update_user_meta( get_current_user_id(), 'soapbox_blyg_dismissed_problem', $stamp );
+			update_user_meta( get_current_user_id(), self::DISMISSED_META, $stamp );
 		}
-		if ( '' !== $problem && ( $ours || get_user_meta( get_current_user_id(), 'soapbox_blyg_dismissed_problem', true ) !== $stamp ) ) {
+		if ( '' !== $problem && ( $ours || get_user_meta( get_current_user_id(), self::DISMISSED_META, true ) !== $stamp ) ) {
 			echo '<div class="notice notice-error"><p>';
 			echo esc_html(
 				'engine' === $problem
@@ -390,6 +395,8 @@ class ToolsPage {
 						'transclusion' => __( 'Quotes %s', 'soapbox-for-blygger' ),
 						/* translators: %s: the address of one of this site's items, as a link. Another publication's item is a fork of it. */
 						'fork'         => __( 'Forked from %s', 'soapbox-for-blygger' ),
+						/* translators: %s: the address of one of this site's items, as a link. Another publication's item has machine-generated text that drew on it. */
+						'source'       => __( 'Drew on %s', 'soapbox-for-blygger' ),
 					);
 					?>
 					<table class="widefat striped" style="max-width:60rem">

@@ -13,10 +13,14 @@ namespace SoapboxBlyg\Tests;
 
 use SoapboxBlyg\Admin\SettingsPage;
 use SoapboxBlyg\Admin\ToolsPage;
+use SoapboxBlyg\Integrations\Purge;
 use SoapboxBlyg\Ledger\Schema;
+use SoapboxBlyg\Mentions\Receiver;
+use SoapboxBlyg\Origins\PostTypeSource;
 use SoapboxBlyg\Plugin;
 use SoapboxBlyg\Settings;
 use SoapboxBlyg\Surface\Documents;
+use SoapboxBlyg\Surface\Router;
 use SoapboxBlyg\Surface\Locations;
 
 class IdentityTest extends TestCase {
@@ -38,12 +42,19 @@ class IdentityTest extends TestCase {
 	/** Runs $during with the earlier plugin's main file in place, and takes it away again. */
 	private function with_the_old_copy_installed( callable $during ): void {
 		$this->assertFileDoesNotExist( self::old_copy(), 'this checkout is not the earlier plugin' );
+		// The folder exists when this checkout is named soapbox-blyg, and not otherwise.
+		$folder = dirname( self::old_copy() );
+		$made   = ! is_dir( $folder ) && mkdir( $folder ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir
+		$this->assertDirectoryExists( $folder );
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- a stand-in file, in the test site's plugins directory.
 		$this->assertNotFalse( file_put_contents( self::old_copy(), "<?php\n// A stand-in for Soapbox Blyg 0.1.1, written by IdentityTest.\n" ) );
 		try {
 			$during();
 		} finally {
 			unlink( self::old_copy() ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+			if ( $made ) {
+				rmdir( $folder ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_rmdir
+			}
 		}
 	}
 
@@ -61,6 +72,19 @@ class IdentityTest extends TestCase {
 		// In bookmarks, and in the links Site Health and the notices give.
 		$this->assertSame( 'soapbox-blyg', SettingsPage::PAGE );
 		$this->assertSame( 'soapbox-blyg-tools', ToolsPage::PAGE );
+		// Scheduled work already queued under these names on every site that ran 0.1.1.
+		$this->assertSame( 'soapbox_blyg_sweep_mentions', Receiver::SWEEP_HOOK );
+		$this->assertSame( 'soapbox_blyg_verify_mention', Receiver::VERIFY_HOOK );
+		$this->assertSame( 'soapbox_blyg_repair', PostTypeSource::REPAIR_HOOK );
+		$this->assertSame( 'soapbox_blyg_reconcile_run', PostTypeSource::RECONCILE_HOOK );
+		$this->assertSame( 'soapbox_blyg_purge_again', Purge::AGAIN_HOOK );
+		// Stored options and user meta, and the settings group the options screen posts.
+		$this->assertSame( 'soapbox_blyg_rules_hash', Router::RULES_OPTION );
+		$this->assertSame( 'soapbox_blyg_plugin_version', Plugin::VERSION_OPTION );
+		$this->assertSame( 'soapbox_blyg', SettingsPage::GROUP );
+		$this->assertSame( 'soapbox_blyg_dismissed_problem', ToolsPage::DISMISSED_META );
+		// In people's scripts.
+		$this->assertSame( 'blyg', Plugin::CLI_COMMAND );
 	}
 
 	public function test_the_names_people_and_wordpress_org_see_are_the_new_ones() {
@@ -171,13 +195,59 @@ class IdentityTest extends TestCase {
 				set_current_screen( 'plugins' );
 				ob_start();
 				do_action( 'admin_notices' );
-				$this->assertStringContainsString( 'Soapbox Blyg', (string) ob_get_clean(), 'and the administrator is told why' );
+				$said = (string) ob_get_clean();
+				$this->assertStringContainsString( 'Soapbox Blyg', $said, 'and the administrator is told why' );
+				$this->assertStringContainsString( 'tick it again', $said, 'and that it does not come back by itself' );
+				$this->assertStringNotContainsString( 'kept', $said );
 				set_current_screen( 'front' );
+
+				// The note beside the setting says the same.
+				wp_set_current_user( $this->someone_who_manages_plugins() );
+				ob_start();
+				SettingsPage::field( array( 'key' => 'delete_data' ) );
+				$note = (string) ob_get_clean();
+				$this->assertStringContainsString( 'tick this again', $note );
+				$this->assertStringNotContainsString( 'Kept off', $note );
 			}
 		);
 
 		// Once it has gone, the choice is the owner's again.
 		$this->assertTrue( SettingsPage::sanitize( array( 'delete_data' => true ) )['delete_data'] );
+	}
+
+	/**
+	 * On a network the hold runs on the site being visited, and only there. Another site can still
+	 * have the setting on; this plugin's own uninstall walks every site and must leave that one
+	 * alone too. (Deleting the earlier plugin there is the runbook's to prevent: BACKLOG.)
+	 */
+	public function test_another_site_of_a_network_where_the_hold_has_not_run_is_left_alone() {
+		if ( ! is_multisite() ) {
+			$this->markTestSkipped( 'Runs on the multisite configuration.' );
+		}
+		$other = self::factory()->blog->create();
+		switch_to_blog( $other );
+		update_option( Settings::OPTION, array( 'delete_data' => true ) + Settings::all() );
+		update_option( 'soapbox_blyg_db_version', 'kept' );
+		restore_current_blog();
+
+		$this->with_the_old_copy_installed(
+			function () use ( $other ) {
+				Plugin::keep_data_beside_the_earlier_plugin();
+				switch_to_blog( $other );
+				$this->assertTrue( get_option( Settings::OPTION )['delete_data'], 'the hold ran on the current site only' );
+				if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
+					define( 'WP_UNINSTALL_PLUGIN', 'soapbox-for-blygger/soapbox-for-blygger.php' );
+				}
+				if ( ! function_exists( 'soapbox_blyg_uninstall_site' ) ) {
+					include dirname( __DIR__, 2 ) . '/uninstall.php';
+					switch_to_blog( $other ); // The file walked the network and restored the current site.
+				}
+				soapbox_blyg_uninstall_site();
+				$this->assertSame( 'kept', get_option( 'soapbox_blyg_db_version' ) );
+				$this->assertNotEmpty( get_option( Settings::OPTION ) );
+				restore_current_blog();
+			}
+		);
 	}
 
 	/**

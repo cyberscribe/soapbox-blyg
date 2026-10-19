@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * The manifest is always at {origin}blyg.json: that filename is what lets a reader handed a bare
  * origin find the blyg, and it is what makes the origin, and so the blyg's identity, a stable
- * path of the site's own choosing (spec §12.2, §16.6e). Everything past the manifest is located
+ * path of the site's own choosing (spec §4, §12.2). Everything past the manifest is located
  * by the manifest:
  *
  * - templated: the documents are behind REST routes, and the manifest carries absolute `feed` and
@@ -176,7 +176,7 @@ class Locations {
 	/**
 	 * The item a URL names, within one origin: by its page, in any spelling the item has ever had,
 	 * or by its item document URL in the origin's current layout. This is the check a Webmention's
-	 * target has to pass (spec §15.3, §16.6e: receivers check targets against their own templates).
+	 * target has to pass (spec §15.3: receivers check targets against their own templates).
 	 *
 	 * @param Origin $origin The origin.
 	 * @param string $url    An absolute URL.

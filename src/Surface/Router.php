@@ -24,7 +24,7 @@ defined( 'ABSPATH' ) || exit;
  * for everything else. The layout then changes what is served under the mount, never the rules.
  *
  * The REST API is not used for the manifest: the protocol fixes that one filename at the origin
- * (spec §4, §16.6e), and {origin}blyg.json is what makes the origin's identity a path the site
+ * (spec §4, §6.1), and {origin}blyg.json is what makes the origin's identity a path the site
  * owns. add_feed() is not used either: it serves /feed/{name}/, and the protocol's default feed
  * path is {origin}feed.xml.
  */

@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.1.3 (unreleased)
+
+Blygger 0.4 is published (2026-10-18). The plugin moves to it.
+
+- **`Documents::PROTOCOL` is "0.4"**, in the manifest, item and pinned documents of both layouts
+  (spec 0.4 §3.1). Pinned files change by the key alone; a pin promises content, which
+  `content_hash` covers (§8), not bytes.
+- **`generator_url`** is the public repository (`SOAPBOX_BLYG_GENERATOR_URL`), RECOMMENDED by §6.1.
+- **The `source` relation** (§15.4 step 4, §5.7): a `generated[].sources[]` entry naming one of our
+  items verifies, last in the order stub, transclusion, fork, source. No pin check.
+- Copy cites 0.4: the settings notice links the spec by `PROTOCOL`; the layout descriptions say
+  what readers of each version find, and nothing about reader support beyond what the spec says.
+- The note and notice beside "delete all data", while Soapbox Blyg is installed, say it has been
+  switched off and does not come back by itself.
+- `ToolsPage::DISMISSED_META` and `Plugin::CLI_COMMAND` name what were literals, and the identity
+  test pins them with the cron hooks, `Router::RULES_OPTION`, `Plugin::VERSION_OPTION` and
+  `SettingsPage::GROUP`.
+- Tests: the earlier-plugin helper makes its folder when the checkout has another name; a network
+  site where the hold has not run is left alone by this plugin's uninstall.
+- `readme.txt` points translators at translate.wordpress.org. Nothing is bundled.
+- `tests/conformance/blyg-check.py` accepts any 0.x; `bin/switchover.sh` reads the version from
+  the header.
+
 ## 0.1.2 (unreleased)
 
 For WordPress.org, whose review of 0.1.0 asked for a name that does not read as the Blygger

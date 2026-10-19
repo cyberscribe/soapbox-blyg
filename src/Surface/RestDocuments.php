@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Serves the feed, the archive index, item documents and pinned versions of a templated origin
- * from REST routes. The manifest names these URLs and readers follow it (spec §16.6e), so the
+ * from REST routes. The manifest names these URLs and readers follow it (spec §6.1), so the
  * documents can sit where WordPress routes natively, away from the .json and .xml paths that
  * managed hosts treat as static files and cache at the edge.
  *

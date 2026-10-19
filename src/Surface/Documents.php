@@ -27,9 +27,11 @@ defined( 'ABSPATH' ) || exit;
 class Documents {
 
 	/**
-	 * The protocol version these documents are written to (spec §3.1).
+	 * The protocol version these documents are written to (spec §3.1). One value for every
+	 * document in both layouts, pinned versions included: a pin promises its content, which
+	 * content_hash covers, not its bytes (§8).
 	 */
-	const PROTOCOL = '0.3';
+	const PROTOCOL = '0.4';
 
 	/**
 	 * The conformance level claimed (spec §3). The documents carry `page` and may advertise a
