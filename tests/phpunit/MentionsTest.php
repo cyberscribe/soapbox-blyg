@@ -13,6 +13,7 @@ use SoapboxBlyg\Mentions\Store;
 use SoapboxBlyg\Mentions\Verifier;
 use SoapboxBlyg\Plugin;
 use SoapboxBlyg\Settings;
+use SoapboxBlyg\Surface\Locations;
 
 class MentionsTest extends TestCase {
 
@@ -1159,6 +1160,69 @@ class MentionsTest extends TestCase {
 			'templated' => array( 'templated' ),
 			'fixed'     => array( 'fixed' ),
 		);
+	}
+
+	/**
+	 * Spec §15.3 step 1 as revised by decision #84: the target must resolve, by this site's own
+	 * published data, to an address it serves for one of its items. Where it lives is not the
+	 * test. A REST API on another host (a filter on rest_url, as domain mapping and headless set-ups
+	 * do) puts a templated origin's item documents off the home host, and they are still ours.
+	 */
+	public function test_84_a_target_on_the_rest_host_is_accepted_when_it_differs_from_home() {
+		add_filter(
+			'rest_url',
+			static function ( $url ) {
+				return str_replace( Locations::http_origin( home_url( '/' ) ), 'https://api.example.org', $url );
+			}
+		);
+		$plugin = Plugin::instance();
+		$post   = self::factory()->post->create( array( 'post_status' => 'publish', 'post_content' => '<p>Body.</p>' ) );
+		$id     = soapbox_blyg_get_status( 'posts', 'post:' . $post )['id'];
+		soapbox_blyg_pin( $id, 1 );
+
+		$origin         = clone $plugin->registry->get( 'posts' );
+		$origin->layout = 'templated';
+		$receiver       = new Receiver( $plugin->mentions, $plugin->locations );
+
+		$document = $plugin->locations->item( $origin, $id );
+		$pin      = $plugin->locations->pin( $origin, $id, 1 );
+		$this->assertStringStartsWith( 'https://api.example.org/', $document, 'the set-up puts the REST API on its own host' );
+		$this->assertSame( 202, $receiver->receive( $origin, 'https://reader.example/1', $document )['status'], 'the item document on the REST host' );
+		$this->assertSame( 202, $receiver->receive( $origin, 'https://reader.example/2', $pin )['status'], 'a pinned version on the REST host' );
+
+		$unknown = $receiver->receive( $origin, 'https://reader.example/3', $plugin->locations->item( $origin, str_repeat( '0', 26 ) ) );
+		$this->assertSame( 400, $unknown['status'], 'an unknown item on the REST host is still 400' );
+	}
+
+	/** The page an item records is its page, on whatever host the site published it. */
+	public function test_84_an_items_recorded_page_on_another_host_is_accepted() {
+		$page = 'https://www.example.net/notes/b/';
+		$id   = soapbox_blyg_publish( 'notes', 'b', $this->fragment( 'Two.', array( 'permalink' => $page ) ) )['id'];
+		$this->assertSame( 202, $this->receive( self::THEIR_PAGE, $page )['status'] );
+		$this->assertSame( $id, $this->mention()['target_id'] );
+	}
+
+	/** With no host check, a foreign host is refused for what it fails to name, after the client is counted. */
+	public function test_84_a_foreign_target_is_refused_because_it_names_nothing_and_still_counts_against_its_client() {
+		add_filter(
+			'soapbox_blyg_webmention_limits',
+			static function ( $limits ) {
+				return array( 'client' => 1 ) + $limits;
+			}
+		);
+		$plugin   = Plugin::instance();
+		$receiver = new Receiver( $plugin->mentions, $plugin->locations, array( __CLASS__, 'addresses_of' ) );
+		$origin   = $plugin->registry->get( 'notes' );
+
+		foreach ( array( 'https://elsewhere.example/notes/a/', 'http://example.org:8080/notes/a/' ) as $target ) {
+			$response = $receiver->receive( $origin, self::THEIR_PAGE, $target );
+			$this->assertSame( 400, $response['status'], $target );
+			$this->assertStringContainsString( 'does not name an item of this blyg', $response['body'], $target );
+		}
+
+		$this->assertSame( 400, $receiver->receive( $origin, self::THEIR_PAGE, 'https://elsewhere.example/notes/a/', 'one-client' )['status'] );
+		$this->assertSame( 429, $receiver->receive( $origin, self::THEIR_PAGE, home_url( '/notes/a/' ), 'one-client' )['status'], 'the refused claim used up the client\'s one request' );
+		$this->assertSame( array(), $plugin->mentions->query() );
 	}
 
 	/*

@@ -6,7 +6,8 @@
 	"plugins": [ ".", "https://downloads.wordpress.org/plugin/webmention.zip" ],
 	"themes": [ "https://downloads.wordpress.org/theme/twentytwentyfive.zip" ],
 	"mappings": {
-		"wp-content/mu-plugins/allow-docker-host.php": "./tests/env/mu-plugins/allow-docker-host.php"
+		"wp-content/mu-plugins/allow-docker-host.php": "./tests/env/mu-plugins/allow-docker-host.php",
+		"wp-content/mu-plugins/rest-host.php": "./tests/env/mu-plugins/rest-host.php"
 	},
 	"config": {
 		"WP_DEBUG": true,

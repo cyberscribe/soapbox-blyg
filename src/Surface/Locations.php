@@ -175,8 +175,9 @@ class Locations {
 
 	/**
 	 * The item a URL names, within one origin: by its page, in any spelling the item has ever had,
-	 * or by its item document URL in the origin's current layout. This is the check a Webmention's
-	 * target has to pass (spec §15.3: receivers check targets against their own templates).
+	 * or by its item document URL in the origin's current layout. This is the whole check a
+	 * Webmention's target has to pass (spec §15.3, decision #84): what matters is that this site
+	 * serves the address for the item, not which host it is on.
 	 *
 	 * @param Origin $origin The origin.
 	 * @param string $url    An absolute URL.

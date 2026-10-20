@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.4 (unreleased)
+
+Blygger 0.4 decision #84 revises §15.3 step 1: a Webmention target must resolve, by the
+receiver's own published data, to an address it serves for one of its items. Location is not the test.
+
+- **The receiver's host pre-check is gone.** `Locations::item_for_url()` alone decides. A target on
+  the REST host, where `rest_url()` is filtered onto a host other than home's, was refused as "not on
+  this site"; it is now accepted. A foreign target is 400 "does not name an item of this blyg",
+  after the client limit has counted it, as before.
+- No pinned-version page exists to accept: pinned documents carry no `page`, and every page an item
+  has recorded already names it.
+- The Webmention rehearsal gains two steps, with a test-only `rest_url` filter in the webmention cell.
+
 ## 0.1.3 (unreleased)
 
 Blygger 0.4 is published (2026-10-18). The plugin moves to it.

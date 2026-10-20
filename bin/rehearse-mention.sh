@@ -137,6 +137,19 @@ sleep 1
 SENT=$(grep -a -o 'endless: sent=[0-9]*' /tmp/soapbox-stub.log | tail -1 | cut -d= -f2)
 [[ -n "$SENT" && "$SENT" -lt 16777216 ]] && ok "the transfer was aborted: the sender got ${SENT} of 67108864 bytes out (${TOOK}s)" || bad "the sender wrote ${SENT:-all} bytes"
 
+step "decision #84: a target on the REST host, where that differs from home, is ours"
+stub transclusion
+$WP option update soapbox_test_rest_host 'http://api.localhost:8892' >/dev/null
+API_DOC=$($WP eval 'echo SoapboxBlyg\Plugin::instance()->locations->item( SoapboxBlyg\Plugin::instance()->registry->get( "posts" ), "'"$TARGET_ID"'" );')
+[[ "$API_DOC" == "http://api.localhost:8892/"* ]] && ok "our item document is now at $API_DOC" || bad "the REST host did not move: $API_DOC"
+[[ "$(post "$SOURCE" "$API_DOC")" == "202" ]] && ok "202 for a target on the REST host" || bad "refused: $(cat /tmp/soapbox-mention-body)"
+run_queue
+[[ "$(mention_field status)" == "verified" && "$(mention_field target_url)" == "$API_DOC" && "$(mention_field target_id)" == "$TARGET_ID" ]] && ok "verified, for our item, with the target as sent" || bad "status $(mention_field status) / $(mention_field reason) / $(mention_field target_url)"
+$WP option delete soapbox_test_rest_host >/dev/null
+
+step "decision #84: a foreign target is refused because it names nothing of ours"
+[[ "$(post "$SOURCE" "http://elsewhere.example/blyg/t/$TARGET_ID/")" == "400" ]] && grep -q "does not name an item of this blyg" /tmp/soapbox-mention-body && ok "400: $(cat /tmp/soapbox-mention-body)" || bad "$(cat /tmp/soapbox-mention-body)"
+
 step "T7 with the IndieWeb Webmention plugin active"
 $WP plugin activate webmention >/dev/null 2>&1
 N=$(curl -s "$PAGE" | grep -c "href=\"${ORIGIN}webmention\"")

@@ -188,12 +188,11 @@ class Receiver {
 			return self::reply( 400, 'source and target are the same URL.' );
 		}
 
-		// The target must be on this site and name an item of this origin, by its page or by its
-		// item document. An unknown item is 400, not 404: the endpoint exists, the claim is bad. A
-		// withdrawn target is accepted, since people may respond to a withdrawal.
-		if ( Locations::http_origin( $target ) !== Locations::http_origin( home_url( '/' ) ) ) {
-			return self::reply( 400, 'target is not on this site.' );
-		}
+		// The target must name an item of this origin by an address this site serves for it: its
+		// page, its item document or a pinned version (spec §15.3, decision #84). Membership is the
+		// whole test, not the host: an item document behind a REST API on another host is ours. An
+		// unknown item is 400, not 404: the endpoint exists, the claim is bad. A withdrawn target is
+		// accepted, since people may respond to a withdrawal.
 		$item = $this->locations->item_for_url( $origin, $target );
 		if ( ! $item ) {
 			return self::reply( 400, 'target does not name an item of this blyg.' );

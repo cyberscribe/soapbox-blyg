@@ -4,7 +4,7 @@ Tags: blygger, feed, rss, webmention, syndication
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.1.3
+Stable tag: 0.1.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -264,6 +264,9 @@ JavaScript sources are in `assets/src/`; the built files in `build/` are produce
 
 == Changelog ==
 
+= 0.1.4 =
+* Webmentions: a mention is accepted when its target is one of your items' addresses, wherever that address is. A site whose REST API is on another host (domain mapping, a separate API host) had mentions of its item documents refused; they are now accepted. Blygger 0.4's revised receiving rule (decision #84).
+
 = 0.1.3 =
 * Publishes under Blygger 0.4, the protocol's published version: every document says `"blyg": "0.4"`, in both layouts. Nothing else in them changes. Every 0.3 document is a valid 0.4 document, and readers accept any 0.x.
 * Pinned versions say "0.4" too, so their files change by those three characters. A pin promises its content, which the content hash covers, and that is unchanged.
@@ -289,6 +292,9 @@ JavaScript sources are in `assets/src/`; the built files in `build/` are produce
 * First release. Blygger 0.3, level 2. Posts and any post type with `blyg` support; versions, withdrawal and pins; templated and fixed surface layouts; an optional Webmention receiver with structural verification; Site Health tests; WP-CLI.
 
 == Upgrade Notice ==
+
+= 0.1.4 =
+Webmentions of your item documents are accepted when your REST API is on another host. No address, id or version changes.
 
 = 0.1.3 =
 Moves your blyg to Blygger 0.4. No address, id or version changes.
