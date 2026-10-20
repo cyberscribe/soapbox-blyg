@@ -270,7 +270,7 @@ class Store {
 				$target,
 				$source,
 				self::pair_hash( $source, $target ),
-				substr( $host, 0, 191 ),
+				mb_strcut( $host, 0, 191, 'UTF-8' ), // The column's width in bytes, cut between characters.
 				$client,
 				self::PENDING,
 				Ledger::now()

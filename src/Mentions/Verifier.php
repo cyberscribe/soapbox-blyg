@@ -514,7 +514,9 @@ class Verifier {
 		if ( isset( $document['author'] ) && is_array( $document['author'] ) ) {
 			$author = Ledger::json( (object) $document['author'] );
 			if ( strlen( $author ) > self::MAX_STORED_AUTHOR ) {
-				$name   = isset( $document['author']['name'] ) && is_string( $document['author']['name'] ) ? mb_substr( $document['author']['name'], 0, 200 ) : '';
+				// 200 characters as a reader sees them: grapheme clusters (PCRE's \X), so a letter
+				// keeps its accent and an emoji sequence is not left half drawn.
+				$name   = isset( $document['author']['name'] ) && is_string( $document['author']['name'] ) && preg_match( '/^\X{0,200}/u', $document['author']['name'], $m ) ? $m[0] : '';
 				$author = '' !== $name ? Ledger::json( (object) array( 'name' => $name ) ) : null;
 			}
 		}

@@ -3,7 +3,7 @@
  * Plugin Name:       Soapbox for Blygger
  * Plugin URI:        https://github.com/cyberscribe/soapbox-blyg
  * Description:       Publishes your posts as a blyg: stable ids, versions, pins and a feed that other clients can subscribe to and quote. An independent implementation of the Blygger protocol; not affiliated with the Blygger project.
- * Version:           0.1.4
+ * Version:           0.1.5
  * Requires at least: 6.6
  * Requires PHP:      7.4
  * Author:            Robert Peake
@@ -51,7 +51,7 @@ if ( defined( 'SOAPBOX_BLYG_VERSION' ) ) {
 const SOAPBOX_BLYG_SLUG        = 'soapbox-blyg';
 const SOAPBOX_BLYG_TEXT_DOMAIN = 'soapbox-for-blygger';
 const SOAPBOX_BLYG_GENERATOR   = 'soapbox-for-blygger';
-const SOAPBOX_BLYG_VERSION     = '0.1.4';
+const SOAPBOX_BLYG_VERSION     = '0.1.5';
 const SOAPBOX_BLYG_FILE        = __FILE__;
 
 /*

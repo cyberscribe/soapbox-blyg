@@ -323,8 +323,12 @@ def check_item(origin, entry):
             fail("AC-5", f"{label}: changelog v{c.get('version')} at {c.get('at')!r} not ISO Z")
         if "pinned" in c and c["pinned"] is not True:
             fail("AC-5", f"{label}: changelog pinned must be true or absent")
-        if any(k not in ("version", "at", "note", "pinned") for k in c):
+        # pinned_at and cid are 0.4's ruled members of a pinned entry (spec §16.9, decisions #73, #74).
+        pin_members = ("pinned_at", "cid") if c.get("pinned") is True else ()
+        if any(k not in ("version", "at", "note", "pinned") + pin_members for k in c):
             fail("AC-5", f"{label}: changelog carries content or diffs ({sorted(c)})")
+        if "pinned_at" in c and not is_iso_z(c["pinned_at"]):
+            fail("AC-5", f"{label}: changelog v{c.get('version')} pinned_at {c['pinned_at']!r} not ISO Z")
     ats = [c.get("at", "") for c in cl]
     if ats != sorted(ats):
         warn("AC-5", f"{label}: changelog times are not monotonic")

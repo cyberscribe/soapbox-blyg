@@ -1216,7 +1216,7 @@ class PostTypeSource {
 	 */
 	public static function dump_slug( WP_Post $post ): string {
 		$slug = sanitize_file_name( urldecode( $post->post_name ) );
-		return '' === $slug ? 'untitled' : substr( $slug, 0, 80 );
+		return '' === $slug ? 'untitled' : mb_strcut( $slug, 0, 80, 'UTF-8' ); // 80 bytes, cut between characters.
 	}
 
 	/**

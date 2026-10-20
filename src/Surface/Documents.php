@@ -393,6 +393,12 @@ class Documents {
 					);
 					if ( (int) $row['pinned'] ) {
 						$entry['pinned'] = true;
+						// When the promise was made (spec §16.9, decision #73). The item document
+						// carries it, so a pinned document's own bytes never change. A pin with no
+						// recorded time leaves it out: absent means unknown.
+						if ( null !== $row['pinned_at'] && '' !== $row['pinned_at'] ) {
+							$entry['pinned_at'] = $row['pinned_at'];
+						}
 					}
 					$changelog[] = $entry;
 				}

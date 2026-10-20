@@ -1,6 +1,6 @@
 {
 	"name": "soapbox-blyg",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"private": true,
 	"description": "Publishes WordPress content as a blyg under the Blygger protocol.",
 	"license": "GPL-2.0-or-later",

@@ -117,6 +117,19 @@ final class Origin {
 	 * (spec §12.2), and it is never hard-coded.
 	 */
 	public function url(): string {
-		return home_url( $this->path );
+		return self::spelling( home_url( $this->path ) );
+	}
+
+	/**
+	 * How this site writes an origin, in the manifest and in every document. Today that is the
+	 * site's home URL exactly as stored, host case and IDN form included. Blygger-spec#6 may rule a
+	 * canonical ASCII spelling (lower case, IDNA). Changing what a site writes changes its
+	 * identity (spec §12.2), so that ruling needs a migration as well as a change here. What is
+	 * compared is Locations::host_key()'s, which can be made more forgiving on its own.
+	 *
+	 * @param string $url An origin URL.
+	 */
+	public static function spelling( string $url ): string {
+		return $url;
 	}
 }

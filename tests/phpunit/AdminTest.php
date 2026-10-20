@@ -339,6 +339,37 @@ class AdminTest extends TestCase {
 		$this->assertSame( 'Only this', Settings::get( 'title' ) );
 	}
 
+	/**
+	 * Informative, for blygger-spec#6: whether an origin is already a canonical ASCII string, and
+	 * what this server has for Unicode (ext-intl, and the libxml whose parser decides what control
+	 * characters survive).
+	 */
+	public function test_site_health_says_whether_an_origin_is_plain_ascii_and_what_the_server_has_for_unicode() {
+		$this->register_notes();
+		$plain = SiteHealth::test_text();
+		$this->assertSame( 'good', $plain['status'], $plain['description'] );
+		$this->assertStringContainsString( 'libxml ' . LIBXML_DOTTED_VERSION, $plain['description'] );
+		$this->assertStringContainsString( extension_loaded( 'intl' ) ? 'intl extension is available' : 'intl extension is not available', $plain['description'] );
+		$this->assertSame( LIBXML_VERSION >= 21400, false !== strpos( $plain['description'], 'keeps some control characters' ) );
+		$this->assertStringContainsString( 'keeps some control characters', SiteHealth::test_text( 21500 )['description'] );
+		$this->assertStringNotContainsString( 'keeps some control characters', SiteHealth::test_text( 21309 )['description'] );
+
+		foreach ( array( 'https://Example.ORG' => 'Example.ORG', "https://b\u{00FC}cher.example" => "b\u{00FC}cher.example" ) as $home => $host ) {
+			$set = static function () use ( $home ) {
+				return $home;
+			};
+			add_filter( 'pre_option_home', $set );
+			$result = SiteHealth::test_text();
+			remove_filter( 'pre_option_home', $set );
+			$this->assertSame( 'recommended', $result['status'], $home );
+			$this->assertStringContainsString( esc_html( $host ), $result['description'], $home );
+		}
+		if ( function_exists( 'idn_to_ascii' ) ) {
+			$this->assertStringContainsString( 'xn--bcher-kva.example', $result['description'], 'the ASCII form, where intl can give it' );
+		}
+		$this->assertSame( array( SiteHealth::class, 'test_text' ), SiteHealth::tests( array() )['direct']['soapbox_blyg_text']['test'], 'registered as a direct test' );
+	}
+
 	public function test_site_health_reports_a_moved_origin_plain_permalinks_and_a_failed_save() {
 		$this->assertSame( 'good', SiteHealth::test_mount()['status'] );
 		$this->assertSame( 'good', SiteHealth::test_permalinks()['status'] );

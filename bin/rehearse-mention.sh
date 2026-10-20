@@ -150,6 +150,12 @@ $WP option delete soapbox_test_rest_host >/dev/null
 step "decision #84: a foreign target is refused because it names nothing of ours"
 [[ "$(post "$SOURCE" "http://elsewhere.example/blyg/t/$TARGET_ID/")" == "400" ]] && grep -q "does not name an item of this blyg" /tmp/soapbox-mention-body && ok "400: $(cat /tmp/soapbox-mention-body)" || bad "$(cat /tmp/soapbox-mention-body)"
 
+step "0.1.5: a source on a long Unicode host is stored cut between characters, not refused"
+LONG="x$(printf 'ü%.0s' $(seq 30)).$(printf 'ü%.0s' $(seq 30)).$(printf 'ü%.0s' $(seq 30)).$(printf 'ü%.0s' $(seq 20)).example"
+[[ "$(post "https://$LONG/t/x/" "$PAGE")" == "202" ]] && ok "202 for a $(printf '%s' "$LONG" | wc -c | tr -d ' ')-byte host" || bad "$(cat /tmp/soapbox-mention-body)"
+HOSTHEX=$($WP eval 'global $wpdb; $h = $wpdb->get_var( "SELECT source_host FROM " . SoapboxBlyg\Ledger\Schema::table( "mentions" ) . " ORDER BY mention_id DESC LIMIT 1" ); echo strlen( $h ), " ", mb_check_encoding( $h, "UTF-8" ) ? "valid" : "invalid";')
+[[ "$HOSTHEX" == "190 valid" ]] && ok "stored as 190 bytes of valid UTF-8 (the 191st would split a ü)" || bad "stored: $HOSTHEX"
+
 step "T7 with the IndieWeb Webmention plugin active"
 $WP plugin activate webmention >/dev/null 2>&1
 N=$(curl -s "$PAGE" | grep -c "href=\"${ORIGIN}webmention\"")

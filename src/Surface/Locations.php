@@ -239,6 +239,18 @@ class Locations {
 		}
 		$port    = isset( $parts['port'] ) ? (int) $parts['port'] : null;
 		$default = 'https' === $scheme ? 443 : 80;
-		return $scheme . '://' . strtolower( $parts['host'] ) . ( null !== $port && $port !== $default ? ':' . $port : '' );
+		return $scheme . '://' . self::host_key( $parts['host'] ) . ( null !== $port && $port !== $default ? ':' . $port : '' );
+	}
+
+	/**
+	 * A host as two origins are compared by it. Today: ASCII case folded, nothing else, so a
+	 * Unicode host and its punycode, or its NFC and NFD spellings, are different hosts. Blygger-
+	 * spec#6 may rule UTS #46 (idn_to_ascii(), which needs ext-intl); that is a change here, and
+	 * every origin and address comparison follows. What this site writes is Origin::spelling()'s.
+	 *
+	 * @param string $host A URL's host.
+	 */
+	public static function host_key( string $host ): string {
+		return strtolower( $host );
 	}
 }

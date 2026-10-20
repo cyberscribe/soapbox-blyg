@@ -23,6 +23,15 @@ defined( 'ABSPATH' ) || exit;
 class ContentRenderer {
 
 	/**
+	 * Whether a post's HTML is cleaned of what XML forbids before it is parsed. Off: switching it on
+	 * can change content_md, and so publish a new version of a post nobody has touched, and the
+	 * text-safety rule is blygger-spec#6's to make. Until then the parser decides. libxml up to 2.13
+	 * drops these characters, so there the filter changes nothing; 2.14 and later keep some of
+	 * them (BEL and U+FFFF among them).
+	 */
+	const FILTER_TEXT = false;
+
+	/**
 	 * Embeds the stand-in for oEmbed turned into links during the current render.
 	 *
 	 * @var int
@@ -38,6 +47,7 @@ class ContentRenderer {
 	 *                      repair: turn runs of line breaks into paragraphs (default true).
 	 *                      wire_tokens: keep the protocol's blyg-transclusion and blyg-tk-gen
 	 *                      markers (default true; the posts source passes false).
+	 *                      filter_text: run filter_text() before parsing (default FILTER_TEXT).
 	 * @return array { content_md, content_html, media, stats }. stats is diagnostic only.
 	 */
 	public static function render_html( string $html, string $title, array $opts = array() ): array {
@@ -49,7 +59,8 @@ class ContentRenderer {
 			! isset( $opts['repair'] ) || (bool) $opts['repair'],
 			! isset( $opts['wire_tokens'] ) || (bool) $opts['wire_tokens']
 		);
-		$body      = $sanitizer->sanitize( wp_check_invalid_utf8( $html, true ) );
+		$html      = wp_check_invalid_utf8( $html, true );
+		$body      = $sanitizer->sanitize( ( $opts['filter_text'] ?? self::FILTER_TEXT ) ? self::filter_text( $html ) : $html );
 
 		$content_html = '<h1>' . Sanitizer::text( $title ) . '</h1>' . ( '' === $body ? '' : "\n" . $body );
 		$body_md      = '' === trim( $body ) ? '' : Markdown::from_html( $body );
@@ -89,6 +100,17 @@ class ContentRenderer {
 	public static function xml_safe( string $text ): string {
 		$clean = preg_replace( '/[^\x{9}\x{A}\x{D}\x{20}-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}]/u', '', $text );
 		return null === $clean ? '' : $clean;
+	}
+
+	/**
+	 * What the input filter does when it is on: xml_safe(), with NUL turned into a space first,
+	 * which is what libxml before 2.14 makes of it. On such a host the output is then byte for byte
+	 * what it was without the filter.
+	 *
+	 * @param string $html UTF-8 HTML.
+	 */
+	public static function filter_text( string $html ): string {
+		return self::xml_safe( str_replace( "\0", ' ', $html ) );
 	}
 
 	/**

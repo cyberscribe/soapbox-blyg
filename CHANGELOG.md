@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.1.5 (unreleased)
+
+Ahead of the open roadmap, compatibly: what is already ruled, and seams for what is not
+(blygger-spec #6 and #13).
+
+- **`pinned_at`** on a pinned changelog entry of the item document (spec 0.4 §16.9, decision #73),
+  from `versions.pinned_at`, UTC like `at`, after `pinned`. Absent when the ledger has no time.
+  Pinned documents are unchanged.
+- **Seams for #6**, each exactly today's behaviour, pinned by `UnicodeTest`:
+  `Snapshot::canonical()` under every content hash; `ContentRenderer::filter_text()` before the HTML
+  parser, off (`FILTER_TEXT`), which on libxml ≤ 2.13 is tested to change nothing;
+  `Origin::spelling()` for the origin we write; `Locations::host_key()` for hosts we compare.
+- **Truncations** never split a character: the stored source host (191 bytes) and the dry-run
+  file-name slug (80 bytes) use `mb_strcut()`. An oversized remote author's name is cut to 200
+  grapheme clusters (PCRE `\X`), not code points. A source host over 191 bytes that a cut split
+  was refused 429, since the database rejected the row; it is now accepted.
+- **Site Health, "Unicode in addresses and text"**: recommended when an origin is not plain
+  lower-case ASCII, with its host in ASCII where intl can give it; names intl and the libxml
+  version, and notes libxml ≥ 2.14, whose parser keeps some control characters.
+- The readme says the plugin needs mbstring.
+- `bin/upgrade.sh` masks `pinned_at` and checks it against the ledger; the Webmention rehearsal
+  gains a step for the long Unicode host.
+
 ## 0.1.4 (unreleased)
 
 Blygger 0.4 decision #84 revises §15.3 step 1: a Webmention target must resolve, by the

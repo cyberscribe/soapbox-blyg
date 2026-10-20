@@ -109,7 +109,19 @@ final class Snapshot {
 	 * @param string $content_md Markdown bytes.
 	 */
 	public static function hash_of( string $content_md ): string {
-		return 'sha256:' . hash( 'sha256', $content_md );
+		return 'sha256:' . hash( 'sha256', self::canonical( $content_md ) );
+	}
+
+	/**
+	 * The text a content hash is taken over. Today it is the Markdown exactly as stored, with no
+	 * Unicode normalisation. Blygger-spec#6 may rule that the hash covers a normal form (NFC is the
+	 * likely one); that ruling is a change here and to UnicodeTest, and every hash and every check
+	 * of one (the ledger's verify included) follows.
+	 *
+	 * @param string $content_md Markdown bytes.
+	 */
+	public static function canonical( string $content_md ): string {
+		return $content_md;
 	}
 
 	/**

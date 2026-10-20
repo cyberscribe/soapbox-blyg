@@ -365,6 +365,29 @@ class MentionsTest extends TestCase {
 		$this->assertSame( 'https://reader.example/2', Plugin::instance()->mentions->by_pair( 'https://reader.example/2', home_url( '/notes/a/' ) )['source_page'] );
 	}
 
+	/** An oversized author is cut to its name's first 200 characters as a reader sees them, whole. */
+	public function test_an_oversized_authors_name_is_cut_between_graphemes() {
+		$name = str_repeat( 'a', 199 ) . "e\u{0301}" . str_repeat( 'b', 50 );
+		$this->web[ self::THEIR_DOC ] = array( 200, $this->their_document( array( 'stub_of' => $this->our_reference(), 'author' => array( 'name' => $name, 'bio' => str_repeat( 'x', 5000 ) ) ) ) );
+		$this->receive( self::THEIR_DOC, home_url( '/notes/a/' ) );
+		$this->run_queue();
+		$stored = json_decode( $this->mention()['source_author'], true )['name'];
+		$this->assertSame( str_repeat( 'a', 199 ) . "e\u{0301}", $stored, 'the accent stays on its letter' );
+	}
+
+	/** A source host is stored to 191 bytes without cutting a character in two. */
+	public function test_a_long_unicode_source_host_is_stored_on_a_character_boundary() {
+		// The 'x' puts byte 191 inside a ü.
+		$host     = 'x' . str_repeat( "\u{00FC}", 30 ) . '.' . str_repeat( "\u{00FC}", 30 ) . '.' . str_repeat( "\u{00FC}", 30 ) . '.' . str_repeat( "\u{00FC}", 20 ) . '.example';
+		$source   = "https://{$host}/t/x/";
+		$response = $this->receive( $source, home_url( '/notes/a/' ) );
+		$this->assertGreaterThan( 191, strlen( $host ) );
+		$this->assertSame( 202, $response['status'], $response['body'] );
+		$stored = $this->mention()['source_host'];
+		$this->assertLessThanOrEqual( 191, strlen( $stored ) );
+		$this->assertTrue( mb_check_encoding( $stored, 'UTF-8' ), bin2hex( $stored ) );
+	}
+
 	public function test_each_request_is_pinned_to_an_address_that_was_checked() {
 		$this->web = array(
 			'https://short.example/a' => array( 302, '', self::THEIR_DOC ),

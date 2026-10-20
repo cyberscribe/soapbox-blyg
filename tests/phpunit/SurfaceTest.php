@@ -162,6 +162,32 @@ class SurfaceTest extends TestCase {
 		$this->assertSame( 404, $this->rest( '/origins/nowhere/items' )['status'] );
 	}
 
+	/**
+	 * Spec 0.4 §16.9 (decision #73): pinned_at on a pinned changelog entry, the moment the promise
+	 * was made, in UTC like `at`. Absent means the time is unknown, so a pin without a recorded
+	 * time carries no member rather than a guess. The pinned document itself does not change.
+	 */
+	public function test_pinned_at_is_on_the_pinned_entry_of_the_item_document_and_only_when_known() {
+		$this->register_notes();
+		$ids     = $this->seed();
+		$pin_doc = $this->respond( "items/{$ids['a']}/v1.json" )['body'];
+
+		global $wpdb;
+		$wpdb->query( $wpdb->prepare( 'UPDATE %i SET pinned_at = %s WHERE blyg_id = %s AND version = 1', \SoapboxBlyg\Ledger\Schema::table( 'versions' ), '2026-03-03T08:00:00Z', $ids['a'] ) ); // phpcs:ignore
+		wp_cache_flush(); // The SQL above bypasses the ledger, so its generation has not moved.
+		$entry = json_decode( $this->respond( "items/{$ids['a']}.json" )['body'], true )['changelog'][0];
+		$this->assertSame( array( 'version', 'at', 'note', 'pinned', 'pinned_at' ), array_keys( $entry ), 'pinned_at follows pinned, as in §16.9\'s example' );
+		$this->assertSame( '2026-03-03T08:00:00Z', $entry['pinned_at'] );
+
+		$wpdb->query( $wpdb->prepare( 'UPDATE %i SET pinned_at = NULL WHERE blyg_id = %s AND version = 1', \SoapboxBlyg\Ledger\Schema::table( 'versions' ), $ids['a'] ) ); // phpcs:ignore
+		wp_cache_flush(); // The SQL above bypasses the ledger, so its generation has not moved.
+		$entry = json_decode( $this->respond( "items/{$ids['a']}.json" )['body'], true )['changelog'][0];
+		$this->assertArrayNotHasKey( 'pinned_at', $entry, 'an unknown time is left out, never guessed' );
+		$this->assertTrue( $entry['pinned'] );
+
+		$this->assertArrayNotHasKey( 'pinned_at', json_decode( $pin_doc, true ), 'the pinned document is not where pinned_at goes' );
+	}
+
 	public function test_item_document_fields() {
 		$this->register_notes();
 		$ids = $this->seed();
@@ -175,9 +201,11 @@ class SurfaceTest extends TestCase {
 		$this->assertSame( "# A note\n\nTwo.\n", $doc['content_md'], 'only the latest content is served' );
 		$this->assertSame( 'sha256:' . hash( 'sha256', $doc['content_md'] ), $doc['content_hash'] );
 		$this->assertArrayNotHasKey( 'transclusions', $doc );
+		$pinned_at = Plugin::instance()->ledger->version_row( $ids['a'], 1 )['pinned_at'];
+		$this->assertMatchesRegularExpression( '/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$/', $pinned_at );
 		$this->assertSame(
 			array(
-				array( 'version' => 1, 'at' => '2026-03-01T10:00:00Z', 'note' => null, 'pinned' => true ),
+				array( 'version' => 1, 'at' => '2026-03-01T10:00:00Z', 'note' => null, 'pinned' => true, 'pinned_at' => $pinned_at ),
 				array( 'version' => 2, 'at' => '2026-03-02T10:00:00Z', 'note' => 'second' ),
 			),
 			$doc['changelog']

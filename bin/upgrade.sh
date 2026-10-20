@@ -6,7 +6,8 @@
 #
 # What must hold: every address answers as before, and every document says the same thing apart
 # from what the release changes on purpose: the protocol version key, the generator, and
-# generator_url. Ids, versions, `updated`, content hashes, pins and the withdrawn page do not move.
+# generator_url, and from 0.1.5 a pinned changelog entry's pinned_at. Ids, versions, `updated`,
+# content hashes, pins and the withdrawn page do not move.
 #
 #   npx wp-env start --config tests/env/switchover.json
 #   bin/upgrade.sh <previous release zip> [new zip, default ./soapbox-for-blygger.zip]
@@ -38,13 +39,13 @@ step() { echo; echo "[$*]"; }
 wp2()  { "$WP" --url="$TWO/" "$@"; }
 jget() { python3 -c "import json,sys; d=json.load(sys.stdin); print(d$1)"; }
 
-# One line for an address: its status and a hash of its body with the three intended changes
-# taken out (generator, the blyg version key, generator_url).
+# One line for an address: its status and a hash of its body with the intended changes taken out
+# (generator, the blyg version key, generator_url, pinned_at).
 line() {
   curl -s -D "$T/h" -o "$T/b" "$1"
   printf '%s %s\n' \
     "$(sed -n '1s/^HTTP[^ ]* \([0-9]*\).*/\1/p' "$T/h")" \
-    "$(sed -E -e 's#soapbox-for-blygger/[0-9.]+#GENERATOR#g' -e 's#"blyg":"0\.[0-9]+"#"blyg":"0.x"#g' -e 's#"generator_url":"[^"]*",?##g' "$T/b" | shasum -a 256 | cut -c1-16)"
+    "$(sed -E -e 's#soapbox-for-blygger/[0-9.]+#GENERATOR#g' -e 's#"blyg":"0\.[0-9]+"#"blyg":"0.x"#g' -e 's#"generator_url":"[^"]*",?##g' -e 's#,"pinned_at":"[^"]*"##g' "$T/b" | shasum -a 256 | cut -c1-16)"
 }
 snapshot() { : > "$1"; for u in "${URLS[@]}"; do echo "$u $(line "$u")" >> "$1"; done; }
 field()    { curl -s "$1" | jget "$2" 2>/dev/null; }
@@ -86,7 +87,7 @@ step "updated in place to $NEW_VERSION"
 curl -s -o /dev/null "$TWO/"
 snapshot "$T/after"
 if diff <(awk '{print $1, $2, $3}' "$T/before") <(awk '{print $1, $2, $3}' "$T/after") >/dev/null; then
-  ok "every address answers as before, and says the same apart from the version key, generator and generator_url"
+  ok "every address answers as before, and says the same apart from the version key, generator, generator_url and pinned_at"
 else
   bad "an address changed beyond what the release intends"; diff "$T/before" "$T/after" | sed 's/^/         /' | head -14
 fi
@@ -95,6 +96,8 @@ fi
 [[ "$(field "$MANIFEST" '["updated"]')" == "$UPDATED" ]] && ok "manifest updated unchanged: $UPDATED" || bad "manifest updated moved: $(field "$MANIFEST" '["updated"]')"
 [[ "$(field "$MANIFEST" '["generator"]')" == "$SLUG/$NEW_VERSION" ]] && ok "generator: $SLUG/$NEW_VERSION" || bad "generator: $(field "$MANIFEST" '["generator"]')"
 echo "       manifest blyg $(field "$MANIFEST" '["blyg"]'), item $(field "$ITEM" '["blyg"]'), pin $(field "$PIN" '["blyg"]'), withdrawn $(field "$WITHDRAWN" '["blyg"]'); generator_url $(field "$MANIFEST" '.get("generator_url")')"
+AT=$(wp2 db query "SELECT pinned_at FROM wp_2_soapbox_blyg_versions WHERE pinned = 1 LIMIT 1" --skip-column-names)
+[[ -n "$AT" && "$(field "$ITEM" '["changelog"][0].get("pinned_at")')" == "$AT" ]] && ok "the pinned entry carries pinned_at, the ledger's $AT" || bad "pinned_at: $(field "$ITEM" '["changelog"][0].get("pinned_at")'), ledger $AT"
 [[ "$(fatals)" == "0" ]] && ok "no fatal error in debug.log" || bad "$(fatals) fatal errors in debug.log"
 
 rm -rf "$T"

@@ -4,7 +4,7 @@ Tags: blygger, feed, rss, webmention, syndication
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.1.4
+Stable tag: 0.1.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -62,7 +62,7 @@ Readers get a manifest, an RSS feed that any feed reader can use, a complete arc
 5. Go to Tools > Soapbox for Blygger and run a **dry run** of the backfill. It shows what each existing post would look like, and publishes nothing.
 6. When you are happy with it, run the backfill. That publishes your existing posts.
 
-The plugin needs a permalink structure other than "Plain".
+The plugin needs a permalink structure other than "Plain", and PHP's mbstring extension, which nearly every host has.
 
 == Frequently Asked Questions ==
 
@@ -264,6 +264,11 @@ JavaScript sources are in `assets/src/`; the built files in `build/` are produce
 
 == Changelog ==
 
+= 0.1.5 =
+* Pinned versions say when they were pinned: an item's changelog gives the time of each pin, as Blygger 0.4 shapes it (`pinned_at`). Pinned documents themselves do not change.
+* Site Health has a new, informative entry about Unicode: whether your blyg's address is plain ASCII, and what your server has for Unicode text.
+* Long international host names in Webmentions are stored without being cut mid-character, and long author names without splitting a letter from its accent.
+
 = 0.1.4 =
 * Webmentions: a mention is accepted when its target is one of your items' addresses, wherever that address is. A site whose REST API is on another host (domain mapping, a separate API host) had mentions of its item documents refused; they are now accepted. Blygger 0.4's revised receiving rule (decision #84).
 
@@ -292,6 +297,9 @@ JavaScript sources are in `assets/src/`; the built files in `build/` are produce
 * First release. Blygger 0.3, level 2. Posts and any post type with `blyg` support; versions, withdrawal and pins; templated and fixed surface layouts; an optional Webmention receiver with structural verification; Site Health tests; WP-CLI.
 
 == Upgrade Notice ==
+
+= 0.1.5 =
+Item documents now say when each pinned version was pinned. No address, id, content or hash changes.
 
 = 0.1.4 =
 Webmentions of your item documents are accepted when your REST API is on another host. No address, id or version changes.
