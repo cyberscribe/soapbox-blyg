@@ -23,13 +23,14 @@ defined( 'ABSPATH' ) || exit;
 class ContentRenderer {
 
 	/**
-	 * Whether a post's HTML is cleaned of what XML forbids before it is parsed. Off: switching it on
-	 * can change content_md, and so publish a new version of a post nobody has touched, and the
-	 * text-safety rule is blygger-spec#6's to make. Until then the parser decides. libxml up to 2.13
-	 * drops these characters, so there the filter changes nothing; 2.14 and later keep some of
-	 * them (BEL and U+FFFF among them).
+	 * Whether a post's HTML is cleaned of what XML forbids before it is parsed. On: spec 0.4 §5.1
+	 * (decision #103, blygger-spec#6) says content_md MUST NOT carry a C0 control other than tab,
+	 * LF and CR, and SHOULD NOT carry U+FFFE or U+FFFF, and a client that derives Markdown from
+	 * parsed HTML drops them itself rather than leave it to the parser's version. libxml up to 2.13
+	 * already drops them, and there the filter is tested to change nothing; 2.14 and later keep
+	 * some (BEL and U+FFFF among them), and there a post that carries one publishes without it.
 	 */
-	const FILTER_TEXT = false;
+	const FILTER_TEXT = true;
 
 	/**
 	 * Embeds the stand-in for oEmbed turned into links during the current render.

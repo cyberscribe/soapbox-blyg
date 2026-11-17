@@ -416,11 +416,11 @@ class ToolsPage {
 								<td>
 									<?php // The origin is what was verified. The page is the sender's word, kept only under that origin. ?>
 									<?php if ( ! empty( $mention['source_origin'] ) ) : ?>
-										<strong><?php echo esc_html( $mention['source_origin'] ); ?></strong><br>
+										<strong><bdi><?php echo esc_html( $mention['source_origin'] ); ?></bdi></strong><br>
 									<?php endif; ?>
 									<a href="<?php echo esc_url( $from ); ?>" rel="noopener noreferrer nofollow" target="_blank"><?php echo esc_html( $from ); ?></a>
 									<?php if ( is_array( $author ) && ! empty( $author['name'] ) && is_string( $author['name'] ) ) : ?>
-										<br><span class="description"><?php echo esc_html( $author['name'] ); ?></span>
+										<br><span class="description"><bdi><?php echo esc_html( $author['name'] ); ?></bdi></span>
 									<?php endif; ?>
 								</td>
 								<td>

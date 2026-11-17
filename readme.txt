@@ -4,7 +4,7 @@ Tags: blygger, feed, rss, webmention, syndication
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.1.5
+Stable tag: 0.1.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -264,6 +264,11 @@ JavaScript sources are in `assets/src/`; the built files in `build/` are produce
 
 == Changelog ==
 
+= 0.1.6 =
+* Follows Blygger 0.4's ruling on Unicode (decision #103). Characters that XML forbids, such as some control characters, are removed from a post before it is converted, so a post publishes the same on every server whatever its libxml version. On most servers nothing changes.
+* Your blyg's address is written in the one form Blygger gives it: lower case, with an international host name in its ASCII (xn--) form and no default port. A site whose address was already plain lower-case ASCII, as nearly every one is, writes exactly what it wrote before. Site Health says when the two differ.
+* Webmention senders' names and addresses under Tools are isolated, so right-to-left control characters in them cannot rearrange the text around them.
+
 = 0.1.5 =
 * Pinned versions say when they were pinned: an item's changelog gives the time of each pin, as Blygger 0.4 shapes it (`pinned_at`). Pinned documents themselves do not change.
 * Site Health has a new, informative entry about Unicode: whether your blyg's address is plain ASCII, and what your server has for Unicode text.
@@ -297,6 +302,9 @@ JavaScript sources are in `assets/src/`; the built files in `build/` are produce
 * First release. Blygger 0.3, level 2. Posts and any post type with `blyg` support; versions, withdrawal and pins; templated and fixed surface layouts; an optional Webmention receiver with structural verification; Site Health tests; WP-CLI.
 
 == Upgrade Notice ==
+
+= 0.1.6 =
+Follows Blygger 0.4's Unicode ruling. On a site whose address is plain lower-case ASCII, no address, id, version or hash changes.
 
 = 0.1.5 =
 Item documents now say when each pinned version was pinned. No address, id, content or hash changes.

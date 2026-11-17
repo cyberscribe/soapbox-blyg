@@ -243,14 +243,36 @@ class Locations {
 	}
 
 	/**
-	 * A host as two origins are compared by it. Today: ASCII case folded, nothing else, so a
-	 * Unicode host and its punycode, or its NFC and NFD spellings, are different hosts. Blygger-
-	 * spec#6 may rule UTS #46 (idn_to_ascii(), which needs ext-intl); that is a change here, and
-	 * every origin and address comparison follows. What this site writes is Origin::spelling()'s.
+	 * A host in the one spelling spec 0.4 §12.2 gives it (decision #103): lower case, and an
+	 * internationalised host in its A-label (xn--) form, which is what a WHATWG URL parser writes.
+	 * Origins are written with it (Origin::spelling()) and compared with it, so a host taken from
+	 * the network is folded the same way before it is compared.
+	 *
+	 * With ext-intl this is UTS #46 without transitional processing, as WHATWG does it. Without it,
+	 * WordPress core's IDNA encoder (Requests) gives the same answer for a host already in NFC,
+	 * which nearly every host is; Site Health says when intl is missing. A host neither can encode
+	 * is returned lower-cased, as before, and Site Health reports it.
 	 *
 	 * @param string $host A URL's host.
 	 */
 	public static function host_key( string $host ): string {
-		return strtolower( $host );
+		if ( ! preg_match( '/[^\x00-\x7F]/', $host ) ) {
+			return strtolower( $host );
+		}
+		if ( function_exists( 'idn_to_ascii' ) ) {
+			$ascii = idn_to_ascii( $host, IDNA_NONTRANSITIONAL_TO_ASCII | IDNA_CHECK_BIDI | IDNA_CHECK_CONTEXTJ, INTL_IDNA_VARIANT_UTS46 );
+			if ( is_string( $ascii ) && '' !== $ascii ) {
+				return strtolower( $ascii );
+			}
+		}
+		$lower = mb_strtolower( $host, 'UTF-8' );
+		if ( class_exists( '\WpOrg\Requests\IdnaEncoder' ) ) {
+			try {
+				return strtolower( \WpOrg\Requests\IdnaEncoder::encode( $lower ) );
+			} catch ( \Exception $e ) {
+				return $lower;
+			}
+		}
+		return $lower;
 	}
 }

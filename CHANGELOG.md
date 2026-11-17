@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.1.6 (unreleased)
+
+Blygger 0.4 decision #103 (fifteenth revision, blygger-spec#6): Unicode on the wire. The 0.1.5
+seams take the ruling.
+
+- **§5.1 text safety: `ContentRenderer::FILTER_TEXT` is on.** `content_md` MUST NOT carry a C0
+  control other than tab, LF and CR, and SHOULD NOT carry U+FFFE or U+FFFF. They are removed
+  before the HTML parser, not left to the libxml version. On libxml ≤ 2.13 the output is byte for
+  byte what it was (tested); on 2.14 and later a post carrying one publishes without it.
+- **§5.1 the hash is over the bytes served.** `Snapshot::canonical()` stays the identity: no NFC
+  normalisation (a SHOULD, which would make the hash depend on ext-intl).
+- **§12.2 one ASCII spelling for an origin: `Origin::spelling()`.** Lower-case scheme and host,
+  A-label for an IDN host (UTS #46 non-transitional with ext-intl, WordPress core's
+  `WpOrg\Requests\IdnaEncoder` without it), no default port, the path percent-encoded with
+  upper-case hex, a final `/`, no query or fragment. `Locations::host_key()` folds a compared host
+  the same way. A plain lower-case ASCII home URL is written unchanged.
+- **§14 bidi:** remote origins and author names on the Tools page are in `<bdi>`.
+- **Site Health, "Unicode in addresses and text":** says where an origin's written spelling
+  differs from the home URL; recommended only when a host cannot be put into ASCII. Without
+  ext-intl, core's encoder is named; with libxml ≥ 2.14, the filter is.
+- `UnicodeTest` and `AdminTest` follow the rulings.
+
 ## 0.1.5 (unreleased)
 
 Ahead of the open roadmap, compatibly: what is already ruled, and seams for what is not

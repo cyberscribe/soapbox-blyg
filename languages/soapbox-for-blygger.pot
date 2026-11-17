@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Soapbox for Blygger 0.1.5\n"
+"Project-Id-Version: Soapbox for Blygger 0.1.6\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/soapbox-blyg\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-20T21:08:49+00:00\n"
+"POT-Creation-Date: 2026-11-16T17:21:29+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: soapbox-for-blygger\n"
@@ -521,113 +521,109 @@ msgstr ""
 msgid "No page or post shares an address with a blyg, and every blyg is served where it first published."
 msgstr ""
 
-#. translators: 1: an origin URL, 2: its host in ASCII
-#: src/Admin/SiteHealth.php:410
-#, php-format
-msgid "The blyg at %1$s is not written in plain lower-case ASCII; its host in ASCII is %2$s."
-msgstr ""
-
 #. translators: %s: an origin URL
 #: src/Admin/SiteHealth.php:412
 #, php-format
-msgid "The blyg at %s is not written in plain lower-case ASCII."
+msgid "The blyg at %s cannot be written in plain ASCII, as the Blygger protocol requires: its host name could not be converted. Check the site address in Settings > General."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:417
-msgid "Two spellings of one host can count as two different blygs, and the Blygger protocol may rule a single ASCII form. Nothing needs doing now; this is so you know before it does."
+#. translators: 1: the site's address for a blyg, as stored, 2: the same address in the one spelling the Blygger protocol requires
+#: src/Admin/SiteHealth.php:418
+#, php-format
+msgid "The blyg at %1$s is written as %2$s, the single spelling the Blygger protocol gives it."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:420
+#: src/Admin/SiteHealth.php:425
 msgid "The PHP intl extension is available, for Unicode normalisation and international host names."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:421
-msgid "The PHP intl extension is not available. Unicode normalisation and international host names need it."
+#: src/Admin/SiteHealth.php:426
+msgid "The PHP intl extension is not available. International host names are converted by WordPress's own encoder, which is enough for nearly every host."
 msgstr ""
 
 #. translators: %s: a version number, e.g. 2.13.9
-#: src/Admin/SiteHealth.php:424
+#: src/Admin/SiteHealth.php:429
 #, php-format
 msgid "Posts are parsed with libxml %s."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:426
-msgid "This libxml keeps some control characters that earlier versions drop, so a post containing one may publish differently here than on another server."
+#: src/Admin/SiteHealth.php:431
+msgid "This libxml keeps some control characters that earlier versions drop. The plugin removes them before parsing, as the Blygger protocol requires, so a post publishes the same here as on any other server."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:432
-msgid "A blyg address is not plain ASCII"
+#: src/Admin/SiteHealth.php:437
+msgid "A blyg address cannot be written in plain ASCII"
 msgstr ""
 
-#: src/Admin/SiteHealth.php:432
+#: src/Admin/SiteHealth.php:437
 msgid "Blyg addresses are plain ASCII"
 msgstr ""
 
-#: src/Admin/SiteHealth.php:443
+#: src/Admin/SiteHealth.php:448
 msgid "Open Tools > Soapbox for Blygger"
 msgstr ""
 
-#: src/Admin/SiteHealth.php:449
+#: src/Admin/SiteHealth.php:454
 msgid "The blyg's database tables cannot be relied on"
 msgstr ""
 
-#: src/Admin/SiteHealth.php:451
+#: src/Admin/SiteHealth.php:456
 msgid "The plugin's tables are not using the InnoDB storage engine. Without it an item and its version cannot be written together or not at all, so the plugin is publishing nothing and the blyg is offline. Ask your host to convert the soapbox_blyg tables to InnoDB, then deactivate and activate the plugin."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:452
+#: src/Admin/SiteHealth.php:457
 msgid "The plugin's tables could not be brought up to date, so the plugin is publishing nothing and the blyg is offline. It tries again by itself; if this stays, deactivate and activate the plugin, and check that the database user may create and alter tables."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:463
+#: src/Admin/SiteHealth.php:468
 msgid "A post was saved but not published to the blyg"
 msgstr ""
 
 #. translators: 1: post id, 2: date and time, 3: error message
-#: src/Admin/SiteHealth.php:468
+#: src/Admin/SiteHealth.php:473
 #, php-format
 msgid "Post %1$d was saved on %2$s, but the blyg could not be brought into step with it: %3$s. The plugin has stopped trying. Nothing the post no longer shows is being served; open the post and save it to try again."
 msgstr ""
 
 #. translators: 1: post id, 2: date and time, 3: error message
-#: src/Admin/SiteHealth.php:470
+#: src/Admin/SiteHealth.php:475
 #, php-format
 msgid "Post %1$d was saved on %2$s, but the blyg could not be brought into step with it: %3$s. The plugin keeps trying, and until it succeeds nothing the post no longer shows is served. Saving the post again also retries."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:481
+#: src/Admin/SiteHealth.php:486
 msgid "The blyg's ledger has never been verified"
 msgstr ""
 
-#: src/Admin/SiteHealth.php:481
+#: src/Admin/SiteHealth.php:486
 msgid "Verifying recomputes the hash of every version ever published and checks the ledger is complete. Run it once now, and again after WordPress or plugin updates."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:487
+#: src/Admin/SiteHealth.php:492
 msgid "The blyg's ledger failed verification"
 msgstr ""
 
 #. translators: 1: number of problems, already formatted for the locale, 2: date and time
-#: src/Admin/SiteHealth.php:490
+#: src/Admin/SiteHealth.php:495
 #, php-format
 msgid "The last verification, on %2$s, found %1$s problem. The ledger is the record of everything this site has published; run verify again from Tools to see what is wrong."
 msgid_plural "The last verification, on %2$s, found %1$s problems. The ledger is the record of everything this site has published; run verify again from Tools to see what is wrong."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Admin/SiteHealth.php:499
+#: src/Admin/SiteHealth.php:504
 msgid "The blyg's ledger was last verified over 30 days ago"
 msgstr ""
 
-#: src/Admin/SiteHealth.php:499
+#: src/Admin/SiteHealth.php:504
 msgid "It passed then. Verify again, especially after WordPress or plugin updates, which can change how posts render."
 msgstr ""
 
-#: src/Admin/SiteHealth.php:501
+#: src/Admin/SiteHealth.php:506
 msgid "The blyg's ledger is verified"
 msgstr ""
 
-#: src/Admin/SiteHealth.php:501
+#: src/Admin/SiteHealth.php:506
 msgid "Every stored version matches its hash, and the ledger is complete."
 msgstr ""
 

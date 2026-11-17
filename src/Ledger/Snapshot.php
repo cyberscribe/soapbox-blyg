@@ -113,10 +113,10 @@ final class Snapshot {
 	}
 
 	/**
-	 * The text a content hash is taken over. Today it is the Markdown exactly as stored, with no
-	 * Unicode normalisation. Blygger-spec#6 may rule that the hash covers a normal form (NFC is the
-	 * likely one); that ruling is a change here and to UnicodeTest, and every hash and every check
-	 * of one (the ledger's verify included) follows.
+	 * The text a content hash is taken over: the Markdown exactly as stored. Spec 0.4 §5.1
+	 * (decision #103) puts the hash over the bytes served, on purpose, and asks a publisher only
+	 * to publish NFC where it can (a SHOULD). The plugin does not normalise: that takes ext-intl,
+	 * so two servers would hash one post differently, and nearly every input is NFC already.
 	 *
 	 * @param string $content_md Markdown bytes.
 	 */

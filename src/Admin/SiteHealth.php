@@ -389,47 +389,52 @@ class SiteHealth {
 	}
 
 	/**
-	 * Informative, for blygger-spec#6, which may rule a canonical ASCII spelling for origins and a
-	 * rule for which characters text may carry. Reports any origin that is not already plain
-	 * lower-case ASCII (it may need to change when that ruling comes), whether ext-intl is there to
-	 * give the ASCII form, and which libxml parses posts: from 2.14 its parser keeps some control
-	 * characters that earlier versions drop, and those then reach content_md and its hash.
+	 * Unicode in addresses and text (spec 0.4 §5.1 and §12.2, decision #103). Every origin is
+	 * written in one ASCII spelling (Origin::spelling()); this says where that differs from the
+	 * home URL as stored, and is recommended only when a host could not be put into ASCII at all.
+	 * It names what the server has: ext-intl for international host names (WordPress core's
+	 * encoder covers a host in NFC without it), and the libxml that parses posts, whose control
+	 * characters the plugin removes first, so the output does not depend on its version.
 	 *
 	 * @param int $libxml The libxml version as an integer, e.g. 21309 for 2.13.9. Tests pass one.
 	 */
 	public static function test_text( int $libxml = LIBXML_VERSION ): array {
 		$intl  = extension_loaded( 'intl' ) && function_exists( 'idn_to_ascii' );
 		$notes = array();
+		$bad   = false;
 		foreach ( Plugin::instance()->registry->all() as $origin ) {
-			$url = $origin->url();
-			if ( preg_match( '/[^\x00-\x7F]/', $url ) || (string) wp_parse_url( $url, PHP_URL_HOST ) !== strtolower( (string) wp_parse_url( $url, PHP_URL_HOST ) ) ) {
-				$host    = (string) wp_parse_url( $url, PHP_URL_HOST );
-				$ascii   = $intl ? idn_to_ascii( $host, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46 ) : false;
-				$notes[] = false !== $ascii && $ascii !== $host
-					/* translators: 1: an origin URL, 2: its host in ASCII */
-					? sprintf( __( 'The blyg at %1$s is not written in plain lower-case ASCII; its host in ASCII is %2$s.', 'soapbox-for-blygger' ), $url, $ascii )
+			$home    = home_url( $origin->path );
+			$written = $origin->url();
+			if ( preg_match( '/[^\x00-\x7F]/', $written ) ) {
+				$bad     = true;
+				$notes[] = sprintf(
 					/* translators: %s: an origin URL */
-					: sprintf( __( 'The blyg at %s is not written in plain lower-case ASCII.', 'soapbox-for-blygger' ), $url );
+					__( 'The blyg at %s cannot be written in plain ASCII, as the Blygger protocol requires: its host name could not be converted. Check the site address in Settings > General.', 'soapbox-for-blygger' ),
+					$home
+				);
+			} elseif ( $home !== $written ) {
+				$notes[] = sprintf(
+					/* translators: 1: the site's address for a blyg, as stored, 2: the same address in the one spelling the Blygger protocol requires */
+					__( 'The blyg at %1$s is written as %2$s, the single spelling the Blygger protocol gives it.', 'soapbox-for-blygger' ),
+					$home,
+					$written
+				);
 			}
-		}
-		$odd = (bool) $notes;
-		if ( $odd ) {
-			$notes[] = __( 'Two spellings of one host can count as two different blygs, and the Blygger protocol may rule a single ASCII form. Nothing needs doing now; this is so you know before it does.', 'soapbox-for-blygger' );
 		}
 		$notes[] = $intl
 			? __( 'The PHP intl extension is available, for Unicode normalisation and international host names.', 'soapbox-for-blygger' )
-			: __( 'The PHP intl extension is not available. Unicode normalisation and international host names need it.', 'soapbox-for-blygger' );
+			: __( 'The PHP intl extension is not available. International host names are converted by WordPress\'s own encoder, which is enough for nearly every host.', 'soapbox-for-blygger' );
 		$version = intdiv( $libxml, 10000 ) . '.' . intdiv( $libxml % 10000, 100 ) . '.' . ( $libxml % 100 );
 		/* translators: %s: a version number, e.g. 2.13.9 */
 		$notes[] = sprintf( __( 'Posts are parsed with libxml %s.', 'soapbox-for-blygger' ), $version );
 		if ( $libxml >= 21400 ) {
-			$notes[] = __( 'This libxml keeps some control characters that earlier versions drop, so a post containing one may publish differently here than on another server.', 'soapbox-for-blygger' );
+			$notes[] = __( 'This libxml keeps some control characters that earlier versions drop. The plugin removes them before parsing, as the Blygger protocol requires, so a post publishes the same here as on any other server.', 'soapbox-for-blygger' );
 		}
 
 		return self::result(
 			'text',
-			$odd ? 'recommended' : 'good',
-			$odd ? __( 'A blyg address is not plain ASCII', 'soapbox-for-blygger' ) : __( 'Blyg addresses are plain ASCII', 'soapbox-for-blygger' ),
+			$bad ? 'recommended' : 'good',
+			$bad ? __( 'A blyg address cannot be written in plain ASCII', 'soapbox-for-blygger' ) : __( 'Blyg addresses are plain ASCII', 'soapbox-for-blygger' ),
 			implode( ' ', $notes )
 		);
 	}

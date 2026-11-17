@@ -352,21 +352,31 @@ class AdminTest extends TestCase {
 		$this->assertStringContainsString( extension_loaded( 'intl' ) ? 'intl extension is available' : 'intl extension is not available', $plain['description'] );
 		$this->assertSame( LIBXML_VERSION >= 21400, false !== strpos( $plain['description'], 'keeps some control characters' ) );
 		$this->assertStringContainsString( 'keeps some control characters', SiteHealth::test_text( 21500 )['description'] );
+		$this->assertStringContainsString( 'removes them before parsing', SiteHealth::test_text( 21500 )['description'] );
 		$this->assertStringNotContainsString( 'keeps some control characters', SiteHealth::test_text( 21309 )['description'] );
+		$this->assertStringNotContainsString( 'is written as', $plain['description'], 'a plain home is written as it is' );
 
-		foreach ( array( 'https://Example.ORG' => 'Example.ORG', "https://b\u{00FC}cher.example" => "b\u{00FC}cher.example" ) as $home => $host ) {
+		// A home that is not in the one spelling is written in it, and Site Health says so.
+		foreach ( array( 'https://Example.ORG' => 'https://example.org/notes/', "https://b\u{00FC}cher.example" => 'https://xn--bcher-kva.example/notes/' ) as $home => $written ) {
 			$set = static function () use ( $home ) {
 				return $home;
 			};
 			add_filter( 'pre_option_home', $set );
 			$result = SiteHealth::test_text();
 			remove_filter( 'pre_option_home', $set );
-			$this->assertSame( 'recommended', $result['status'], $home );
-			$this->assertStringContainsString( esc_html( $host ), $result['description'], $home );
+			$this->assertSame( 'good', $result['status'], $home );
+			$this->assertStringContainsString( 'is written as ' . $written, $result['description'], $home );
 		}
-		if ( function_exists( 'idn_to_ascii' ) ) {
-			$this->assertStringContainsString( 'xn--bcher-kva.example', $result['description'], 'the ASCII form, where intl can give it' );
-		}
+
+		// A host neither intl nor core can encode (a label far over 63 octets) stays non-ASCII.
+		$set = static function () {
+			return 'https://' . str_repeat( "\u{00FC}", 100 ) . '.example';
+		};
+		add_filter( 'pre_option_home', $set );
+		$result = SiteHealth::test_text();
+		remove_filter( 'pre_option_home', $set );
+		$this->assertSame( 'recommended', $result['status'] );
+		$this->assertStringContainsString( 'cannot be written in plain ASCII', $result['description'] );
 		$this->assertSame( array( SiteHealth::class, 'test_text' ), SiteHealth::tests( array() )['direct']['soapbox_blyg_text']['test'], 'registered as a direct test' );
 	}
 

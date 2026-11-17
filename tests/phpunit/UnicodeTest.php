@@ -1,8 +1,8 @@
 <?php
 /**
- * Unicode on the wire (blygger-spec#6): the seams a ruling will change, and text that is never
- * split or made invalid. Every seam is today's behaviour; these tests pin that, so a ruling is a
- * change to one function and to the test beside it.
+ * Unicode on the wire (spec 0.4 decision #103, blygger-spec#6): the hash over the bytes served,
+ * text with nothing XML forbids, one ASCII spelling for an origin, and text that is never split
+ * or made invalid.
  *
  * @package SoapboxBlyg
  */
@@ -28,7 +28,7 @@ class UnicodeTest extends TestCase {
 		return $s . "\u{FFFE}a\u{FFFF}a";
 	}
 
-	/** Text that a #6 ruling might normalise, and that today is hashed exactly as given. */
+	/** Text the plugin does not normalise: the hash covers the bytes as given (§5.1). */
 	public function texts(): array {
 		return array(
 			'NFC'                 => array( "Caf\u{00E9}" ),
@@ -47,10 +47,12 @@ class UnicodeTest extends TestCase {
 		$this->assertSame( 'sha256:' . hash( 'sha256', $text ), Snapshot::hash_of( $text ) );
 	}
 
-	public function test_the_input_filter_is_off_and_rendering_is_as_before() {
-		$this->assertFalse( ContentRenderer::FILTER_TEXT, 'switched on only by a #6 ruling' );
+	public function test_the_input_filter_is_on_and_content_md_carries_nothing_xml_forbids() {
+		$this->assertTrue( ContentRenderer::FILTER_TEXT, 'spec 0.4 §5.1, decision #103' );
 		$html = '<p>' . self::forbidden() . " \u{202E}rlo\u{202C} e\u{0301}</p>";
-		$this->assertSame( ContentRenderer::render_html( $html, 'T', array( 'filter_text' => false ) ), ContentRenderer::render_html( $html, 'T' ) );
+		$this->assertSame( ContentRenderer::render_html( $html, 'T', array( 'filter_text' => true ) ), ContentRenderer::render_html( $html, 'T' ) );
+		$post = self::factory()->post->create_and_get( array( 'post_content' => $html, 'post_status' => 'publish' ) );
+		$this->assertSame( 0, preg_match( '/[\x{0}-\x{8}\x{B}\x{C}\x{E}-\x{1F}\x{FFFE}\x{FFFF}]/u', ContentRenderer::render_html( $post->post_content, $post->post_title )['content_md'] ) );
 	}
 
 	/**
@@ -74,36 +76,56 @@ class UnicodeTest extends TestCase {
 		$this->assertSame( 'a b', ContentRenderer::filter_text( "a\0b" ), 'NUL becomes a space, as earlier libxml makes it' );
 	}
 
-	/** What an origin is written as, for the homes the probe tried. */
+	/** What an origin is written as (spec 0.4 §12.2): home as stored => the one ASCII spelling. */
 	public function homes(): array {
 		return array(
+			'plain'           => array( 'https://example.org', 'https://example.org' ),
 			'upper-case host' => array( 'https://Example.ORG', 'https://example.org' ),
-			'IDN host, NFC'   => array( "https://b\u{00FC}cher.example", "https://b\u{00FC}cher.example" ),
-			'IDN host, NFD'   => array( "https://bu\u{0308}cher.example", "https://bu\u{0308}cher.example" ),
-			'IDN upper-case'  => array( "https://B\u{00DC}CHER.example", "https://b\u{00DC}cher.example" ),
-			'punycode host'   => array( 'https://xn--bcher-kva.example', 'https://xn--bcher-kva.example' ),
+			'upper-case http' => array( 'HTTP://example.org', 'http://example.org' ),
+			'IDN host, NFC'   => array( "https://b\u{00FC}cher.example", 'https://xn--bcher-kva.example' ),
+			'IDN upper-case'  => array( "https://B\u{00DC}CHER.example", 'https://xn--bcher-kva.example' ),
+			'punycode host'   => array( 'https://XN--bcher-kva.example', 'https://xn--bcher-kva.example' ),
+			'default port'    => array( 'https://example.org:443', 'https://example.org' ),
+			'other port'      => array( 'https://example.org:8443', 'https://example.org:8443' ),
+			'subdirectory'    => array( 'https://example.org/Wp', 'https://example.org/Wp' ),
 		);
 	}
 
 	/**
-	 * The write seam: an origin is home_url() and its mount, spelled exactly as the site's home is.
-	 * The compare seam: the host is folded by ASCII case alone. Today neither does IDNA or NFC.
+	 * The origin written and the origin compared are one string, whatever the home URL's spelling.
 	 *
 	 * @dataProvider homes
 	 */
-	public function test_the_origin_seams_write_home_as_given_and_compare_by_ascii_case_alone( string $home, string $compared ) {
+	public function test_an_origin_is_written_in_one_ascii_spelling_and_compared_in_it( string $home, string $expected ) {
 		$set = static function () use ( $home ) {
 			return $home;
 		};
 		add_filter( 'pre_option_home', $set );
 		$origin = Plugin::instance()->registry->get( 'posts' );
-
-		$this->assertSame( $home . '/blyg/', $origin->url() );
-		$this->assertSame( $home . '/blyg/', Origin::spelling( $home . '/blyg/' ) );
-		$this->assertSame( $compared, Locations::http_origin( $origin->url() ) );
-		$this->assertSame( $compared . '/blyg/', Verifier::identity( $origin->url() ) );
-		$this->assertSame( strtolower( (string) wp_parse_url( $home, PHP_URL_HOST ) ), Locations::host_key( (string) wp_parse_url( $home, PHP_URL_HOST ) ) );
+		$url    = $origin->url();
 		remove_filter( 'pre_option_home', $set );
+
+		$this->assertSame( $expected . '/blyg/', $url );
+		$this->assertSame( 0, preg_match( '/[^\x21-\x7E]/', $url ), 'ASCII, nothing to escape' );
+		$this->assertSame( $url, Origin::spelling( $url ), 'a canonical spelling is its own spelling' );
+		$this->assertSame( Verifier::identity( $url ), Verifier::identity( $expected . '/blyg/' ) );
+		$this->assertSame( (string) wp_parse_url( $expected, PHP_URL_HOST ), Locations::host_key( (string) wp_parse_url( $home, PHP_URL_HOST ) ) );
+		$this->assertSame( Locations::http_origin( $home . '/blyg/' ), Locations::http_origin( $url ), 'a host from the network is folded the same way' );
+	}
+
+	public function test_an_origin_path_is_percent_encoded_with_upper_case_hex_and_never_case_folded() {
+		$this->assertSame( 'https://example.org/Caf%C3%A9/a%2Fb/', Origin::spelling( "https://example.org/Caf\u{00E9}/a%2fb" ) );
+		$this->assertSame( 'https://example.org/a%20b/', Origin::spelling( 'https://example.org/a b/' ) );
+		$this->assertSame( 'https://example.org/blyg/', Origin::spelling( 'https://example.org/blyg/?x=1#y' ), 'no query or fragment' );
+		$this->assertSame( 'https://example.org/', Origin::spelling( 'https://example.org' ), 'a final slash' );
+	}
+
+	/** NFD and NFC spell one host; UTS #46 folds them, which takes intl. */
+	public function test_an_idn_host_in_nfd_is_folded_to_the_same_a_label_where_intl_is_present() {
+		if ( ! function_exists( 'idn_to_ascii' ) ) {
+			$this->markTestSkipped( 'needs ext-intl' );
+		}
+		$this->assertSame( 'xn--bcher-kva.example', Locations::host_key( "bu\u{0308}cher.example" ) );
 	}
 
 	/** A dry run's file name keeps to 80 bytes without cutting a character in two. */

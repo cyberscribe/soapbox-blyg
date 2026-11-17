@@ -7,6 +7,8 @@
 
 namespace SoapboxBlyg\Origins;
 
+use SoapboxBlyg\Surface\Locations;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -121,15 +123,40 @@ final class Origin {
 	}
 
 	/**
-	 * How this site writes an origin, in the manifest and in every document. Today that is the
-	 * site's home URL exactly as stored, host case and IDN form included. Blygger-spec#6 may rule a
-	 * canonical ASCII spelling (lower case, IDNA). Changing what a site writes changes its
-	 * identity (spec §12.2), so that ruling needs a migration as well as a change here. What is
-	 * compared is Locations::host_key()'s, which can be made more forgiving on its own.
+	 * How this site writes an origin, in the manifest and in every document: the one spelling of
+	 * spec 0.4 §12.2 (decision #103). ASCII only; scheme and host in lower case, an
+	 * internationalised host as its A-label (Locations::host_key()); no default port; the path
+	 * percent-encoded from its UTF-8 bytes, with upper-case hex digits; a final slash; no query
+	 * or fragment. It is what a WHATWG URL parser serializes, so a site whose home URL was already
+	 * plain lower-case ASCII, as nearly every one is, writes exactly what it wrote before. One
+	 * stored as, say, https://Example.ORG/ now writes https://example.org/, which is the string a
+	 * WHATWG-based reader already took as its identity.
+	 *
+	 * The path is never case-folded, and dot segments are left as they are.
 	 *
 	 * @param string $url An origin URL.
 	 */
 	public static function spelling( string $url ): string {
-		return $url;
+		$parts = wp_parse_url( $url );
+		if ( ! is_array( $parts ) || empty( $parts['scheme'] ) || empty( $parts['host'] ) ) {
+			return $url;
+		}
+		$scheme  = strtolower( $parts['scheme'] );
+		$default = array(
+			'http'  => 80,
+			'https' => 443,
+		);
+		$port    = isset( $parts['port'] ) && ( ! isset( $default[ $scheme ] ) || (int) $parts['port'] !== $default[ $scheme ] ) ? ':' . (int) $parts['port'] : '';
+		// Byte by byte, not by character: a non-ASCII character is its UTF-8 bytes, each escaped.
+		// What WHATWG's path percent-encode set escapes is escaped; an escape already there keeps
+		// its byte and gets upper-case hex.
+		$path = (string) preg_replace_callback(
+			'/%[0-9A-Fa-f]{2}|[\x00-\x20"#<>?`{}\x7F-\xFF]/',
+			static function ( $m ) {
+				return '%' === $m[0][0] ? strtoupper( $m[0] ) : sprintf( '%%%02X', ord( $m[0] ) );
+			},
+			isset( $parts['path'] ) ? $parts['path'] : ''
+		);
+		return $scheme . '://' . Locations::host_key( $parts['host'] ) . $port . trailingslashit( '/' . ltrim( $path, '/' ) );
 	}
 }
